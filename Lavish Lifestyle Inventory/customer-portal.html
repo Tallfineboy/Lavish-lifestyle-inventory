@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal - Lavish Lifestyle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --sidebar-bg: #021527;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: var(--sidebar-bg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .brand-subtitle {
+            color: #9ff3ef;
+            font-size: 0.9rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--sidebar-bg) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 30px 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            height: 200px;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+
+        .product-body {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .product-category {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .stock-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .in-stock {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .low-stock {
+            color: var(--warning-color);
+            font-weight: 500;
+        }
+
+        .out-of-stock {
+            color: var(--danger-color);
+            font-weight: 500;
+        }
+
+        .btn-add-to-cart {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-to-cart:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-add-to-cart:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            background: var(--sidebar-bg);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .remove-item {
+            color: var(--danger-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .btn-checkout {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-checkout:hover {
+            background: #27ae60;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .order-history {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-top: 40px;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-cart i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 0 10px 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: white;
+            border-bottom-color: white;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1055;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <div class="navbar-brand">
+                <div class="brand">Lavish Lifestyle</div>
+                <div class="brand-subtitle">Customer Portal</div>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-2"></i>
+                        <span id="customerName">Customer</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><span class="dropdown-item-text user-role" id="customerRole">Customer</span></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="showProfile()"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="viewOrderHistory()"><i class="fas fa-history me-2"></i>Order History</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a></li>
+                    </ul>
+                </div>
+                <button class="btn btn-outline-light ms-3" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    Cart <span class="badge bg-danger" id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>Welcome to Lavish Lifestyle</h1>
+            <p class="lead">Discover our exclusive collection of luxury products</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" id="customerTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab">
+                    <i class="fas fa-shopping-bag me-2"></i>Products
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+                    <i class="fas fa-user me-2"></i>My Profile
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">
+                    <i class="fas fa-history me-2"></i>Order History
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="customerTabsContent">
+            <!-- Products Tab -->
+            <div class="tab-pane fade show active" id="products" role="tabpanel">
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="searchProducts" placeholder="Search products...">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <option value="Bags">Bags</option>
+                                <option value="Watches">Watches</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Fragrances">Fragrances</option>
+                                <option value="Jewelry">Jewelry</option>
+                                <option value="Footwear">Footwear</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Phones">Phones</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="sortProducts">
+                                <option value="name">Sort by Name</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="stock-high">Stock: High to Low</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <h2 class="section-title">Our Products</h2>
+                <div class="product-grid" id="productsGrid">
+                    <!-- Products will be loaded here automatically -->
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="tab-pane fade" id="profile" role="tabpanel">
+                <div class="profile-section">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="text-center mb-4">My Profile</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="profileName" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="profileEmail" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="profilePhone">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <textarea class="form-control" id="profileAddress" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="updateProfile()">
+                            <i class="fas fa-save me-2"></i>Update Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div class="tab-pane fade" id="orders" role="tabpanel">
+                <div class="order-history">
+                    <h3><i class="fas fa-history me-2"></i>Your Order History</h3>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderHistoryBody">
+                                <!-- Order history will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="emptyOrders" class="empty-state text-center py-4" style="display: none;">
+                        <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                        <h5>No orders yet</h5>
+                        <p class="text-muted">Your order history will appear here once you place an order.</p>
+                        <button class="btn btn-primary" onclick="showTab('products')">
+                            <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Your Cart</h4>
+            <button class="btn btn-sm btn-light" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <!-- Cart items will be loaded here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">Total: ₦<span id="cartTotal">0</span></div>
+            <button class="btn-checkout" onclick="placeOrder()" id="checkoutBtn" disabled>
+                <i class="fas fa-credit-card me-2"></i>Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast for notifications -->
+    <div class="toast align-items-center text-white bg-success border-0" id="successToast">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">
+                Item added to cart!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+
+    <div class="toast align-items-center text-white bg-danger border-0" id="errorToast">
+        <div class="d-flex">
+            <div class="toast-body" id="errorToastMessage">
+                Error adding item to cart!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Storage keys (matching your dashboard)
+        const AUTH_KEY = 'lavish_auth_v1';
+        const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+        const ORDERS_STORAGE_KEY = 'lavish_orders_v1';
+        const CUSTOMERS_STORAGE_KEY = 'lavish_customers_v1';
+        const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
+
+        // Cart state
+        let cart = [];
+
+        // Check authentication - Customers only
+        function checkAuthentication() {
+            const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+            
+            if (!session || !session.loggedIn) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            // Redirect admins back to dashboard
+            if (session.user.role === 'admin') {
+                window.location.href = 'dashboard.html';
+                return false;
+            }
+            
+            // Check session expiry (24 hours)
+            const loginTime = new Date(session.loginTime);
+            const now = new Date();
+            const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+            
+            if (hoursDiff >= 24) {
+                localStorage.removeItem(AUTH_KEY);
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            return session.user;
+        }
+
+        // Update user info
+        function updateUserInfo() {
+            const user = checkAuthentication();
+            if (user) {
+                document.getElementById('customerName').textContent = user.name;
+                document.getElementById('customerRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+                
+                // Update profile form
+                document.getElementById('profileName').value = user.name;
+                document.getElementById('profileEmail').value = user.email;
+                document.getElementById('profilePhone').value = user.phone || '';
+                document.getElementById('profileAddress').value = user.address || '';
+            }
+        }
+
+        // Load products from inventory (using the same inventory as your dashboard)
+        function loadProducts() {
+            const inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY) || '[]');
+            const productsGrid = document.getElementById('productsGrid');
+            
+            // Apply filters
+            const searchTerm = document.getElementById('searchProducts').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const sortBy = document.getElementById('sortProducts').value;
+            
+            let filteredProducts = inventory.filter(item => item.stock > 0); // Using 'stock' field from your inventory
+            
+            // Search filter
+            if (searchTerm) {
+                filteredProducts = filteredProducts.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) || 
+                    item.category.toLowerCase().includes(searchTerm) ||
+                    item.description?.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Category filter
+            if (categoryFilter) {
+                filteredProducts = filteredProducts.filter(item => item.category === categoryFilter);
+            }
+            
+            // Sort products
+            filteredProducts.sort((a, b) => {
+                switch(sortBy) {
+                    case 'price-low':
+                        return a.price - b.price;
+                    case 'price-high':
+                        return b.price - a.price;
+                    case 'stock-high':
+                        return b.stock - a.stock;
+                    default:
+                        return a.name.localeCompare(b.name);
+                }
+            });
+            
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4>No Products Found</h4>
+                        <p class="text-muted">Try adjusting your search or filter criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            productsGrid.innerHTML = filteredProducts.map(product => {
+                const stockStatus = getStockStatus(product.stock);
+                
+                return `
+                    <div class="product-card">
+                        <div class="product-image">
+                            ${product.thumb ? 
+                                `<img src="${product.thumb}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                                `<i class="fas ${getProductIcon(product.category)}"></i>`
+                            }
+                        </div>
+                        <div class="product-body">
+                            <div class="product-title">${product.name}</div>
+                            <div class="product-category">${product.category}</div>
+                            <div class="product-price">₦${product.price?.toLocaleString() || '0'}</div>
+                            <div class="stock-info">
+                                <span class="${stockStatus.class}">${stockStatus.text}</span>
+                                <span class="text-muted">SKU: ${product.sku}</span>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">${product.description || 'No description available'}</small>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    onclick="addToCart(${product.id})"
+                                    ${product.stock === 0 ? 'disabled' : ''}>
+                                <i class="fas fa-cart-plus me-2"></i>
+                                ${product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Get stock status based on quantity (matching your inventory system)
+        function getStockStatus(stock) {
+            if (stock === 0) return { class: 'out-of-stock', text: 'Out of Stock' };
+            if (stock <= 10) return { class: 'low-stock', text: `Low Stock (${stock} left)` };
+            return { class: 'in-stock', text: `In Stock (${stock} available)` };
+        }
+
+        // Get appropriate icon for product category
+        function getProductIcon(category) {
+            const icons = {
+                'Bags': 'fa-briefcase',
+                'Watches': 'fa-clock',
+                'Accessories': 'fa-glasses',
+                'Fragrances': 'fa-spray-can',
+                'Jewelry': 'fa-gem',
+                'Footwear': 'fa-shoe-prints',
+                'Clothing': 'fa-tshirt',
+                'Electronics': 'fa-laptop',
+                'Phones': 'fa-mobile-alt'
+            };
+            return icons[category] || 'fa-cube';
+        }
+
+        // Cart functionality
+        function addToCart(productId) {
+            const inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY) || '[]');
+            const product = inventory.find(item => item.id === productId);
+            
+            if (!product || product.stock === 0) {
+                showToast('Product is out of stock!', 'error');
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity++;
+                    showToast(`${product.name} added to cart!`, 'success');
+                } else {
+                    showToast(`Only ${product.stock} items available in stock.`, 'error');
+                    return;
+                }
+            } else {
+                cart.push({
+                    id: product.id,
+                    sku: product.sku,
+                    name: product.name,
+                    price: product.price,
+                    category: product.category,
+                    thumb: product.thumb,
+                    quantity: 1,
+                    maxStock: product.stock
+                });
+                showToast(`${product.name} added to cart!`, 'success');
+            }
+            
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const cartBody = document.getElementById('cartBody');
+            const cartTotal = document.getElementById('cartTotal');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            // Update cart count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Update cart items
+            if (cart.length === 0) {
+                cartBody.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h5>Your cart is empty</h5>
+                        <p>Add some products to get started!</p>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+            } else {
+                cartBody.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            ${item.thumb ? 
+                                `<img src="${item.thumb}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` : 
+                                `<i class="fas ${getProductIcon(item.category)}"></i>`
+                            }
+                        </div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-price">₦${item.price.toLocaleString()} each</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <input type="number" class="quantity-input" value="${item.quantity}" 
+                                       min="1" max="${item.maxStock}" 
+                                       onchange="setQuantity(${item.id}, this.value)">
+                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                <button class="remove-item" onclick="removeFromCart(${item.id})" title="Remove item">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="mt-1">
+                                <small class="text-muted">Subtotal: ₦${(item.price * item.quantity).toLocaleString()}</small>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Update total
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                cartTotal.textContent = total.toLocaleString();
+                checkoutBtn.disabled = false;
+            }
+        }
+
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                const newQuantity = item.quantity + change;
+                if (newQuantity >= 1 && newQuantity <= item.maxStock) {
+                    item.quantity = newQuantity;
+                    updateCartDisplay();
+                } else if (newQuantity > item.maxStock) {
+                    showToast(`Only ${item.maxStock} items available in stock.`, 'error');
+                }
+            }
+        }
+
+        function setQuantity(productId, quantity) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                const newQuantity = parseInt(quantity);
+                if (newQuantity >= 1 && newQuantity <= item.maxStock) {
+                    item.quantity = newQuantity;
+                    updateCartDisplay();
+                } else if (newQuantity > item.maxStock) {
+                    showToast(`Only ${item.maxStock} items available in stock.`, 'error');
+                    updateCartDisplay(); // Reset to current quantity
+                }
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+            showToast('Item removed from cart', 'success');
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('cartOverlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // Place order
+        function placeOrder() {
+            if (cart.length === 0) return;
+            
+            const user = checkAuthentication();
+            if (!user) return;
+            
+            // Validate stock before placing order
+            const inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY) || '[]');
+            let hasStockIssue = false;
+            
+            for (const cartItem of cart) {
+                const inventoryItem = inventory.find(item => item.id === cartItem.id);
+                if (!inventoryItem || inventoryItem.stock < cartItem.quantity) {
+                    showToast(`Sorry, ${cartItem.name} is no longer available in the requested quantity.`, 'error');
+                    hasStockIssue = true;
+                    break;
+                }
+            }
+            
+            if (hasStockIssue) {
+                loadProducts(); // Refresh product list
+                return;
+            }
+            
+            // Generate order ID
+            const orderId = 'ORD-' + Date.now();
+            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Create order
+            const order = {
+                id: orderId,
+                customerId: user.id,
+                customerEmail: user.email,
+                customerName: user.name,
+                customerPhone: user.phone || '',
+                customerAddress: user.address || '',
+                items: cart.map(item => ({
+                    id: item.id,
+                    sku: item.sku,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    subtotal: item.price * item.quantity
+                })),
+                totalAmount: totalAmount,
+                status: 'Pending',
+                date: new Date().toISOString().split('T')[0],
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save order
+            const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+            orders.push(order);
+            localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+            
+            // Create payment record
+            createPaymentRecord(order);
+            
+            // Update inventory stock
+            updateInventoryStock();
+            
+            // Clear cart
+            cart = [];
+            updateCartDisplay();
+            toggleCart();
+            
+            // Show success message
+            showToast(`Order placed successfully! Your order ID is ${orderId}`, 'success');
+            
+            // Reload products and order history
+            loadProducts();
+            loadOrderHistory();
+            
+            // Switch to orders tab
+            showTab('orders');
+        }
+
+        function createPaymentRecord(order) {
+            const payments = JSON.parse(localStorage.getItem(PAYMENTS_STORAGE_KEY) || '[]');
+            const paymentId = payments.length > 0 ? Math.max(...payments.map(p => p.id)) + 1 : 1;
+            
+            const payment = {
+                id: paymentId,
+                orderId: order.id,
+                customer: order.customerName,
+                amount: order.totalAmount,
+                method: "Online Payment",
+                date: order.date,
+                status: "Pending",
+                createdAt: new Date().toISOString()
+            };
+            
+            payments.push(payment);
+            localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(payments));
+        }
+
+        function updateInventoryStock() {
+            const inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY) || '[]');
+            
+            cart.forEach(cartItem => {
+                const inventoryItem = inventory.find(item => item.id === cartItem.id);
+                if (inventoryItem) {
+                    inventoryItem.stock -= cartItem.quantity;
+                    if (inventoryItem.stock < 0) inventoryItem.stock = 0;
+                    
+                    // Update stock status
+                    inventoryItem.updatedAt = new Date().toISOString();
+                }
+            });
+            
+            localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
+        }
+
+        // Load order history
+        function loadOrderHistory() {
+            const user = checkAuthentication();
+            if (!user) return;
+            
+            const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+            const userOrders = orders.filter(order => order.customerEmail === user.email)
+                                   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            const orderHistoryBody = document.getElementById('orderHistoryBody');
+            const emptyOrders = document.getElementById('emptyOrders');
+            
+            if (userOrders.length === 0) {
+                orderHistoryBody.innerHTML = '';
+                emptyOrders.style.display = 'block';
+                return;
+            }
+            
+            emptyOrders.style.display = 'none';
+            orderHistoryBody.innerHTML = userOrders.map(order => {
+                const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
+                const statusClass = order.status === 'Completed' ? 'badge bg-success' :
+                                  order.status === 'Pending' ? 'badge bg-warning' : 
+                                  order.status === 'Processing' ? 'badge bg-info' : 'badge bg-secondary';
+                
+                return `
+                    <tr>
+                        <td><strong>${order.id}</strong></td>
+                        <td>${order.date}</td>
+                        <td>${itemCount} item(s)</td>
+                        <td>₦${order.totalAmount.toLocaleString()}</td>
+                        <td><span class="badge ${statusClass}">${order.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetails('${order.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function viewOrderDetails(orderId) {
+            const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+            const order = orders.find(o => o.id === orderId);
+            
+            if (order) {
+                const itemsList = order.items.map(item => 
+                    `${item.name} (${item.quantity} × ₦${item.price.toLocaleString()})`
+                ).join('\n');
+                
+                alert(`Order Details:\n\nOrder ID: ${order.id}\nDate: ${order.date}\nStatus: ${order.status}\nTotal: ₦${order.totalAmount.toLocaleString()}\n\nItems:\n${itemsList}`);
+            }
+        }
+
+        // Profile functions
+        function showProfile() {
+            showTab('profile');
+        }
+
+        function updateProfile() {
+            const user = checkAuthentication();
+            if (!user) return;
+            
+            // Update user data
+            user.phone = document.getElementById('profilePhone').value;
+            user.address = document.getElementById('profileAddress').value;
+            
+            // Update session
+            const session = JSON.parse(localStorage.getItem(AUTH_KEY));
+            session.user = user;
+            localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+            
+            // Update customers database
+            const customers = JSON.parse(localStorage.getItem(CUSTOMERS_STORAGE_KEY) || '[]');
+            const customerIndex = customers.findIndex(c => c.email === user.email);
+            if (customerIndex !== -1) {
+                customers[customerIndex] = { ...customers[customerIndex], ...user };
+            } else {
+                customers.push(user);
+            }
+            localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(customers));
+            
+            showToast('Profile updated successfully!', 'success');
+        }
+
+        function viewOrderHistory() {
+            showTab('orders');
+        }
+
+        function showTab(tabName) {
+            const tab = document.getElementById(`${tabName}-tab`);
+            if (tab) {
+                const bsTab = new bootstrap.Tab(tab);
+                bsTab.show();
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to log out?')) {
+                localStorage.removeItem(AUTH_KEY);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Toast notification function
+        function showToast(message, type = 'success') {
+            if (type === 'success') {
+                document.getElementById('toastMessage').textContent = message;
+                const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                toast.show();
+            } else {
+                document.getElementById('errorToastMessage').textContent = message;
+                const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                toast.show();
+            }
+        }
+
+        // Auto-refresh products
+        function setupAutoRefresh() {
+            setInterval(() => {
+                loadProducts();
+                loadOrderHistory();
+            }, 5000); // Refresh every 5 seconds
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuthentication();
+            if (!user) return;
+            
+            updateUserInfo();
+            loadProducts();
+            loadOrderHistory();
+            updateCartDisplay();
+            setupAutoRefresh();
+            
+            // Add event listeners for filters
+            document.getElementById('searchProducts').addEventListener('input', loadProducts);
+            document.getElementById('categoryFilter').addEventListener('change', loadProducts);
+            document.getElementById('sortProducts').addEventListener('change', loadProducts);
+        });
+    </script>
+</body>
+</html>

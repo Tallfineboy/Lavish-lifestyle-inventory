@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .kpi {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .kpi:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .kpi::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: var(--primary-color);
+    }
+
+    .kpi-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .kpi h6 {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .kpi h3 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .kpi-trend {
+      font-size: 0.8rem;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .trend-up {
+      color: var(--success-color);
+    }
+
+    .trend-down {
+      color: var(--danger-color);
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-completed {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-pending {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-processing {
+      background: rgba(52, 152, 219, 0.2);
+      color: var(--primary-color);
+    }
+
+    .status-failed {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .chart-container {
+      height: 150px;
+      position: relative;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Enhanced KPI Cards with different colors */
+    .kpi:nth-child(1)::before { background: var(--primary-color); }
+    .kpi:nth-child(2)::before { background: var(--accent-color); }
+    .kpi:nth-child(3)::before { background: var(--success-color); }
+    .kpi:nth-child(4)::before { background: var(--warning-color); }
+
+    .kpi:nth-child(1) .kpi-icon { color: var(--primary-color); }
+    .kpi:nth-child(2) .kpi-icon { color: var(--accent-color); }
+    .kpi:nth-child(3) .kpi-icon { color: var(--success-color); }
+    .kpi:nth-child(4) .kpi-icon { color: var(--warning-color); }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Enhanced charts */
+    .chart-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(131, 89, 182, 0.1) 100%);
+      border-radius: 0 0 0 100px;
+      z-index: 0;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none; /* REMOVED: Underlines from submenu links */
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link active" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <!-- CHANGED: Link directly to product-masterlist.html -->
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- NEW: Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- NEW: Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- NEW: Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- NEW: Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Welcome back, <span id="welcomeUserName">Admin</span>!</h2>
+      <p>Here's what's happening with your business today.</p>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Dashboard Overview</h3>
+      <div>
+        <button class="btn btn-sm btn-outline-primary" onclick="downloadDashboardReport()">
+          <i class="fas fa-download me-1"></i> Download Report (CSV)
+        </button>
+      </div>
+    </div>
+    
+    <div class="kpi-grid">
+      <div class="kpi">
+        <i class="fas fa-shopping-cart kpi-icon"></i>
+        <h6>Total Orders</h6>
+        <h3 id="k_orders">0</h3>
+        <div class="kpi-trend" id="ordersTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>0% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-money-bill-wave kpi-icon"></i>
+        <h6>Total Revenue</h6>
+        <h3 id="k_revenue">₦0</h3>
+        <div class="kpi-trend" id="revenueTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>0% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-users kpi-icon"></i>
+        <h6>Customers</h6>
+        <h3 id="k_customers">0</h3>
+        <div class="kpi-trend" id="customersTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>0% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-cubes kpi-icon"></i>
+        <h6>Products</h6>
+        <h3 id="k_inventory">0</h3>
+        <div class="kpi-trend" id="inventoryTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>0% from last month</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card chart-card">
+          <h6><i class="fas fa-chart-line me-2"></i> Sales Trend</h6>
+          <div class="chart-container">
+            <canvas id="chartLine"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card chart-card">
+          <h6><i class="fas fa-chart-pie me-2"></i> Transactions by Status</h6>
+          <div class="chart-container">
+            <canvas id="chartPie"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card mt-3">
+      <h6><i class="fas fa-list me-2"></i> Recent Transactions</h6>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="recentTransactionsBody">
+            <!-- Transactions will be loaded here automatically -->
+          </tbody>
+        </table>
+        <div id="emptyTransactions" class="empty-state" style="display: none;">
+          <i class="fas fa-receipt"></i>
+          <h4>No Transactions Yet</h4>
+          <p>Recent payments will appear here as they are processed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- REMOVED: Product Master List UI from dashboard since it now has its own page -->
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Storage keys
+    const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
+    const CUSTOMERS_STORAGE_KEY = 'lavish_customers_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+    const DASHBOARD_STATS_KEY = 'lavish_dashboard_stats_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar and welcome header
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        document.getElementById('welcomeUserName').textContent = user.name.split(' ')[0];
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Existing data getters
+    function getPayments() {
+      const payments = localStorage.getItem(PAYMENTS_STORAGE_KEY);
+      return payments ? JSON.parse(payments) : [];
+    }
+
+    function getCustomers() {
+      const customers = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
+      return customers ? JSON.parse(customers) : [];
+    }
+
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    function getNotifications() {
+      const notifications = localStorage.getItem(NOTIFICATIONS_KEY);
+      return notifications ? JSON.parse(notifications) : [];
+    }
+
+    function getDashboardStats() {
+      const stats = localStorage.getItem(DASHBOARD_STATS_KEY);
+      return stats ? JSON.parse(stats) : null;
+    }
+
+    function saveDashboardStats(stats) {
+      localStorage.setItem(DASHBOARD_STATS_KEY, JSON.stringify(stats));
+    }
+
+    // Initialize demo data if none exists
+    function initializeDemoData() {
+      const existingPayments = getPayments();
+      if (existingPayments.length === 0) {
+        const demoPayments = [
+          { id: 8456, orderId: "ORD-7845", customer: "James Wilson", amount: 85400, method: "Credit Card", date: "2023-10-15", status: "Completed", createdAt: new Date().toISOString() },
+          { id: 8455, orderId: "ORD-7844", customer: "Sarah Johnson", amount: 42150, method: "Bank Transfer", date: "2023-10-14", status: "Pending", createdAt: new Date().toISOString() },
+          { id: 8454, orderId: "ORD-7843", customer: "Michael Brown", amount: 63800, method: "Credit Card", date: "2023-10-14", status: "Completed", createdAt: new Date().toISOString() },
+          { id: 8453, orderId: "ORD-7842", customer: "Emily Davis", amount: 29500, method: "PayPal", date: "2023-10-13", status: "Completed", createdAt: new Date().toISOString() },
+          { id: 8452, orderId: "ORD-7841", customer: "Robert Miller", amount: 112300, method: "Credit Card", date: "2023-10-12", status: "Failed", createdAt: new Date().toISOString() }
+        ];
+        localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(demoPayments));
+      }
+
+      const existingCustomers = getCustomers();
+      if (existingCustomers.length === 0) {
+        const demoCustomers = [
+          { id: 1, name: "James Wilson", email: "james@example.com", phone: "+2348012345678", joinDate: "2023-09-15", totalOrders: 5, totalSpent: 254300 },
+          { id: 2, name: "Sarah Johnson", email: "sarah@example.com", phone: "+2348023456789", joinDate: "2023-08-22", totalOrders: 3, totalSpent: 124500 },
+          { id: 3, name: "Michael Brown", email: "michael@example.com", phone: "+2348034567890", joinDate: "2023-10-05", totalOrders: 2, totalSpent: 63800 }
+        ];
+        localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(demoCustomers));
+      }
+
+      const existingInventory = getInventoryItems();
+      if (existingInventory.length === 0) {
+        const demoInventory = [
+          { id: 1, name: "Premium Leather Handbag", category: "Accessories", price: 45000, stock: 15, sku: "LLH-001" },
+          { id: 2, name: "Designer Sunglasses", category: "Accessories", price: 25000, stock: 32, sku: "LLS-002" },
+          { id: 3, name: "Luxury Watch", category: "Accessories", price: 120000, stock: 8, sku: "LLW-003" },
+          { id: 4, name: "Cashmere Scarf", category: "Clothing", price: 18000, stock: 25, sku: "LLC-004" }
+        ];
+        localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(demoInventory));
+      }
+
+      const existingNotifications = getNotifications();
+      if (existingNotifications.length === 0) {
+        const demoNotifications = [
+          {
+            id: 1,
+            type: 'order',
+            title: 'New Order Received',
+            message: 'Order ORD-7845 has been placed by James Wilson',
+            date: new Date().toISOString(),
+            read: false,
+            priority: 'high'
+          },
+          {
+            id: 2,
+            type: 'payment',
+            title: 'Payment Completed',
+            message: 'Payment of ₦85,400 for ORD-7845 has been processed',
+            date: new Date(Date.now() - 300000).toISOString(),
+            read: false,
+            priority: 'medium'
+          }
+        ];
+        localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(demoNotifications));
+      }
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+        
+        // Add alert animation to bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.add('notification-alert');
+        }
+      } else {
+        badge.style.display = 'none';
+        
+        // Remove alert animation from bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.remove('notification-alert');
+        }
+      }
+    }
+
+    // Update KPI statistics with trends
+    function updateKPIStats() {
+      const payments = getPayments();
+      const customers = getCustomers();
+      const inventory = getInventoryItems();
+      
+      // Get previous stats for trend calculation
+      const previousStats = getDashboardStats();
+      const currentStats = {};
+      
+      // Total Orders (Completed payments)
+      const totalOrders = payments.filter(p => p.status === 'Completed').length;
+      document.getElementById('k_orders').textContent = totalOrders.toLocaleString();
+      currentStats.orders = totalOrders;
+      
+      // Total Revenue (Sum of completed payments)
+      const totalRevenue = payments
+        .filter(p => p.status === 'Completed')
+        .reduce((sum, p) => sum + p.amount, 0);
+      document.getElementById('k_revenue').textContent = `₦${totalRevenue.toLocaleString()}`;
+      currentStats.revenue = totalRevenue;
+      
+      // Total Customers
+      document.getElementById('k_customers').textContent = customers.length.toLocaleString();
+      currentStats.customers = customers.length;
+      
+      // Total Products
+      document.getElementById('k_inventory').textContent = inventory.length.toLocaleString();
+      currentStats.inventory = inventory.length;
+      
+      // Calculate and display trends
+      if (previousStats) {
+        updateTrend('orders', totalOrders, previousStats.orders || 0);
+        updateTrend('revenue', totalRevenue, previousStats.revenue || 0);
+        updateTrend('customers', customers.length, previousStats.customers || 0);
+        updateTrend('inventory', inventory.length, previousStats.inventory || 0);
+      }
+      
+      // Save current stats for next comparison
+      saveDashboardStats(currentStats);
+    }
+
+    // Update trend indicators
+    function updateTrend(type, current, previous) {
+      const trendElement = document.getElementById(`${type}Trend`);
+      if (!trendElement) return;
+      
+      let percentage = 0;
+      if (previous > 0) {
+        percentage = ((current - previous) / previous) * 100;
+      } else if (current > 0) {
+        percentage = 100;
+      }
+      
+      const icon = trendElement.querySelector('i');
+      const text = trendElement.querySelector('span');
+      
+      if (percentage > 0) {
+        icon.className = 'fas fa-caret-up me-1 trend-up';
+        text.textContent = `${percentage.toFixed(1)}% from last month`;
+      } else if (percentage < 0) {
+        icon.className = 'fas fa-caret-down me-1 trend-down';
+        text.textContent = `${Math.abs(percentage).toFixed(1)}% from last month`;
+      } else {
+        icon.className = 'fas fa-minus me-1';
+        text.textContent = 'No change from last month';
+      }
+    }
+
+    // Load recent transactions
+    function loadRecentTransactions() {
+      const payments = getPayments();
+      const recentPayments = payments
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+      
+      const tbody = document.getElementById('recentTransactionsBody');
+      const emptyState = document.getElementById('emptyTransactions');
+      
+      if (recentPayments.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = recentPayments.map(payment => {
+        const statusClass = `status-${payment.status.toLowerCase()}`;
+        return `
+          <tr>
+            <td>#PAY-${payment.id}</td>
+            <td>${payment.customer}</td>
+            <td>${payment.date}</td>
+            <td><span class="status ${statusClass}">${payment.status}</span></td>
+            <td>₦${payment.amount.toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Calculate monthly revenue from payments
+    function calculateMonthlyRevenue(payments) {
+      const completedPayments = payments.filter(p => p.status === 'Completed');
+      const monthlyData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      
+      completedPayments.forEach(payment => {
+        const month = new Date(payment.date).getMonth();
+        if (month >= 0 && month <= 9) {
+          monthlyData[month] += payment.amount;
+        }
+      });
+      
+      return monthlyData;
+    }
+
+    // Update charts with real data
+    function updateCharts() {
+      const payments = getPayments();
+      
+      // Update pie chart with real payment status data
+      const statusCounts = {
+        completed: payments.filter(p => p.status === 'Completed').length,
+        pending: payments.filter(p => p.status === 'Pending').length,
+        failed: payments.filter(p => p.status === 'Failed').length
+      };
+      
+      // Update the pie chart if it exists
+      if (window.pieChart) {
+        window.pieChart.data.datasets[0].data = [
+          statusCounts.completed,
+          statusCounts.pending,
+          statusCounts.failed,
+          0
+        ];
+        window.pieChart.update();
+      }
+      
+      // Update line chart with monthly revenue data
+      const monthlyRevenue = calculateMonthlyRevenue(payments);
+      if (window.lineChart) {
+        window.lineChart.data.datasets[0].data = monthlyRevenue;
+        window.lineChart.update();
+      }
+    }
+
+    // Initialize charts
+    function initializeCharts() {
+      const payments = getPayments();
+      const monthlyRevenue = calculateMonthlyRevenue(payments);
+      const statusCounts = {
+        completed: payments.filter(p => p.status === 'Completed').length,
+        pending: payments.filter(p => p.status === 'Pending').length,
+        failed: payments.filter(p => p.status === 'Failed').length
+      };
+
+      // Line chart for Sales Trend
+      const lineCtx = document.getElementById('chartLine');
+      if (!lineCtx) {
+        console.error('Line chart canvas element not found');
+        return;
+      }
+      
+      try {
+        window.lineChart = new Chart(lineCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+            datasets: [{
+              label: 'Sales (₦)',
+              data: monthlyRevenue,
+              borderColor: '#3498db',
+              backgroundColor: 'rgba(52, 152, 219, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  drawBorder: false
+                },
+                ticks: {
+                  callback: function(value) {
+                    if (value >= 1000000) {
+                      return '₦' + (value / 1000000).toFixed(1) + 'M';
+                    } else if (value >= 1000) {
+                      return '₦' + (value / 1000).toFixed(0) + 'K';
+                    }
+                    return '₦' + value;
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing line chart:', error);
+      }
+
+      // Pie chart for Transactions by Status
+      const pieCtx = document.getElementById('chartPie');
+      if (!pieCtx) {
+        console.error('Pie chart canvas element not found');
+        return;
+      }
+      
+      try {
+        window.pieChart = new Chart(pieCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Completed', 'Pending', 'Failed', 'Cancelled'],
+            datasets: [{
+              data: [
+                statusCounts.completed,
+                statusCounts.pending,
+                statusCounts.failed,
+                0
+              ],
+              backgroundColor: [
+                '#2ecc71',
+                '#f39c12',
+                '#e74c3c',
+                '#95a5a6'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  boxWidth: 12,
+                  font: {
+                    size: 11
+                  }
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing pie chart:', error);
+      }
+    }
+
+    // Download dashboard report as CSV
+    function downloadDashboardReport() {
+      const payments = getPayments();
+      const customers = getCustomers();
+      const inventory = getInventoryItems();
+      
+      const totalOrders = payments.filter(p => p.status === 'Completed').length;
+      const totalRevenue = payments
+        .filter(p => p.status === 'Completed')
+        .reduce((sum, p) => sum + p.amount, 0);
+      const totalCustomers = customers.length;
+      const totalProducts = inventory.length;
+      
+      const recentPayments = payments
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 10);
+      
+      const statusCounts = {
+        completed: payments.filter(p => p.status === 'Completed').length,
+        pending: payments.filter(p => p.status === 'Pending').length,
+        failed: payments.filter(p => p.status === 'Failed').length
+      };
+      
+      const monthlyRevenue = calculateMonthlyRevenue(payments);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+      
+      let csvContent = "";
+      csvContent += "Lavish Lifestyle Inventory - Dashboard Report\n";
+      csvContent += `Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n\n`;
+      
+      csvContent += "KEY PERFORMANCE INDICATORS\n";
+      csvContent += "Metric,Value\n";
+      csvContent += `Total Orders,${totalOrders}\n`;
+      csvContent += `Total Revenue (₦),${totalRevenue}\n`;
+      csvContent += `Total Customers,${totalCustomers}\n`;
+      csvContent += `Total Products,${totalProducts}\n\n`;
+      
+      csvContent += "TRANSACTION STATUS BREAKDOWN\n";
+      csvContent += "Status,Count\n";
+      csvContent += `Completed,${statusCounts.completed}\n`;
+      csvContent += `Pending,${statusCounts.pending}\n`;
+      csvContent += `Failed,${statusCounts.failed}\n\n`;
+      
+      csvContent += "MONTHLY REVENUE (₦)\n";
+      csvContent += "Month,Revenue\n";
+      months.forEach((month, index) => {
+        csvContent += `${month},${monthlyRevenue[index]}\n`;
+      });
+      csvContent += "\n";
+      
+      csvContent += "RECENT TRANSACTIONS\n";
+      csvContent += "Payment ID,Order ID,Customer,Date,Status,Amount (₦),Payment Method\n";
+      if (recentPayments.length > 0) {
+        recentPayments.forEach(payment => {
+          const customer = payment.customer.includes(',') ? `"${payment.customer}"` : payment.customer;
+          csvContent += `PAY-${payment.id},${payment.orderId},${customer},${payment.date},${payment.status},${payment.amount},${payment.method}\n`;
+        });
+      } else {
+        csvContent += "No recent transactions\n";
+      }
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lavish-dashboard-report-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Dashboard report downloaded as CSV successfully!');
+    }
+
+    // Auto-refresh dashboard data
+    function setupAutoRefresh() {
+      setInterval(() => {
+        updateKPIStats();
+        loadRecentTransactions();
+        updateCharts();
+        updateNotificationBadge();
+      }, 5000); // Refresh every 5 seconds
+    }
+
+    // ---------- UI interactions for sidebar submenus ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wire up product submenu toggle
+      const productToggle = document.getElementById('productToggle');
+      const productSubmenu = document.getElementById('productSubmenu');
+      const productChevron = document.getElementById('productChevron');
+      if (productToggle && productSubmenu) {
+        productToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+          productToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+            productSubmenu.style.maxHeight = '0';
+            productChevron.style.transform = '';
+          } else {
+            productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+            productChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up inventory control submenu toggle
+      const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+      const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+      const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+      if (inventoryControlToggle && inventoryControlSubmenu) {
+        inventoryControlToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+          inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+            inventoryControlSubmenu.style.maxHeight = '0';
+            inventoryControlChevron.style.transform = '';
+          } else {
+            inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+            inventoryControlChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // NEW: Wire up stock movement submenu toggle
+      const stockMovementToggle = document.getElementById('stockMovementToggle');
+      const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
+      const stockMovementChevron = document.getElementById('stockMovementChevron');
+      if (stockMovementToggle && stockMovementSubmenu) {
+        stockMovementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = stockMovementToggle.getAttribute('aria-expanded') === 'true';
+          stockMovementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (stockMovementSubmenu.style.maxHeight && stockMovementSubmenu.style.maxHeight !== '0px') {
+            stockMovementSubmenu.style.maxHeight = '0';
+            stockMovementChevron.style.transform = '';
+          } else {
+            stockMovementSubmenu.style.maxHeight = (stockMovementSubmenu.scrollHeight + 20) + 'px';
+            stockMovementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up purchase management submenu toggle
+      const purchaseManagementToggle = document.getElementById('purchaseManagementToggle');
+      const purchaseManagementSubmenu = document.getElementById('purchaseManagementSubmenu');
+      const purchaseManagementChevron = document.getElementById('purchaseManagementChevron');
+      if (purchaseManagementToggle && purchaseManagementSubmenu) {
+        purchaseManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = purchaseManagementToggle.getAttribute('aria-expanded') === 'true';
+          purchaseManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (purchaseManagementSubmenu.style.maxHeight && purchaseManagementSubmenu.style.maxHeight !== '0px') {
+            purchaseManagementSubmenu.style.maxHeight = '0';
+            purchaseManagementChevron.style.transform = '';
+          } else {
+            purchaseManagementSubmenu.style.maxHeight = (purchaseManagementSubmenu.scrollHeight + 20) + 'px';
+            purchaseManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up sales management submenu toggle
+      const salesManagementToggle = document.getElementById('salesManagementToggle');
+      const salesManagementSubmenu = document.getElementById('salesManagementSubmenu');
+      const salesManagementChevron = document.getElementById('salesManagementChevron');
+      if (salesManagementToggle && salesManagementSubmenu) {
+        salesManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = salesManagementToggle.getAttribute('aria-expanded') === 'true';
+          salesManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (salesManagementSubmenu.style.maxHeight && salesManagementSubmenu.style.maxHeight !== '0px') {
+            salesManagementSubmenu.style.maxHeight = '0';
+            salesManagementChevron.style.transform = '';
+          } else {
+            salesManagementSubmenu.style.maxHeight = (salesManagementSubmenu.scrollHeight + 20) + 'px';
+            salesManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // NEW: Wire up reporting & analytics submenu toggle
+      const reportingAnalyticsToggle = document.getElementById('reportingAnalyticsToggle');
+      const reportingAnalyticsSubmenu = document.getElementById('reportingAnalyticsSubmenu');
+      const reportingAnalyticsChevron = document.getElementById('reportingAnalyticsChevron');
+      if (reportingAnalyticsToggle && reportingAnalyticsSubmenu) {
+        reportingAnalyticsToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = reportingAnalyticsToggle.getAttribute('aria-expanded') === 'true';
+          reportingAnalyticsToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (reportingAnalyticsSubmenu.style.maxHeight && reportingAnalyticsSubmenu.style.maxHeight !== '0px') {
+            reportingAnalyticsSubmenu.style.maxHeight = '0';
+            reportingAnalyticsChevron.style.transform = '';
+          } else {
+            reportingAnalyticsSubmenu.style.maxHeight = (reportingAnalyticsSubmenu.scrollHeight + 20) + 'px';
+            reportingAnalyticsChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Continue with original initialization
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      initializeDemoData();
+      updateKPIStats();
+      loadRecentTransactions();
+      initializeCharts();
+      updateNotificationBadge();
+      setupAutoRefresh();
+    });
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

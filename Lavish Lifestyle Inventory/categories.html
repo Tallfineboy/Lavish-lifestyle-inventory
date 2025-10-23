@@ -1,0 +1,1453 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-active {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-inactive {
+      background: rgba(108, 117, 125, 0.2);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Custom styles for categories page */
+    .tab-content {
+      margin-top: 20px;
+    }
+    
+    .nav-tabs .nav-link {
+      color: var(--text-muted);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .nav-tabs .nav-link.active {
+      color: var(--primary-color);
+      background-color: white;
+      border-bottom: 3px solid var(--primary-color);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .action-buttons .btn {
+      padding: 5px 10px;
+      font-size: 0.85rem;
+    }
+    
+    .stats-card {
+      text-align: center;
+      padding: 15px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .stats-card .number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+    
+    .stats-card .label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    
+    .form-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .badge-category {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: var(--primary-color);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    
+    .badge-brand {
+      background-color: rgba(46, 204, 113, 0.1);
+      color: var(--success-color);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    
+    .badge-unit {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: var(--warning-color);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center active" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link active">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Categories, Brands & Units of Storage</h2>
+      <p>Manage your product categorization, brand organization, and storage units.</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="stats-card">
+          <div class="number" id="categoriesCount">0</div>
+          <div class="label">Product Categories</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <div class="number" id="brandsCount">0</div>
+          <div class="label">Brands</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <div class="number" id="unitsCount">0</div>
+          <div class="label">Units of Storage</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="true">
+          <i class="fas fa-tags me-2"></i> Categories
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="brands-tab" data-bs-toggle="tab" data-bs-target="#brands" type="button" role="tab" aria-controls="brands" aria-selected="false">
+          <i class="fas fa-copyright me-2"></i> Brands
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="units-tab" data-bs-toggle="tab" data-bs-target="#units" type="button" role="tab" aria-controls="units" aria-selected="false">
+          <i class="fas fa-weight me-2"></i> Units of Storage
+        </button>
+      </li>
+    </ul>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="myTabContent">
+      <!-- Categories Tab -->
+      <div class="tab-pane fade show active" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5>Product Categories</h5>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+            <i class="fas fa-plus me-1"></i> Add Category
+          </button>
+        </div>
+        
+        <div class="card">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Category Name</th>
+                  <th>Description</th>
+                  <th>Products</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="categoriesTableBody">
+                <!-- Categories will be loaded here -->
+              </tbody>
+            </table>
+            <div id="emptyCategories" class="empty-state" style="display: none;">
+              <i class="fas fa-tags"></i>
+              <h4>No Categories Yet</h4>
+              <p>Add your first product category to get started.</p>
+              <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                <i class="fas fa-plus me-1"></i> Add Category
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Brands Tab -->
+      <div class="tab-pane fade" id="brands" role="tabpanel" aria-labelledby="brands-tab">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5>Brands</h5>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+            <i class="fas fa-plus me-1"></i> Add Brand
+          </button>
+        </div>
+        
+        <div class="card">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Brand Name</th>
+                  <th>Description</th>
+                  <th>Products</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="brandsTableBody">
+                <!-- Brands will be loaded here -->
+              </tbody>
+            </table>
+            <div id="emptyBrands" class="empty-state" style="display: none;">
+              <i class="fas fa-copyright"></i>
+              <h4>No Brands Yet</h4>
+              <p>Add your first brand to get started.</p>
+              <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+                <i class="fas fa-plus me-1"></i> Add Brand
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Units of Storage Tab -->
+      <div class="tab-pane fade" id="units" role="tabpanel" aria-labelledby="units-tab">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5>Units of Storage</h5>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUnitModal">
+            <i class="fas fa-plus me-1"></i> Add Unit
+          </button>
+        </div>
+        
+        <div class="card">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Unit Name</th>
+                  <th>Abbreviation</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="unitsTableBody">
+                <!-- Units will be loaded here -->
+              </tbody>
+            </table>
+            <div id="emptyUnits" class="empty-state" style="display: none;">
+              <i class="fas fa-weight"></i>
+              <h4>No Units Yet</h4>
+              <p>Add your first unit of storage to get started.</p>
+              <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addUnitModal">
+                <i class="fas fa-plus me-1"></i> Add Unit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Category Modal -->
+  <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addCategoryForm">
+            <div class="mb-3">
+              <label for="categoryName" class="form-label">Category Name</label>
+              <input type="text" class="form-control" id="categoryName" required>
+            </div>
+            <div class="mb-3">
+              <label for="categoryDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="categoryStatus" checked>
+              <label class="form-check-label" for="categoryStatus">Active</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveCategory()">Save Category</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Brand Modal -->
+  <div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addBrandModalLabel">Add New Brand</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addBrandForm">
+            <div class="mb-3">
+              <label for="brandName" class="form-label">Brand Name</label>
+              <input type="text" class="form-control" id="brandName" required>
+            </div>
+            <div class="mb-3">
+              <label for="brandDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="brandDescription" rows="3"></textarea>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="brandStatus" checked>
+              <label class="form-check-label" for="brandStatus">Active</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveBrand()">Save Brand</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Unit Modal -->
+  <div class="modal fade" id="addUnitModal" tabindex="-1" aria-labelledby="addUnitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addUnitModalLabel">Add New Unit of Storage</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addUnitForm">
+            <div class="mb-3">
+              <label for="unitName" class="form-label">Unit Name</label>
+              <input type="text" class="form-control" id="unitName" required>
+            </div>
+            <div class="mb-3">
+              <label for="unitAbbreviation" class="form-label">Abbreviation</label>
+              <input type="text" class="form-control" id="unitAbbreviation" required>
+            </div>
+            <div class="mb-3">
+              <label for="unitType" class="form-label">Type</label>
+              <select class="form-select" id="unitType" required>
+                <option value="weight">Weight</option>
+                <option value="volume">Volume</option>
+                <option value="length">Length</option>
+                <option value="count">Count</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="unitDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="unitDescription" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveUnit()">Save Unit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Storage keys
+    const CATEGORIES_STORAGE_KEY = 'lavish_categories_v1';
+    const BRANDS_STORAGE_KEY = 'lavish_brands_v1';
+    const UNITS_STORAGE_KEY = 'lavish_units_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Data getters
+    function getCategories() {
+      const categories = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+      return categories ? JSON.parse(categories) : [];
+    }
+
+    function getBrands() {
+      const brands = localStorage.getItem(BRANDS_STORAGE_KEY);
+      return brands ? JSON.parse(brands) : [];
+    }
+
+    function getUnits() {
+      const units = localStorage.getItem(UNITS_STORAGE_KEY);
+      return units ? JSON.parse(units) : [];
+    }
+
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    function getNotifications() {
+      const notifications = localStorage.getItem(NOTIFICATIONS_KEY);
+      return notifications ? JSON.parse(notifications) : [];
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+        
+        // Add alert animation to bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.add('notification-alert');
+        }
+      } else {
+        badge.style.display = 'none';
+        
+        // Remove alert animation from bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.remove('notification-alert');
+        }
+      }
+    }
+
+    // Initialize demo data if none exists
+    function initializeDemoData() {
+      const existingCategories = getCategories();
+      if (existingCategories.length === 0) {
+        const demoCategories = [
+          { id: 1, name: "Accessories", description: "Fashion accessories and jewelry", status: "active", productCount: 3 },
+          { id: 2, name: "Clothing", description: "Apparel and fashion items", status: "active", productCount: 1 },
+          { id: 3, name: "Footwear", description: "Shoes and related items", status: "inactive", productCount: 0 }
+        ];
+        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(demoCategories));
+      }
+
+      const existingBrands = getBrands();
+      if (existingBrands.length === 0) {
+        const demoBrands = [
+          { id: 1, name: "Lavish Luxe", description: "Premium luxury brand", status: "active", productCount: 2 },
+          { id: 2, name: "Elegance", description: "Contemporary fashion brand", status: "active", productCount: 1 },
+          { id: 3, name: "Classic Couture", description: "Timeless fashion pieces", status: "inactive", productCount: 0 }
+        ];
+        localStorage.setItem(BRANDS_STORAGE_KEY, JSON.stringify(demoBrands));
+      }
+
+      const existingUnits = getUnits();
+      if (existingUnits.length === 0) {
+        const demoUnits = [
+          { id: 1, name: "Piece", abbreviation: "pc", type: "count", description: "Individual items" },
+          { id: 2, name: "Kilogram", abbreviation: "kg", type: "weight", description: "Weight measurement" },
+          { id: 3, name: "Liter", abbreviation: "L", type: "volume", description: "Volume measurement" },
+          { id: 4, name: "Meter", abbreviation: "m", type: "length", description: "Length measurement" }
+        ];
+        localStorage.setItem(UNITS_STORAGE_KEY, JSON.stringify(demoUnits));
+      }
+
+      const existingNotifications = getNotifications();
+      if (existingNotifications.length === 0) {
+        const demoNotifications = [
+          {
+            id: 1,
+            type: 'category',
+            title: 'New Category Added',
+            message: 'Accessories category has been created',
+            date: new Date().toISOString(),
+            read: false,
+            priority: 'medium'
+          }
+        ];
+        localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(demoNotifications));
+      }
+    }
+
+    // Update statistics
+    function updateStatistics() {
+      const categories = getCategories();
+      const brands = getBrands();
+      const units = getUnits();
+      
+      document.getElementById('categoriesCount').textContent = categories.length;
+      document.getElementById('brandsCount').textContent = brands.length;
+      document.getElementById('unitsCount').textContent = units.length;
+    }
+
+    // Load categories table
+    function loadCategoriesTable() {
+      const categories = getCategories();
+      const tbody = document.getElementById('categoriesTableBody');
+      const emptyState = document.getElementById('emptyCategories');
+      
+      if (categories.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = categories.map(category => {
+        const statusClass = category.status === 'active' ? 'status-active' : 'status-inactive';
+        return `
+          <tr>
+            <td>
+              <span class="badge-category">${category.name}</span>
+            </td>
+            <td>${category.description || 'No description'}</td>
+            <td>${category.productCount || 0}</td>
+            <td><span class="status ${statusClass}">${category.status}</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editCategory(${category.id})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${category.id})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load brands table
+    function loadBrandsTable() {
+      const brands = getBrands();
+      const tbody = document.getElementById('brandsTableBody');
+      const emptyState = document.getElementById('emptyBrands');
+      
+      if (brands.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = brands.map(brand => {
+        const statusClass = brand.status === 'active' ? 'status-active' : 'status-inactive';
+        return `
+          <tr>
+            <td>
+              <span class="badge-brand">${brand.name}</span>
+            </td>
+            <td>${brand.description || 'No description'}</td>
+            <td>${brand.productCount || 0}</td>
+            <td><span class="status ${statusClass}">${brand.status}</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editBrand(${brand.id})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteBrand(${brand.id})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load units table
+    function loadUnitsTable() {
+      const units = getUnits();
+      const tbody = document.getElementById('unitsTableBody');
+      const emptyState = document.getElementById('emptyUnits');
+      
+      if (units.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = units.map(unit => {
+        return `
+          <tr>
+            <td>
+              <span class="badge-unit">${unit.name}</span>
+            </td>
+            <td>${unit.abbreviation}</td>
+            <td>${unit.type.charAt(0).toUpperCase() + unit.type.slice(1)}</td>
+            <td>${unit.description || 'No description'}</td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editUnit(${unit.id})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteUnit(${unit.id})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Save category
+    function saveCategory() {
+      const name = document.getElementById('categoryName').value;
+      const description = document.getElementById('categoryDescription').value;
+      const status = document.getElementById('categoryStatus').checked ? 'active' : 'inactive';
+      
+      if (!name) {
+        alert('Please enter a category name');
+        return;
+      }
+      
+      const categories = getCategories();
+      const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
+      
+      const newCategory = {
+        id: newId,
+        name,
+        description,
+        status,
+        productCount: 0
+      };
+      
+      categories.push(newCategory);
+      localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
+      
+      // Close modal and reset form
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+      modal.hide();
+      document.getElementById('addCategoryForm').reset();
+      
+      // Update UI
+      loadCategoriesTable();
+      updateStatistics();
+      updateNotificationBadge();
+      
+      alert('Category added successfully!');
+    }
+
+    // Save brand
+    function saveBrand() {
+      const name = document.getElementById('brandName').value;
+      const description = document.getElementById('brandDescription').value;
+      const status = document.getElementById('brandStatus').checked ? 'active' : 'inactive';
+      
+      if (!name) {
+        alert('Please enter a brand name');
+        return;
+      }
+      
+      const brands = getBrands();
+      const newId = brands.length > 0 ? Math.max(...brands.map(b => b.id)) + 1 : 1;
+      
+      const newBrand = {
+        id: newId,
+        name,
+        description,
+        status,
+        productCount: 0
+      };
+      
+      brands.push(newBrand);
+      localStorage.setItem(BRANDS_STORAGE_KEY, JSON.stringify(brands));
+      
+      // Close modal and reset form
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addBrandModal'));
+      modal.hide();
+      document.getElementById('addBrandForm').reset();
+      
+      // Update UI
+      loadBrandsTable();
+      updateStatistics();
+      updateNotificationBadge();
+      
+      alert('Brand added successfully!');
+    }
+
+    // Save unit
+    function saveUnit() {
+      const name = document.getElementById('unitName').value;
+      const abbreviation = document.getElementById('unitAbbreviation').value;
+      const type = document.getElementById('unitType').value;
+      const description = document.getElementById('unitDescription').value;
+      
+      if (!name || !abbreviation) {
+        alert('Please enter both unit name and abbreviation');
+        return;
+      }
+      
+      const units = getUnits();
+      const newId = units.length > 0 ? Math.max(...units.map(u => u.id)) + 1 : 1;
+      
+      const newUnit = {
+        id: newId,
+        name,
+        abbreviation,
+        type,
+        description
+      };
+      
+      units.push(newUnit);
+      localStorage.setItem(UNITS_STORAGE_KEY, JSON.stringify(units));
+      
+      // Close modal and reset form
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addUnitModal'));
+      modal.hide();
+      document.getElementById('addUnitForm').reset();
+      
+      // Update UI
+      loadUnitsTable();
+      updateStatistics();
+      updateNotificationBadge();
+      
+      alert('Unit added successfully!');
+    }
+
+    // Edit category (placeholder)
+    function editCategory(id) {
+      alert(`Edit category with ID: ${id} - This feature would open an edit modal in a complete implementation.`);
+    }
+
+    // Edit brand (placeholder)
+    function editBrand(id) {
+      alert(`Edit brand with ID: ${id} - This feature would open an edit modal in a complete implementation.`);
+    }
+
+    // Edit unit (placeholder)
+    function editUnit(id) {
+      alert(`Edit unit with ID: ${id} - This feature would open an edit modal in a complete implementation.`);
+    }
+
+    // Delete category
+    function deleteCategory(id) {
+      if (confirm('Are you sure you want to delete this category?')) {
+        const categories = getCategories();
+        const updatedCategories = categories.filter(c => c.id !== id);
+        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(updatedCategories));
+        loadCategoriesTable();
+        updateStatistics();
+        alert('Category deleted successfully!');
+      }
+    }
+
+    // Delete brand
+    function deleteBrand(id) {
+      if (confirm('Are you sure you want to delete this brand?')) {
+        const brands = getBrands();
+        const updatedBrands = brands.filter(b => b.id !== id);
+        localStorage.setItem(BRANDS_STORAGE_KEY, JSON.stringify(updatedBrands));
+        loadBrandsTable();
+        updateStatistics();
+        alert('Brand deleted successfully!');
+      }
+    }
+
+    // Delete unit
+    function deleteUnit(id) {
+      if (confirm('Are you sure you want to delete this unit?')) {
+        const units = getUnits();
+        const updatedUnits = units.filter(u => u.id !== id);
+        localStorage.setItem(UNITS_STORAGE_KEY, JSON.stringify(updatedUnits));
+        loadUnitsTable();
+        updateStatistics();
+        alert('Unit deleted successfully!');
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      initializeDemoData();
+      updateStatistics();
+      loadCategoriesTable();
+      loadBrandsTable();
+      loadUnitsTable();
+      updateNotificationBadge();
+      
+      // Wire up all sidebar submenus like in dashboard
+      setupSidebarNavigation();
+    });
+
+    // Setup sidebar navigation like in dashboard
+    function setupSidebarNavigation() {
+      // Product submenu
+      const productToggle = document.getElementById('productToggle');
+      const productSubmenu = document.getElementById('productSubmenu');
+      const productChevron = document.getElementById('productChevron');
+      if (productToggle && productSubmenu) {
+        productToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+          productToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+            productSubmenu.style.maxHeight = '0';
+            productChevron.style.transform = '';
+          } else {
+            productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+            productChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Inventory Control submenu
+      const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+      const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+      const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+      if (inventoryControlToggle && inventoryControlSubmenu) {
+        inventoryControlToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+          inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+            inventoryControlSubmenu.style.maxHeight = '0';
+            inventoryControlChevron.style.transform = '';
+          } else {
+            inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+            inventoryControlChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Stock Movement submenu
+      const stockMovementToggle = document.getElementById('stockMovementToggle');
+      const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
+      const stockMovementChevron = document.getElementById('stockMovementChevron');
+      if (stockMovementToggle && stockMovementSubmenu) {
+        stockMovementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = stockMovementToggle.getAttribute('aria-expanded') === 'true';
+          stockMovementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (stockMovementSubmenu.style.maxHeight && stockMovementSubmenu.style.maxHeight !== '0px') {
+            stockMovementSubmenu.style.maxHeight = '0';
+            stockMovementChevron.style.transform = '';
+          } else {
+            stockMovementSubmenu.style.maxHeight = (stockMovementSubmenu.scrollHeight + 20) + 'px';
+            stockMovementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Purchase Management submenu
+      const purchaseManagementToggle = document.getElementById('purchaseManagementToggle');
+      const purchaseManagementSubmenu = document.getElementById('purchaseManagementSubmenu');
+      const purchaseManagementChevron = document.getElementById('purchaseManagementChevron');
+      if (purchaseManagementToggle && purchaseManagementSubmenu) {
+        purchaseManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = purchaseManagementToggle.getAttribute('aria-expanded') === 'true';
+          purchaseManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (purchaseManagementSubmenu.style.maxHeight && purchaseManagementSubmenu.style.maxHeight !== '0px') {
+            purchaseManagementSubmenu.style.maxHeight = '0';
+            purchaseManagementChevron.style.transform = '';
+          } else {
+            purchaseManagementSubmenu.style.maxHeight = (purchaseManagementSubmenu.scrollHeight + 20) + 'px';
+            purchaseManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Sales Management submenu
+      const salesManagementToggle = document.getElementById('salesManagementToggle');
+      const salesManagementSubmenu = document.getElementById('salesManagementSubmenu');
+      const salesManagementChevron = document.getElementById('salesManagementChevron');
+      if (salesManagementToggle && salesManagementSubmenu) {
+        salesManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = salesManagementToggle.getAttribute('aria-expanded') === 'true';
+          salesManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (salesManagementSubmenu.style.maxHeight && salesManagementSubmenu.style.maxHeight !== '0px') {
+            salesManagementSubmenu.style.maxHeight = '0';
+            salesManagementChevron.style.transform = '';
+          } else {
+            salesManagementSubmenu.style.maxHeight = (salesManagementSubmenu.scrollHeight + 20) + 'px';
+            salesManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Reporting & Analytics submenu
+      const reportingAnalyticsToggle = document.getElementById('reportingAnalyticsToggle');
+      const reportingAnalyticsSubmenu = document.getElementById('reportingAnalyticsSubmenu');
+      const reportingAnalyticsChevron = document.getElementById('reportingAnalyticsChevron');
+      if (reportingAnalyticsToggle && reportingAnalyticsSubmenu) {
+        reportingAnalyticsToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = reportingAnalyticsToggle.getAttribute('aria-expanded') === 'true';
+          reportingAnalyticsToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (reportingAnalyticsSubmenu.style.maxHeight && reportingAnalyticsSubmenu.style.maxHeight !== '0px') {
+            reportingAnalyticsSubmenu.style.maxHeight = '0';
+            reportingAnalyticsChevron.style.transform = '';
+          } else {
+            reportingAnalyticsSubmenu.style.maxHeight = (reportingAnalyticsSubmenu.scrollHeight + 20) + 'px';
+            reportingAnalyticsChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

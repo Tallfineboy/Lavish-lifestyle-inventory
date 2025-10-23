@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inter-Warehouse Stock Transfer | Lavish Lifestyle Inventory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --sidebar-bg: #021527;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --text-muted: #6c757d;
+            --accent-color: #030723;
+            --info-color: #17a2b8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar-bg);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .brand-text {
+            display: inline-block;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .nav-section {
+            flex: 1;
+        }
+
+        .user-info {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #9ff3ef;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .logout-btn {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .logout-btn:hover {
+            color: white;
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 3px solid var(--danger-color);
+        }
+
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status-in-transit {
+            background: rgba(52, 152, 219, 0.2);
+            color: var(--primary-color);
+        }
+
+        .status-completed {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-cancelled {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .transfer-form {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .transfer-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .transfer-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            color: var(--text-muted);
+        }
+
+        .search-box input {
+            padding-left: 35px;
+        }
+
+        .action-buttons .btn {
+            margin-right: 5px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        /* Submenu styles */
+        #productSubmenu, #inventoryControlSubmenu, #stockMovementSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu {
+            transition: max-height 0.22s ease;
+            overflow: hidden;
+        }
+        #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link {
+            font-size: 0.88rem;
+            padding-left: 28px;
+            display: block;
+            color: rgba(255,255,255,0.85);
+            padding-top: 8px;
+            padding-bottom: 8px;
+            text-decoration: none;
+        }
+        #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover {
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 250px;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .brand, .nav-link span, .user-info, .logout-btn span {
+                display: block;
+            }
+            
+            .nav-link, .logout-btn {
+                text-align: left;
+                padding: 12px 20px;
+                justify-content: flex-start;
+            }
+            
+            .nav-link i, .logout-btn i {
+                margin-right: 10px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="nav-section">
+            <div class="brand">
+                <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+            </div>
+            <a class="nav-link" href="/dashboard.html">
+                <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+            </a>
+            <a class="nav-link" href="/orders.html">
+                <i class="fa fa-box"></i> <span>Orders</span>
+            </a>
+
+            <!-- Product & Item Management with collapsible submenu -->
+            <div class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false">
+                    <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+                    <i class="fas fa-chevron-down small" id="productChevron"></i>
+                </a>
+                <div id="productSubmenu" style="max-height:0; overflow:hidden;">
+                    <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+                    <a href="#" class="submenu-link">• Categories, Brands & Units of Storage</a>
+                    <a href="#" class="submenu-link">• Barcode Generation</a>
+                    <a href="#" class="submenu-link">• Product Bundling</a>
+                </div>
+            </div>
+
+            <!-- Inventory Control with collapsible submenu -->
+            <div class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false">
+                    <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+                    <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+                </a>
+                <div id="inventoryControlSubmenu" style="max-height:0; overflow:hidden;">
+                    <a href="stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+                    <a href="#" class="submenu-link">• Goods Received (GRN) Entry</a>
+                    <a href="#" class="submenu-link">• Stock Adjustments</a>
+                    <a href="#" class="submenu-link">• Warehouse/Location Management</a>
+                    <a href="#" class="submenu-link">• Batch and Expiry Tracking</a>
+                </div>
+            </div>
+
+            <!-- Stock Movement & Transfers with collapsible submenu -->
+            <div class="nav-item">
+                <a class="nav-link active d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="true">
+                    <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+                    <i class="fas fa-chevron-down small" id="stockMovementChevron" style="transform: rotate(180deg);"></i>
+                </a>
+                <div id="stockMovementSubmenu" style="max-height: 500px; overflow:hidden;">
+                    <a href="inter-warehouse-transfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+                    <a href="#" class="submenu-link">• Stock in Transit</a>
+                    <a href="#" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+                </div>
+            </div>
+
+            <!-- Purchase Management with collapsible submenu -->
+            <div class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false">
+                    <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+                    <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+                </a>
+                <div id="purchaseManagementSubmenu" style="max-height:0; overflow:hidden;">
+                    <a href="#" class="submenu-link">• Supplier Database</a>
+                    <a href="#" class="submenu-link">• Purchase Requisitions (PR)</a>
+                    <a href="#" class="submenu-link">• Purchase Orders (PO)</a>
+                    <a href="#" class="submenu-link">• Goods Receipt Note (GRN)</a>
+                    <a href="#" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+                </div>
+            </div>
+
+            <!-- Sales Management with collapsible submenu -->
+            <div class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false">
+                    <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+                    <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+                </a>
+                <div id="salesManagementSubmenu" style="max-height:0; overflow:hidden;">
+                    <a href="#" class="submenu-link">• Customer Database</a>
+                    <a href="#" class="submenu-link">• Sales Quotation & Order Creation</a>
+                    <a href="#" class="submenu-link">• Invoicing & Payment Tracking</a>
+                    <a href="#" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+                    <a href="#" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+                </div>
+            </div>
+
+            <a class="nav-link" href="/payments.html">
+                <i class="fa fa-credit-card"></i> <span>Payments</span>
+            </a>
+            <a class="nav-link" href="/customers.html">
+                <i class="fa fa-users"></i> <span>Customers</span>
+            </a>
+            <a class="nav-link" href="/notifications.html">
+                <i class="fa fa-bell"></i> <span>Notifications</span>
+            </a>
+            <a class="nav-link" href="/reports.html">
+                <i class="fa fa-file-chart-line"></i> <span>Reports</span>
+            </a>
+            <a class="nav-link" href="/settings.html">
+                <i class="fa fa-cog"></i> <span>Settings</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-name" id="userName">Admin User</div>
+                <div class="user-role" id="userRole">Administrator</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="content" id="content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fa fa-exchange-alt me-2"></i> Inter-Warehouse Stock Transfer</h2>
+                    <p class="mb-0">Manage stock transfers between different warehouse locations</p>
+                </div>
+                <button class="btn btn-light" onclick="showNewTransferForm()">
+                    <i class="fas fa-plus me-1"></i> New Transfer
+                </button>
+            </div>
+        </div>
+
+        <!-- New Transfer Form -->
+        <div class="card" id="newTransferForm" style="display: none;">
+            <h5 class="card-title mb-4"><i class="fas fa-truck-loading me-2"></i> Create New Stock Transfer</h5>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="transferNumber" class="form-label">Transfer Number</label>
+                    <input type="text" class="form-control" id="transferNumber" value="TRF-2023-00125" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="transferDate" class="form-label">Transfer Date</label>
+                    <input type="date" class="form-control" id="transferDate" value="">
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fromWarehouse" class="form-label">From Warehouse</label>
+                    <select class="form-select" id="fromWarehouse">
+                        <option value="">Select Source Warehouse</option>
+                        <option value="WH-001">Main Warehouse (Lagos)</option>
+                        <option value="WH-002">Abuja Distribution Center</option>
+                        <option value="WH-003">Port Harcourt Store</option>
+                        <option value="WH-004">Ibadan Outlet</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="toWarehouse" class="form-label">To Warehouse</label>
+                    <select class="form-select" id="toWarehouse">
+                        <option value="">Select Destination Warehouse</option>
+                        <option value="WH-001">Main Warehouse (Lagos)</option>
+                        <option value="WH-002">Abuja Distribution Center</option>
+                        <option value="WH-003">Port Harcourt Store</option>
+                        <option value="WH-004">Ibadan Outlet</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="transferReason" class="form-label">Transfer Reason</label>
+                    <select class="form-select" id="transferReason">
+                        <option value="">Select Reason for Transfer</option>
+                        <option value="stock_replenishment">Stock Replenishment</option>
+                        <option value="excess_stock">Excess Stock Redistribution</option>
+                        <option value="customer_order">Customer Order Fulfillment</option>
+                        <option value="seasonal_demand">Seasonal Demand</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="notes" class="form-label">Additional Notes</label>
+                    <textarea class="form-control" id="notes" rows="2" placeholder="Any additional information about this transfer..."></textarea>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <h6 class="mb-3"><i class="fas fa-boxes me-2"></i> Add Items to Transfer</h6>
+            
+            <div class="search-box mb-3">
+                <i class="fas fa-search"></i>
+                <input type="text" class="form-control" id="productSearch" placeholder="Search products by name, SKU, or barcode...">
+            </div>
+            
+            <div class="transfer-item">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Product</label>
+                        <select class="form-select product-select">
+                            <option value="">Select Product</option>
+                            <option value="LLH-001">Premium Leather Handbag (LLH-001)</option>
+                            <option value="LLS-002">Designer Sunglasses (LLS-002)</option>
+                            <option value="LLW-003">Luxury Watch (LLW-003)</option>
+                            <option value="LLC-004">Cashmere Scarf (LLC-004)</option>
+                            <option value="LLP-005">Designer Perfume (LLP-005)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Available Qty</label>
+                        <input type="text" class="form-control available-qty" value="15" readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Transfer Qty</label>
+                        <input type="number" class="form-control transfer-qty" min="1" value="1">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Batch/Serial No.</label>
+                        <input type="text" class="form-control batch-no" placeholder="Optional">
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-4">
+                <button type="button" class="btn btn-outline-primary" onclick="addItem()">
+                    <i class="fas fa-plus me-1"></i> Add Another Item
+                </button>
+                <div>
+                    <button type="button" class="btn btn-secondary me-2" onclick="cancelTransfer()">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveTransfer()">
+                        <i class="fas fa-save me-1"></i> Save Transfer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfer List -->
+        <div class="card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i> Recent Transfers</h5>
+                <div class="d-flex">
+                    <div class="search-box me-2">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" id="searchTransfers" placeholder="Search transfers...">
+                    </div>
+                    <button class="btn btn-outline-secondary" onclick="showFilters()">
+                        <i class="fas fa-filter me-1"></i> Filter
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Transfer ID</th>
+                            <th>From Warehouse</th>
+                            <th>To Warehouse</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transfersTableBody">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div id="transferCount">Showing 0 transfers</div>
+                <nav>
+                    <ul class="pagination mb-0" id="pagination">
+                        <!-- Pagination will be generated by JavaScript -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Transfer Statistics -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-primary" id="totalTransfers">0</h3>
+                        <p class="mb-0">Total Transfers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning" id="pendingTransfers">0</h3>
+                        <p class="mb-0">Pending</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-info" id="inTransitTransfers">0</h3>
+                        <p class="mb-0">In Transit</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success" id="completedTransfers">0</h3>
+                        <p class="mb-0">Completed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample data for transfers
+        const transfers = [
+            {
+                id: "TRF-2023-00124",
+                from: "Main Warehouse (Lagos)",
+                to: "Abuja Distribution Center",
+                date: "2023-10-18",
+                items: 3,
+                status: "completed",
+                details: [
+                    { product: "Premium Leather Handbag", sku: "LLH-001", qty: 2 },
+                    { product: "Designer Sunglasses", sku: "LLS-002", qty: 1 }
+                ]
+            },
+            {
+                id: "TRF-2023-00123",
+                from: "Port Harcourt Store",
+                to: "Main Warehouse (Lagos)",
+                date: "2023-10-16",
+                items: 5,
+                status: "in-transit",
+                details: [
+                    { product: "Luxury Watch", sku: "LLW-003", qty: 3 },
+                    { product: "Cashmere Scarf", sku: "LLC-004", qty: 2 }
+                ]
+            },
+            {
+                id: "TRF-2023-00122",
+                from: "Abuja Distribution Center",
+                to: "Ibadan Outlet",
+                date: "2023-10-15",
+                items: 2,
+                status: "pending",
+                details: [
+                    { product: "Designer Perfume", sku: "LLP-005", qty: 2 }
+                ]
+            },
+            {
+                id: "TRF-2023-00121",
+                from: "Main Warehouse (Lagos)",
+                to: "Port Harcourt Store",
+                date: "2023-10-12",
+                items: 7,
+                status: "completed",
+                details: [
+                    { product: "Premium Leather Handbag", sku: "LLH-001", qty: 3 },
+                    { product: "Designer Sunglasses", sku: "LLS-002", qty: 4 }
+                ]
+            },
+            {
+                id: "TRF-2023-00120",
+                from: "Ibadan Outlet",
+                to: "Abuja Distribution Center",
+                date: "2023-10-10",
+                items: 4,
+                status: "cancelled",
+                details: [
+                    { product: "Cashmere Scarf", sku: "LLC-004", qty: 4 }
+                ]
+            }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('transferDate').value = today;
+            
+            // Initialize sidebar menu toggles
+            initializeSidebarToggles();
+            
+            // Load transfers data
+            loadTransfers();
+            
+            // Update statistics
+            updateStatistics();
+        });
+
+        // Initialize sidebar menu toggles
+        function initializeSidebarToggles() {
+            // Product Management toggle
+            const productToggle = document.getElementById('productToggle');
+            const productSubmenu = document.getElementById('productSubmenu');
+            const productChevron = document.getElementById('productChevron');
+            
+            if (productToggle && productSubmenu) {
+                productToggle.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+                    productToggle.setAttribute('aria-expanded', (!expanded).toString());
+                    if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+                        productSubmenu.style.maxHeight = '0';
+                        productChevron.style.transform = '';
+                    } else {
+                        productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+                        productChevron.style.transform = 'rotate(180deg)';
+                    }
+                });
+            }
+            
+            // Inventory Control toggle
+            const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+            const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+            const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+            
+            if (inventoryControlToggle && inventoryControlSubmenu) {
+                inventoryControlToggle.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+                    inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+                    if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+                        inventoryControlSubmenu.style.maxHeight = '0';
+                        inventoryControlChevron.style.transform = '';
+                    } else {
+                        inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+                        inventoryControlChevron.style.transform = 'rotate(180deg)';
+                    }
+                });
+            }
+            
+            // Stock Movement toggle (already expanded by default)
+            const stockMovementToggle = document.getElementById('stockMovementToggle');
+            const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
+            const stockMovementChevron = document.getElementById('stockMovementChevron');
+            
+            if (stockMovementToggle && stockMovementSubmenu) {
+                stockMovementToggle.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const expanded = stockMovementToggle.getAttribute('aria-expanded') === 'true';
+                    stockMovementToggle.setAttribute('aria-expanded', (!expanded).toString());
+                    if (stockMovementSubmenu.style.maxHeight && stockMovementSubmenu.style.maxHeight !== '0px') {
+                        stockMovementSubmenu.style.maxHeight = '0';
+                        stockMovementChevron.style.transform = '';
+                    } else {
+                        stockMovementSubmenu.style.maxHeight = (stockMovementSubmenu.scrollHeight + 20) + 'px';
+                        stockMovementChevron.style.transform = 'rotate(180deg)';
+                    }
+                });
+            }
+            
+            // Purchase Management toggle
+            const purchaseManagementToggle = document.getElementById('purchaseManagementToggle');
+            const purchaseManagementSubmenu = document.getElementById('purchaseManagementSubmenu');
+            const purchaseManagementChevron = document.getElementById('purchaseManagementChevron');
+            
+            if (purchaseManagementToggle && purchaseManagementSubmenu) {
+                purchaseManagementToggle.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const expanded = purchaseManagementToggle.getAttribute('aria-expanded') === 'true';
+                    purchaseManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+                    if (purchaseManagementSubmenu.style.maxHeight && purchaseManagementSubmenu.style.maxHeight !== '0px') {
+                        purchaseManagementSubmenu.style.maxHeight = '0';
+                        purchaseManagementChevron.style.transform = '';
+                    } else {
+                        purchaseManagementSubmenu.style.maxHeight = (purchaseManagementSubmenu.scrollHeight + 20) + 'px';
+                        purchaseManagementChevron.style.transform = 'rotate(180deg)';
+                    }
+                });
+            }
+            
+            // Sales Management toggle
+            const salesManagementToggle = document.getElementById('salesManagementToggle');
+            const salesManagementSubmenu = document.getElementById('salesManagementSubmenu');
+            const salesManagementChevron = document.getElementById('salesManagementChevron');
+            
+            if (salesManagementToggle && salesManagementSubmenu) {
+                salesManagementToggle.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const expanded = salesManagementToggle.getAttribute('aria-expanded') === 'true';
+                    salesManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+                    if (salesManagementSubmenu.style.maxHeight && salesManagementSubmenu.style.maxHeight !== '0px') {
+                        salesManagementSubmenu.style.maxHeight = '0';
+                        salesManagementChevron.style.transform = '';
+                    } else {
+                        salesManagementSubmenu.style.maxHeight = (salesManagementSubmenu.scrollHeight + 20) + 'px';
+                        salesManagementChevron.style.transform = 'rotate(180deg)';
+                    }
+                });
+            }
+        }
+
+        // Show/hide new transfer form
+        function showNewTransferForm() {
+            const form = document.getElementById('newTransferForm');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        // Cancel transfer creation
+        function cancelTransfer() {
+            document.getElementById('newTransferForm').style.display = 'none';
+            // Reset form fields
+            document.getElementById('fromWarehouse').value = '';
+            document.getElementById('toWarehouse').value = '';
+            document.getElementById('transferReason').value = '';
+            document.getElementById('notes').value = '';
+            
+            // Remove additional items
+            const items = document.querySelectorAll('.transfer-item');
+            for (let i = 1; i < items.length; i++) {
+                items[i].remove();
+            }
+            
+            // Reset first item
+            const firstItem = items[0];
+            firstItem.querySelector('.product-select').value = '';
+            firstItem.querySelector('.transfer-qty').value = '1';
+            firstItem.querySelector('.batch-no').value = '';
+            firstItem.querySelector('.available-qty').value = '0';
+        }
+
+        // Add new item row to transfer form
+        function addItem() {
+            const itemsContainer = document.querySelector('.transfer-item').parentNode;
+            const newItem = document.querySelector('.transfer-item').cloneNode(true);
+            
+            // Clear values in the new item
+            const inputs = newItem.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                if (input.type !== 'button') {
+                    input.value = '';
+                }
+            });
+            newItem.querySelector('.available-qty').value = '0';
+            
+            // Insert before the buttons
+            itemsContainer.insertBefore(newItem, itemsContainer.lastElementChild);
+        }
+
+        // Remove item from transfer form
+        function removeItem(button) {
+            const items = document.querySelectorAll('.transfer-item');
+            if (items.length > 1) {
+                button.closest('.transfer-item').remove();
+            } else {
+                alert('You need at least one item in the transfer.');
+            }
+        }
+
+        // Save transfer
+        function saveTransfer() {
+            const fromWarehouse = document.getElementById('fromWarehouse').value;
+            const toWarehouse = document.getElementById('toWarehouse').value;
+            const transferDate = document.getElementById('transferDate').value;
+            
+            if (!fromWarehouse || !toWarehouse) {
+                alert('Please select both source and destination warehouses.');
+                return;
+            }
+            
+            if (fromWarehouse === toWarehouse) {
+                alert('Source and destination warehouses cannot be the same.');
+                return;
+            }
+            
+            // Validate items
+            let validItems = 0;
+            const transferItems = [];
+            
+            document.querySelectorAll('.transfer-item').forEach(item => {
+                const productSelect = item.querySelector('.product-select');
+                const transferQty = item.querySelector('.transfer-qty');
+                
+                if (productSelect.value && transferQty.value > 0) {
+                    validItems++;
+                    transferItems.push({
+                        product: productSelect.options[productSelect.selectedIndex].text,
+                        sku: productSelect.value,
+                        qty: parseInt(transferQty.value),
+                        batch: item.querySelector('.batch-no').value
+                    });
+                }
+            });
+            
+            if (validItems === 0) {
+                alert('Please add at least one valid item to the transfer.');
+                return;
+            }
+            
+            // Create new transfer object
+            const newTransfer = {
+                id: document.getElementById('transferNumber').value,
+                from: document.getElementById('fromWarehouse').options[document.getElementById('fromWarehouse').selectedIndex].text,
+                to: document.getElementById('toWarehouse').options[document.getElementById('toWarehouse').selectedIndex].text,
+                date: transferDate,
+                items: validItems,
+                status: "pending",
+                details: transferItems
+            };
+            
+            // Add to transfers array
+            transfers.unshift(newTransfer);
+            
+            // In a real application, you would send this data to the server
+            alert('Transfer saved successfully!');
+            
+            // Reset form and hide it
+            cancelTransfer();
+            
+            // Reload transfers table
+            loadTransfers();
+            updateStatistics();
+        }
+
+        // Load transfers into the table
+        function loadTransfers() {
+            const tbody = document.getElementById('transfersTableBody');
+            tbody.innerHTML = '';
+            
+            transfers.forEach(transfer => {
+                const statusClass = `status-${transfer.status}`;
+                const statusText = transfer.status === 'in-transit' ? 'In Transit' : 
+                                 transfer.status.charAt(0).toUpperCase() + transfer.status.slice(1);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${transfer.id}</td>
+                    <td>${transfer.from}</td>
+                    <td>${transfer.to}</td>
+                    <td>${transfer.date}</td>
+                    <td>${transfer.items} items</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" title="View Details" onclick="viewTransfer('${transfer.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        ${transfer.status === 'pending' ? `
+                        <button class="btn btn-sm btn-outline-warning" title="Edit" onclick="editTransfer('${transfer.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" title="Cancel" onclick="cancelTransferById('${transfer.id}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        ` : ''}
+                        ${transfer.status === 'in-transit' ? `
+                        <button class="btn btn-sm btn-outline-success" title="Mark Received" onclick="completeTransfer('${transfer.id}')">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        ` : ''}
+                        ${transfer.status === 'completed' || transfer.status === 'cancelled' ? `
+                        <button class="btn btn-sm btn-outline-secondary" title="Print" onclick="printTransfer('${transfer.id}')">
+                            <i class="fas fa-print"></i>
+                        </button>
+                        ` : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Update transfer count
+            document.getElementById('transferCount').textContent = `Showing ${transfers.length} transfers`;
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const total = transfers.length;
+            const pending = transfers.filter(t => t.status === 'pending').length;
+            const inTransit = transfers.filter(t => t.status === 'in-transit').length;
+            const completed = transfers.filter(t => t.status === 'completed').length;
+            
+            document.getElementById('totalTransfers').textContent = total;
+            document.getElementById('pendingTransfers').textContent = pending;
+            document.getElementById('inTransitTransfers').textContent = inTransit;
+            document.getElementById('completedTransfers').textContent = completed;
+        }
+
+        // Action functions for transfer buttons
+        function viewTransfer(transferId) {
+            const transfer = transfers.find(t => t.id === transferId);
+            if (transfer) {
+                alert(`Viewing details for transfer: ${transferId}\n\nFrom: ${transfer.from}\nTo: ${transfer.to}\nDate: ${transfer.date}\nStatus: ${transfer.status}\n\nItems:\n${transfer.details.map(item => `- ${item.product} (${item.sku}): ${item.qty} pcs`).join('\n')}`);
+            }
+        }
+
+        function editTransfer(transferId) {
+            const transfer = transfers.find(t => t.id === transferId);
+            if (transfer) {
+                alert(`Editing transfer: ${transferId}\n\nThis would open an edit form in a real application.`);
+            }
+        }
+
+        function cancelTransferById(transferId) {
+            if (confirm(`Are you sure you want to cancel transfer ${transferId}?`)) {
+                const transfer = transfers.find(t => t.id === transferId);
+                if (transfer) {
+                    transfer.status = 'cancelled';
+                    loadTransfers();
+                    updateStatistics();
+                    alert(`Transfer ${transferId} has been cancelled.`);
+                }
+            }
+        }
+
+        function completeTransfer(transferId) {
+            if (confirm(`Mark transfer ${transferId} as received?`)) {
+                const transfer = transfers.find(t => t.id === transferId);
+                if (transfer) {
+                    transfer.status = 'completed';
+                    loadTransfers();
+                    updateStatistics();
+                    alert(`Transfer ${transferId} has been marked as completed.`);
+                }
+            }
+        }
+
+        function printTransfer(transferId) {
+            const transfer = transfers.find(t => t.id === transferId);
+            if (transfer) {
+                alert(`Printing transfer document for: ${transferId}\n\nThis would open a print dialog in a real application.`);
+            }
+        }
+
+        function showFilters() {
+            alert('Filter options would appear here in a real application.');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to log out?')) {
+                alert('You have been logged out. Redirecting to login page...');
+                // In a real application, this would redirect to the login page
+                // window.location.href = 'index.html';
+            }
+        }
+
+        // Update available quantity when product is selected
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.classList.contains('product-select')) {
+                const productSelect = e.target;
+                const availableQty = productSelect.closest('.transfer-item').querySelector('.available-qty');
+                
+                // In a real application, you would fetch the available quantity from the server
+                // based on the selected product and source warehouse
+                const availableQuantities = {
+                    'LLH-001': 15,
+                    'LLS-002': 32,
+                    'LLW-003': 8,
+                    'LLC-004': 25,
+                    'LLP-005': 12
+                };
+                
+                if (productSelect.value && availableQuantities[productSelect.value]) {
+                    availableQty.value = availableQuantities[productSelect.value];
+                } else {
+                    availableQty.value = '0';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

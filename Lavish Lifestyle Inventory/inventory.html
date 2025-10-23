@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .product-image {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+
+    .stock-low {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    .stock-medium {
+      color: #f39c12;
+      font-weight: 600;
+    }
+
+    .stock-high {
+      color: #2ecc71;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background-color: #3498db;
+      border-color: #3498db;
+    }
+
+    .btn-primary:hover {
+      background-color: #2980b9;
+      border-color: #2980b9;
+    }
+
+    .btn-outline-secondary {
+      border-color: #6c757d;
+      color: #6c757d;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .modal-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-title {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .inventory-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: #3498db;
+    }
+
+    .stat-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #3498db;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 5px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1055;
+    }
+
+    .form-text.text-danger {
+      font-size: 0.875rem;
+    }
+
+    .sku-display {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-family: monospace;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .form-control.is-invalid {
+      border-color: #dc3545;
+      padding-right: calc(1.5em + 0.75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6.4.4.4-.4'/%3e%3cpath d='M6 7v1'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .form-control.is-valid {
+      border-color: #198754;
+      padding-right: calc(1.5em + 0.75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      display: none;
+    }
+
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+
+      .inventory-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Updated Sidebar to match dashboard -->
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center active" href="#" id="productToggle" role="button" aria-expanded="true" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height: 200px;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2><i class="fas fa-cubes me-2"></i> Inventory</h2>
+      <div class="d-flex align-items-center">
+        <input id="searchInventory" class="form-control form-control-sm" placeholder="Search items..." style="min-width:220px">
+        <button class="btn btn-primary ms-2" onclick="openItemForm()"><i class="fas fa-plus me-1"></i> New Item</button>
+      </div>
+    </div>
+
+    <div class="inventory-stats">
+      <div class="stat-card">
+        <i class="fas fa-cubes stat-icon"></i>
+        <div class="stat-label">Total Products</div>
+        <div class="stat-value" id="totalProducts">0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-boxes stat-icon"></i>
+        <div class="stat-label">Total Stock Value</div>
+        <div class="stat-value" id="totalStockValue">₦0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-exclamation-triangle stat-icon"></i>
+        <div class="stat-label">Low Stock Items</div>
+        <div class="stat-value" id="lowStockItems">0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-tags stat-icon"></i>
+        <div class="stat-label">Categories</div>
+        <div class="stat-value" id="totalCategories">0</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Category</th>
+              <th>Stock</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody">
+            <!-- Inventory items will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal fade" id="itemFormModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="itemFormTitle">New Inventory Item</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input id="itemFormId" type="hidden">
+            <div class="mb-2">
+              <label class="form-label">SKU</label>
+              <div class="sku-display" id="skuDisplay">Generating...</div>
+              <input id="itemFormSku" type="hidden">
+              <div class="form-text">SKU is automatically generated</div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Name *</label>
+              <input id="itemFormName" class="form-control" required>
+              <div class="form-text text-danger" id="nameError" style="display: none;">Product name is required</div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Category *</label>
+              <select id="itemFormCategory" class="form-select" required>
+                <option value="">Select Category</option>
+                <option value="Bags">Bags</option>
+                <option value="Watches">Watches</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Fragrances">Fragrances</option>
+                <option value="Footwear">Footwear</option>
+                <option value="Jewelry">Jewelry</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Phones">Phones</option>
+              </select>
+              <div class="form-text text-danger" id="categoryError" style="display: none;">Category is required</div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Stock Quantity *</label>
+              <input id="itemFormStock" class="form-control" type="number" min="0" required>
+              <div class="form-text text-danger" id="stockError" style="display: none;">Stock quantity is required</div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Price (₦) *</label>
+              <input id="itemFormPrice" class="form-control" type="number" min="0" step="0.01" required>
+              <div class="form-text text-danger" id="priceError" style="display: none;">Price is required</div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Thumbnail URL</label>
+              <input id="itemFormThumb" class="form-control" placeholder="https://...">
+              <div class="form-text">Leave empty for default product image</div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Description</label>
+              <textarea id="itemFormDescription" class="form-control" rows="3" placeholder="Product description..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" data-action="saveItem" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Item Modal -->
+    <div class="modal fade" id="itemViewModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="itemViewTitle"></h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="itemViewBody"></div>
+          <div class="modal-footer">
+            <button id="itemViewEdit" class="btn btn-primary"><i class="fas fa-edit me-1"></i> Edit</button>
+            <button id="itemViewDelete" class="btn btn-danger"><i class="fas fa-trash me-1"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Toast for notifications -->
+  <div class="toast align-items-center text-white bg-success border-0" id="successToast">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMessage">
+        Item saved successfully!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+
+  <div class="toast align-items-center text-white bg-danger border-0" id="errorToast">
+    <div class="d-flex">
+      <div class="toast-body" id="errorToastMessage">
+        Error saving item!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+  
+  <script>
+    // Authentication and user management
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const SKU_COUNTER_KEY = 'lavish_sku_counter_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Get notifications
+    function getNotifications() {
+      const notifications = localStorage.getItem(NOTIFICATIONS_KEY);
+      return notifications ? JSON.parse(notifications) : [];
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+        
+        // Add alert animation to bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.add('notification-alert');
+        }
+      } else {
+        badge.style.display = 'none';
+        
+        // Remove alert animation from bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.remove('notification-alert');
+        }
+      }
+    }
+
+    // Inventory data management
+    // Initialize sample data if none exists
+    function initializeInventory() {
+      const existingItems = getInventoryItems();
+      if (existingItems.length === 0) {
+        const sampleItems = [
+          { 
+            id: 1, 
+            sku: "LLI-0001", 
+            name: "Designer Handbag", 
+            category: "Bags", 
+            stock: 8, 
+            price: 25000, 
+            thumb: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=150&h=150&fit=crop",
+            description: "Luxury designer handbag with premium leather finish",
+            createdAt: new Date().toISOString()
+          },
+          { 
+            id: 2, 
+            sku: "LLI-0002", 
+            name: "Luxury Watch", 
+            category: "Watches", 
+            stock: 15, 
+            price: 85000, 
+            thumb: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=150&h=150&fit=crop",
+            description: "Premium luxury watch with sapphire crystal",
+            createdAt: new Date().toISOString()
+          },
+          { 
+            id: 3, 
+            sku: "LLI-0003", 
+            name: "Designer Sunglasses", 
+            category: "Accessories", 
+            stock: 42, 
+            price: 18500, 
+            thumb: "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=150&h=150&fit=crop",
+            description: "UV protected designer sunglasses",
+            createdAt: new Date().toISOString()
+          }
+        ];
+        localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(sampleItems));
+        // Initialize SKU counter
+        localStorage.setItem(SKU_COUNTER_KEY, '3');
+      }
+    }
+
+    // Get all inventory items from localStorage
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    // Save inventory items to localStorage
+    function saveInventoryItems(items) {
+      localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(items));
+    }
+
+    // Generate a new item ID
+    function generateItemId() {
+      const items = getInventoryItems();
+      return items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1;
+    }
+
+    // Generate a new SKU
+    function generateSKU() {
+      // Get the current counter from localStorage
+      let counter = parseInt(localStorage.getItem(SKU_COUNTER_KEY)) || 0;
+      
+      // Increment the counter
+      counter++;
+      
+      // Save the updated counter back to localStorage
+      localStorage.setItem(SKU_COUNTER_KEY, counter.toString());
+      
+      // Format the SKU with leading zeros (LLI-0001, LLI-0002, etc.)
+      const skuNumber = counter.toString().padStart(4, '0');
+      return `LLI-${skuNumber}`;
+    }
+
+    // Get stock status based on quantity
+    function getStockStatus(stock) {
+      if (stock === 0) return { status: 'Out of Stock', class: 'stock-low', badge: 'danger' };
+      if (stock <= 10) return { status: 'Low Stock', class: 'stock-low', badge: 'warning' };
+      if (stock <= 25) return { status: 'In Stock', class: 'stock-medium', badge: 'info' };
+      return { status: 'In Stock', class: 'stock-high', badge: 'success' };
+    }
+
+    // Load inventory items into the table
+    function loadInventory() {
+      showLoading(true);
+      
+      // Simulate loading delay for better UX
+      setTimeout(() => {
+        const items = getInventoryItems();
+        const tbody = document.getElementById('inventoryTableBody');
+        
+        if (items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No inventory items found. <a href="javascript:void(0)" onclick="openItemForm()">Add your first item</a></td></tr>';
+          updateStats();
+          showLoading(false);
+          return;
+        }
+
+        tbody.innerHTML = items.map(item => {
+          const stockStatus = getStockStatus(item.stock);
+          return `
+            <tr>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="${item.thumb || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=150&h=150&fit=crop'}" class="product-image" alt="${item.name}">
+                  <div>
+                    <div>${item.name}</div>
+                    <small class="text-muted">${item.description || 'No description'}</small>
+                  </div>
+                </div>
+              </td>
+              <td><strong>${item.sku}</strong></td>
+              <td>${item.category}</td>
+              <td class="${stockStatus.class}">${item.stock}</td>
+              <td>₦${item.price.toLocaleString()}</td>
+              <td><span class="badge bg-${stockStatus.badge}">${stockStatus.status}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-secondary" onclick="viewItem('${item.sku}')" title="View"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="editItem('${item.sku}')" title="Edit"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="deleteItem('${item.sku}')" title="Delete"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        updateStats();
+        showLoading(false);
+      }, 500);
+    }
+
+    // Update statistics
+    function updateStats() {
+      const items = getInventoryItems();
+      const totalProducts = items.length;
+      const totalStockValue = items.reduce((sum, item) => sum + (item.stock * item.price), 0);
+      const lowStockItems = items.filter(item => item.stock <= 10).length;
+      const categories = [...new Set(items.map(item => item.category))].length;
+
+      document.getElementById('totalProducts').textContent = totalProducts;
+      document.getElementById('totalStockValue').textContent = `₦${totalStockValue.toLocaleString()}`;
+      document.getElementById('lowStockItems').textContent = lowStockItems;
+      document.getElementById('totalCategories').textContent = categories;
+    }
+
+    // Function to view item details
+    function viewItem(sku) {
+      const items = getInventoryItems();
+      const item = items.find(i => i.sku === sku);
+      if (item) {
+        const stockStatus = getStockStatus(item.stock);
+        document.getElementById('itemViewTitle').textContent = item.name;
+        document.getElementById('itemViewBody').innerHTML = `
+          <div class="row">
+            <div class="col-md-4 text-center">
+              <img src="${item.thumb || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop'}" class="img-fluid rounded" alt="${item.name}" style="max-height: 200px;">
+            </div>
+            <div class="col-md-8">
+              <div class="mb-3">
+                <strong>SKU:</strong> <code>${item.sku}</code>
+              </div>
+              <div class="mb-3">
+                <strong>Category:</strong> ${item.category}
+              </div>
+              <div class="mb-3">
+                <strong>Stock Quantity:</strong> <span class="${stockStatus.class}">${item.stock}</span>
+              </div>
+              <div class="mb-3">
+                <strong>Price:</strong> ₦${item.price.toLocaleString()}
+              </div>
+              <div class="mb-3">
+                <strong>Stock Value:</strong> ₦${(item.stock * item.price).toLocaleString()}
+              </div>
+              <div class="mb-3">
+                <strong>Status:</strong> <span class="badge bg-${stockStatus.badge}">${stockStatus.status}</span>
+              </div>
+              <div class="mb-3">
+                <strong>Description:</strong><br>
+                ${item.description || 'No description available.'}
+              </div>
+              <div class="mb-3">
+                <strong>Added:</strong> ${new Date(item.createdAt).toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Set up edit button
+        document.getElementById('itemViewEdit').onclick = function() {
+          bootstrap.Modal.getInstance(document.getElementById('itemViewModal')).hide();
+          editItem(sku);
+        };
+        
+        // Set up delete button
+        document.getElementById('itemViewDelete').onclick = function() {
+          bootstrap.Modal.getInstance(document.getElementById('itemViewModal')).hide();
+          deleteItem(sku);
+        };
+        
+        new bootstrap.Modal(document.getElementById('itemViewModal')).show();
+      }
+    }
+
+    // Function to edit an item
+    function editItem(sku) {
+      const items = getInventoryItems();
+      const item = items.find(i => i.sku === sku);
+      if (item) {
+        document.getElementById('itemFormId').value = item.id;
+        document.getElementById('itemFormSku').value = item.sku;
+        document.getElementById('skuDisplay').textContent = item.sku;
+        document.getElementById('itemFormName').value = item.name;
+        document.getElementById('itemFormCategory').value = item.category;
+        document.getElementById('itemFormStock').value = item.stock;
+        document.getElementById('itemFormPrice').value = item.price;
+        document.getElementById('itemFormThumb').value = item.thumb || '';
+        document.getElementById('itemFormDescription').value = item.description || '';
+        document.getElementById('itemFormTitle').textContent = 'Edit Item';
+        
+        // Clear validation states
+        clearValidation();
+        
+        new bootstrap.Modal(document.getElementById('itemFormModal')).show();
+      }
+    }
+
+    // Function to open new item form
+    function openItemForm() {
+      // Reset form
+      document.getElementById('itemFormId').value = '';
+      document.getElementById('itemFormName').value = '';
+      document.getElementById('itemFormCategory').selectedIndex = 0;
+      document.getElementById('itemFormStock').value = '';
+      document.getElementById('itemFormPrice').value = '';
+      document.getElementById('itemFormThumb').value = '';
+      document.getElementById('itemFormDescription').value = '';
+      document.getElementById('itemFormTitle').textContent = 'New Item';
+      
+      // Generate and display new SKU
+      const newSKU = generateSKU();
+      document.getElementById('itemFormSku').value = newSKU;
+      document.getElementById('skuDisplay').textContent = newSKU;
+      
+      // Clear validation states
+      clearValidation();
+      
+      new bootstrap.Modal(document.getElementById('itemFormModal')).show();
+    }
+
+    // Function to delete an item
+    function deleteItem(sku) {
+      const items = getInventoryItems();
+      const item = items.find(i => i.sku === sku);
+      
+      if (item && confirm(`Are you sure you want to delete "${item.name}"? This action cannot be undone.`)) {
+        showLoading(true);
+        
+        // Simulate API call delay
+        setTimeout(() => {
+          const updatedItems = items.filter(i => i.sku !== sku);
+          saveInventoryItems(updatedItems);
+          loadInventory();
+          showToast(`"${item.name}" has been deleted.`, 'success');
+        }, 500);
+      }
+    }
+
+    // Clear validation states
+    function clearValidation() {
+      const formControls = document.querySelectorAll('#itemFormModal .form-control, #itemFormModal .form-select');
+      formControls.forEach(control => {
+        control.classList.remove('is-invalid', 'is-valid');
+      });
+      
+      document.querySelectorAll('.form-text.text-danger').forEach(el => {
+        el.style.display = 'none';
+      });
+    }
+
+    // Validate form
+    function validateForm() {
+      const name = document.getElementById('itemFormName').value.trim();
+      const category = document.getElementById('itemFormCategory').value;
+      const stock = document.getElementById('itemFormStock').value;
+      const price = document.getElementById('itemFormPrice').value;
+      
+      let isValid = true;
+
+      // Clear previous errors
+      clearValidation();
+
+      // Validate name
+      if (!name) {
+        document.getElementById('itemFormName').classList.add('is-invalid');
+        document.getElementById('nameError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('itemFormName').classList.add('is-valid');
+      }
+
+      // Validate category
+      if (!category) {
+        document.getElementById('itemFormCategory').classList.add('is-invalid');
+        document.getElementById('categoryError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('itemFormCategory').classList.add('is-valid');
+      }
+
+      // Validate stock
+      if (!stock || stock < 0) {
+        document.getElementById('itemFormStock').classList.add('is-invalid');
+        document.getElementById('stockError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('itemFormStock').classList.add('is-valid');
+      }
+
+      // Validate price
+      if (!price || price < 0) {
+        document.getElementById('itemFormPrice').classList.add('is-invalid');
+        document.getElementById('priceError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('itemFormPrice').classList.add('is-valid');
+      }
+
+      return isValid;
+    }
+
+    // Save item function
+    document.querySelector('[data-action="saveItem"]').addEventListener('click', function() {
+      if (!validateForm()) {
+        return;
+      }
+
+      const id = document.getElementById('itemFormId').value;
+      const sku = document.getElementById('itemFormSku').value;
+      const name = document.getElementById('itemFormName').value.trim();
+      const category = document.getElementById('itemFormCategory').value;
+      const stock = parseInt(document.getElementById('itemFormStock').value);
+      const price = parseFloat(document.getElementById('itemFormPrice').value);
+      const thumb = document.getElementById('itemFormThumb').value.trim();
+      const description = document.getElementById('itemFormDescription').value.trim();
+
+      showLoading(true);
+
+      // Simulate API call delay
+      setTimeout(() => {
+        try {
+          const items = getInventoryItems();
+          let itemData;
+
+          if (id) {
+            // Update existing item
+            itemData = items.find(i => i.id === parseInt(id));
+            if (itemData) {
+              itemData.name = name;
+              itemData.category = category;
+              itemData.stock = stock;
+              itemData.price = price;
+              itemData.thumb = thumb || itemData.thumb;
+              itemData.description = description;
+              itemData.updatedAt = new Date().toISOString();
+            }
+          } else {
+            // Create new item
+            itemData = {
+              id: generateItemId(),
+              sku,
+              name,
+              category,
+              stock,
+              price,
+              thumb: thumb || `https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=150&h=150&fit=crop&${Math.random()}`,
+              description,
+              createdAt: new Date().toISOString()
+            };
+            items.push(itemData);
+          }
+
+          saveInventoryItems(items);
+          loadInventory();
+          
+          // Close modal and show success message
+          bootstrap.Modal.getInstance(document.getElementById('itemFormModal')).hide();
+          showToast(`Item "${name}" ${id ? 'updated' : 'created'} successfully!`, 'success');
+        } catch (error) {
+          console.error('Error saving item:', error);
+          showToast('Error saving item. Please try again.', 'error');
+        }
+      }, 500);
+    });
+
+    // Search functionality
+    document.getElementById('searchInventory').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#inventoryTableBody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Show/hide loading overlay
+    function showLoading(show) {
+      document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+      if (type === 'success') {
+        document.getElementById('toastMessage').textContent = message;
+        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+        toast.show();
+      } else {
+        document.getElementById('errorToastMessage').textContent = message;
+        const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+        toast.show();
+      }
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check authentication
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      updateNotificationBadge();
+      
+      // Wire up sidebar submenu toggles
+      const productToggle = document.getElementById('productToggle');
+      const productSubmenu = document.getElementById('productSubmenu');
+      const productChevron = document.getElementById('productChevron');
+      if (productToggle && productSubmenu) {
+        productToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+          productToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+            productSubmenu.style.maxHeight = '0';
+            productChevron.style.transform = '';
+          } else {
+            productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+            productChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up other submenu toggles similarly...
+      const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+      const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+      const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+      if (inventoryControlToggle && inventoryControlSubmenu) {
+        inventoryControlToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+          inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+            inventoryControlSubmenu.style.maxHeight = '0';
+            inventoryControlChevron.style.transform = '';
+          } else {
+            inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+            inventoryControlChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Initialize inventory
+      initializeInventory();
+      loadInventory();
+    });
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

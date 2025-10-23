@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-completed {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-pending {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-processing {
+      background: rgba(52, 152, 219, 0.2);
+      color: var(--primary-color);
+    }
+
+    .status-failed {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Page Header with Gradient */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .page-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .page-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Stock Adjustment Specific Styles */
+    .adjustment-type {
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    
+    .adjustment-increase {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+    
+    .adjustment-decrease {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+    
+    .adjustment-transfer {
+      background: rgba(52, 152, 219, 0.2);
+      color: var(--primary-color);
+    }
+    
+    .reason-badge {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link active">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Page Header with Gradient -->
+    <div class="page-header">
+      <h2>Stock Adjustments</h2>
+      <p>Manage inventory adjustments and corrections</p>
+    </div>
+    
+    <!-- Adjustment Summary Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Total Adjustments</h6>
+                <h3 id="totalAdjustments">0</h3>
+              </div>
+              <div class="bg-primary bg-opacity-10 p-3 rounded">
+                <i class="fas fa-exchange-alt text-primary fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Stock Increases</h6>
+                <h3 id="stockIncreases">0</h3>
+              </div>
+              <div class="bg-success bg-opacity-10 p-3 rounded">
+                <i class="fas fa-arrow-up text-success fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Stock Decreases</h6>
+                <h3 id="stockDecreases">0</h3>
+              </div>
+              <div class="bg-danger bg-opacity-10 p-3 rounded">
+                <i class="fas fa-arrow-down text-danger fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Pending Approval</h6>
+                <h3 id="pendingApprovals">0</h3>
+              </div>
+              <div class="bg-warning bg-opacity-10 p-3 rounded">
+                <i class="fas fa-clock text-warning fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Adjustment Type</label>
+            <select class="form-select" id="filterType">
+              <option value="">All Types</option>
+              <option value="increase">Stock Increase</option>
+              <option value="decrease">Stock Decrease</option>
+              <option value="transfer">Transfer</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="filterStatus">
+              <option value="">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending Approval</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Date From</label>
+            <input type="date" class="form-control" id="filterDateFrom">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Date To</label>
+            <input type="date" class="form-control" id="filterDateTo">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Search Products</label>
+            <input type="text" class="form-control" id="searchProduct" placeholder="Search by product name or SKU...">
+          </div>
+          <div class="col-md-6 d-flex align-items-end">
+            <button class="btn btn-outline-secondary me-2" onclick="clearFilters()">
+              <i class="fas fa-times me-1"></i>Clear
+            </button>
+            <button class="btn btn-primary" onclick="applyFilters()">
+              <i class="fas fa-filter me-1"></i>Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adjustments Table -->
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-title">Recent Stock Adjustments</h6>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Adjustment ID</th>
+                <th>Product</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Previous Stock</th>
+                <th>New Stock</th>
+                <th>Reason</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adjustmentsTableBody">
+              <!-- Adjustments will be loaded here -->
+            </tbody>
+          </table>
+          <div id="emptyAdjustments" class="empty-state" style="display: none;">
+            <i class="fas fa-exchange-alt"></i>
+            <h4>No Stock Adjustments</h4>
+            <p>No stock adjustments have been made yet. Create your first adjustment to get started.</p>
+            <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#newAdjustmentModal">
+              <i class="fas fa-plus me-2"></i>Create Adjustment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Adjustment Modal -->
+  <div class="modal fade" id="newAdjustmentModal" tabindex="-1" aria-labelledby="newAdjustmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newAdjustmentModalLabel">Create Stock Adjustment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="adjustmentForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Product *</label>
+                <select class="form-select" id="adjustmentProduct" required>
+                  <option value="">Select Product</option>
+                  <!-- Products will be loaded dynamically -->
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Warehouse/Location *</label>
+                <select class="form-select" id="adjustmentWarehouse" required>
+                  <option value="">Select Warehouse</option>
+                  <option value="main">Main Warehouse</option>
+                  <option value="store1">Store 1</option>
+                  <option value="store2">Store 2</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Adjustment Type *</label>
+                <select class="form-select" id="adjustmentType" required>
+                  <option value="">Select Type</option>
+                  <option value="increase">Stock Increase</option>
+                  <option value="decrease">Stock Decrease</option>
+                  <option value="transfer">Transfer</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Quantity *</label>
+                <input type="number" class="form-control" id="adjustmentQuantity" min="1" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Reason for Adjustment *</label>
+                <select class="form-select" id="adjustmentReason" required>
+                  <option value="">Select Reason</option>
+                  <option value="damaged">Damaged Goods</option>
+                  <option value="return">Customer Return</option>
+                  <option value="found">Found Stock</option>
+                  <option value="theft">Theft/Loss</option>
+                  <option value="expired">Expired Products</option>
+                  <option value="quality">Quality Control</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-12" id="otherReasonContainer" style="display: none;">
+                <label class="form-label">Specify Other Reason</label>
+                <input type="text" class="form-control" id="adjustmentOtherReason" placeholder="Enter reason...">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Notes</label>
+                <textarea class="form-control" id="adjustmentNotes" rows="3" placeholder="Additional notes..."></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="createAdjustment()">Create Adjustment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+  <script>
+    // Storage keys
+    const ADJUSTMENTS_STORAGE_KEY = 'lavish_adjustments_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Get adjustments from localStorage
+    function getAdjustments() {
+      const adjustments = localStorage.getItem(ADJUSTMENTS_STORAGE_KEY);
+      return adjustments ? JSON.parse(adjustments) : [];
+    }
+
+    // Get inventory items
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    // Save adjustments to localStorage
+    function saveAdjustments(adjustments) {
+      localStorage.setItem(ADJUSTMENTS_STORAGE_KEY, JSON.stringify(adjustments));
+    }
+
+    // Initialize demo adjustments data
+    function initializeDemoData() {
+      const existingAdjustments = getAdjustments();
+      if (existingAdjustments.length === 0) {
+        const demoAdjustments = [
+          {
+            id: 'ADJ-001',
+            productId: 1,
+            productName: 'Premium Leather Handbag',
+            sku: 'LLH-001',
+            type: 'decrease',
+            quantity: 2,
+            previousStock: 15,
+            newStock: 13,
+            reason: 'damaged',
+            reasonText: 'Damaged Goods',
+            warehouse: 'main',
+            date: '2024-01-15',
+            status: 'completed',
+            notes: 'Two handbags damaged during storage',
+            createdBy: 'Admin User',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'ADJ-002',
+            productId: 2,
+            productName: 'Designer Sunglasses',
+            sku: 'LLS-002',
+            type: 'increase',
+            quantity: 5,
+            previousStock: 32,
+            newStock: 37,
+            reason: 'found',
+            reasonText: 'Found Stock',
+            warehouse: 'store1',
+            date: '2024-01-14',
+            status: 'completed',
+            notes: 'Found additional stock in back storage',
+            createdBy: 'Admin User',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'ADJ-003',
+            productId: 3,
+            productName: 'Luxury Watch',
+            sku: 'LLW-003',
+            type: 'decrease',
+            quantity: 1,
+            previousStock: 8,
+            newStock: 7,
+            reason: 'theft',
+            reasonText: 'Theft/Loss',
+            warehouse: 'main',
+            date: '2024-01-13',
+            status: 'pending',
+            notes: 'Suspected theft, requires manager approval',
+            createdBy: 'Staff User',
+            createdAt: new Date().toISOString()
+          }
+        ];
+        saveAdjustments(demoAdjustments);
+      }
+    }
+
+    // Load products into dropdown
+    function loadProducts() {
+      const products = getInventoryItems();
+      const select = document.getElementById('adjustmentProduct');
+      
+      select.innerHTML = '<option value="">Select Product</option>';
+      products.forEach(product => {
+        const option = document.createElement('option');
+        option.value = product.id;
+        option.textContent = `${product.name} (${product.sku}) - Stock: ${product.stock}`;
+        option.setAttribute('data-stock', product.stock);
+        select.appendChild(option);
+      });
+    }
+
+    // Update summary cards
+    function updateSummaryCards() {
+      const adjustments = getAdjustments();
+      
+      const totalAdjustments = adjustments.length;
+      const stockIncreases = adjustments.filter(a => a.type === 'increase').length;
+      const stockDecreases = adjustments.filter(a => a.type === 'decrease').length;
+      const pendingApprovals = adjustments.filter(a => a.status === 'pending').length;
+      
+      document.getElementById('totalAdjustments').textContent = totalAdjustments;
+      document.getElementById('stockIncreases').textContent = stockIncreases;
+      document.getElementById('stockDecreases').textContent = stockDecreases;
+      document.getElementById('pendingApprovals').textContent = pendingApprovals;
+    }
+
+    // Load adjustments table
+    function loadAdjustmentsTable() {
+      const adjustments = getAdjustments();
+      const tbody = document.getElementById('adjustmentsTableBody');
+      const emptyState = document.getElementById('emptyAdjustments');
+      
+      if (adjustments.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      // Sort by date (newest first)
+      const sortedAdjustments = adjustments.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      tbody.innerHTML = sortedAdjustments.map(adj => {
+        const typeClass = adj.type === 'increase' ? 'adjustment-increase' : 
+                         adj.type === 'decrease' ? 'adjustment-decrease' : 'adjustment-transfer';
+        const typeText = adj.type === 'increase' ? 'Increase' : 
+                        adj.type === 'decrease' ? 'Decrease' : 'Transfer';
+        const statusClass = `status-${adj.status}`;
+        
+        return `
+          <tr>
+            <td>${adj.id}</td>
+            <td>
+              <div><strong>${adj.productName}</strong></div>
+              <small class="text-muted">${adj.sku}</small>
+            </td>
+            <td><span class="adjustment-type ${typeClass}">${typeText}</span></td>
+            <td>${adj.quantity}</td>
+            <td>${adj.previousStock}</td>
+            <td>${adj.newStock}</td>
+            <td><span class="reason-badge">${adj.reasonText}</span></td>
+            <td>${adj.date}</td>
+            <td><span class="status ${statusClass}">${adj.status.charAt(0).toUpperCase() + adj.status.slice(1)}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="viewAdjustment('${adj.id}')">
+                <i class="fas fa-eye"></i>
+              </button>
+              ${adj.status === 'pending' ? `
+                <button class="btn btn-sm btn-outline-success" onclick="approveAdjustment('${adj.id}')">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="rejectAdjustment('${adj.id}')">
+                  <i class="fas fa-times"></i>
+                </button>
+              ` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Create new adjustment
+    function createAdjustment() {
+      const form = document.getElementById('adjustmentForm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      
+      const productSelect = document.getElementById('adjustmentProduct');
+      const selectedOption = productSelect.options[productSelect.selectedIndex];
+      const previousStock = parseInt(selectedOption.getAttribute('data-stock'));
+      const productId = parseInt(productSelect.value);
+      const productName = selectedOption.textContent.split(' (')[0];
+      const sku = selectedOption.textContent.match(/\(([^)]+)\)/)[1];
+      
+      const type = document.getElementById('adjustmentType').value;
+      const quantity = parseInt(document.getElementById('adjustmentQuantity').value);
+      const reason = document.getElementById('adjustmentReason').value;
+      const otherReason = document.getElementById('adjustmentOtherReason').value;
+      const notes = document.getElementById('adjustmentNotes').value;
+      const warehouse = document.getElementById('adjustmentWarehouse').value;
+      
+      let newStock;
+      if (type === 'increase') {
+        newStock = previousStock + quantity;
+      } else if (type === 'decrease') {
+        if (quantity > previousStock) {
+          alert('Cannot decrease stock by more than current stock level!');
+          return;
+        }
+        newStock = previousStock - quantity;
+      } else {
+        newStock = previousStock; // For transfers, stock remains the same in system
+      }
+      
+      const reasonText = reason === 'other' ? otherReason : 
+        document.getElementById('adjustmentReason').options[document.getElementById('adjustmentReason').selectedIndex].text;
+      
+      const adjustments = getAdjustments();
+      const newAdjustment = {
+        id: 'ADJ-' + String(adjustments.length + 1).padStart(3, '0'),
+        productId,
+        productName,
+        sku,
+        type,
+        quantity,
+        previousStock,
+        newStock,
+        reason,
+        reasonText,
+        warehouse,
+        date: new Date().toISOString().split('T')[0],
+        status: 'pending',
+        notes,
+        createdBy: 'Current User',
+        createdAt: new Date().toISOString()
+      };
+      
+      adjustments.push(newAdjustment);
+      saveAdjustments(adjustments);
+      
+      // Update inventory stock if adjustment is completed
+      if (newAdjustment.status === 'completed') {
+        updateInventoryStock(productId, newStock);
+      }
+      
+      // Close modal and reset form
+      const modal = bootstrap.Modal.getInstance(document.getElementById('newAdjustmentModal'));
+      modal.hide();
+      form.reset();
+      
+      // Refresh UI
+      updateSummaryCards();
+      loadAdjustmentsTable();
+      
+      alert('Stock adjustment created successfully!');
+    }
+
+    // Update inventory stock
+    function updateInventoryStock(productId, newStock) {
+      const inventory = getInventoryItems();
+      const productIndex = inventory.findIndex(item => item.id === productId);
+      
+      if (productIndex !== -1) {
+        inventory[productIndex].stock = newStock;
+        localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
+      }
+    }
+
+    // View adjustment details
+    function viewAdjustment(adjustmentId) {
+      const adjustments = getAdjustments();
+      const adjustment = adjustments.find(a => a.id === adjustmentId);
+      
+      if (adjustment) {
+        alert(`Adjustment Details:\n\n` +
+              `ID: ${adjustment.id}\n` +
+              `Product: ${adjustment.productName}\n` +
+              `Type: ${adjustment.type}\n` +
+              `Quantity: ${adjustment.quantity}\n` +
+              `Previous Stock: ${adjustment.previousStock}\n` +
+              `New Stock: ${adjustment.newStock}\n` +
+              `Reason: ${adjustment.reasonText}\n` +
+              `Status: ${adjustment.status}\n` +
+              `Notes: ${adjustment.notes || 'None'}`);
+      }
+    }
+
+    // Approve adjustment
+    function approveAdjustment(adjustmentId) {
+      if (!confirm('Are you sure you want to approve this adjustment?')) return;
+      
+      const adjustments = getAdjustments();
+      const adjustment = adjustments.find(a => a.id === adjustmentId);
+      
+      if (adjustment) {
+        adjustment.status = 'completed';
+        saveAdjustments(adjustments);
+        
+        // Update inventory stock
+        updateInventoryStock(adjustment.productId, adjustment.newStock);
+        
+        updateSummaryCards();
+        loadAdjustmentsTable();
+        
+        alert('Adjustment approved successfully!');
+      }
+    }
+
+    // Reject adjustment
+    function rejectAdjustment(adjustmentId) {
+      if (!confirm('Are you sure you want to reject this adjustment?')) return;
+      
+      const adjustments = getAdjustments();
+      const adjustment = adjustments.find(a => a.id === adjustmentId);
+      
+      if (adjustment) {
+        adjustment.status = 'rejected';
+        saveAdjustments(adjustments);
+        
+        updateSummaryCards();
+        loadAdjustmentsTable();
+        
+        alert('Adjustment rejected!');
+      }
+    }
+
+    // Filter functions
+    function applyFilters() {
+      // Implementation for filtering adjustments
+      console.log('Applying filters...');
+      // This would filter the adjustments table based on selected criteria
+    }
+
+    function clearFilters() {
+      document.getElementById('filterType').value = '';
+      document.getElementById('filterStatus').value = '';
+      document.getElementById('filterDateFrom').value = '';
+      document.getElementById('filterDateTo').value = '';
+      document.getElementById('searchProduct').value = '';
+      loadAdjustmentsTable();
+    }
+
+    // Event listeners for modal
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      initializeDemoData();
+      loadProducts();
+      updateSummaryCards();
+      loadAdjustmentsTable();
+      
+      // Show/hide other reason field
+      document.getElementById('adjustmentReason').addEventListener('change', function() {
+        const otherContainer = document.getElementById('otherReasonContainer');
+        otherContainer.style.display = this.value === 'other' ? 'block' : 'none';
+      });
+      
+      // Submenu toggle functionality (same as dashboard)
+      setupSubmenuToggles();
+    });
+
+    // Submenu toggle functionality
+    function setupSubmenuToggles() {
+      const toggles = [
+        { toggle: 'productToggle', submenu: 'productSubmenu', chevron: 'productChevron' },
+        { toggle: 'inventoryControlToggle', submenu: 'inventoryControlSubmenu', chevron: 'inventoryControlChevron' },
+        { toggle: 'stockMovementToggle', submenu: 'stockMovementSubmenu', chevron: 'stockMovementChevron' },
+        { toggle: 'purchaseManagementToggle', submenu: 'purchaseManagementSubmenu', chevron: 'purchaseManagementChevron' },
+        { toggle: 'salesManagementToggle', submenu: 'salesManagementSubmenu', chevron: 'salesManagementChevron' },
+        { toggle: 'reportingAnalyticsToggle', submenu: 'reportingAnalyticsSubmenu', chevron: 'reportingAnalyticsChevron' }
+      ];
+      
+      toggles.forEach(({ toggle, submenu, chevron }) => {
+        const toggleEl = document.getElementById(toggle);
+        const submenuEl = document.getElementById(submenu);
+        const chevronEl = document.getElementById(chevron);
+        
+        if (toggleEl && submenuEl) {
+          toggleEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', (!expanded).toString());
+            
+            if (submenuEl.style.maxHeight && submenuEl.style.maxHeight !== '0px') {
+              submenuEl.style.maxHeight = '0';
+              chevronEl.style.transform = '';
+            } else {
+              submenuEl.style.maxHeight = (submenuEl.scrollHeight + 20) + 'px';
+              chevronEl.style.transform = 'rotate(180deg)';
+            }
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>

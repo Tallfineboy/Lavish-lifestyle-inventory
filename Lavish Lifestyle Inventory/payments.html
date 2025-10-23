@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #021527;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 0 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid #3498db;
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-completed {
+      background: rgba(46, 204, 113, 0.2);
+      color: #2ecc71;
+    }
+
+    .status-pending {
+      background: rgba(243, 156, 18, 0.2);
+      color: #f39c12;
+    }
+
+    .status-failed {
+      background: rgba(231, 76, 60, 0.2);
+      color: #e74c3c;
+    }
+
+    .btn-primary {
+      background-color: #3498db;
+      border-color: #3498db;
+    }
+
+    .btn-primary:hover {
+      background-color: #2980b9;
+      border-color: #2980b9;
+    }
+
+    .btn-danger {
+      background-color: #e74c3c;
+      border-color: #e74c3c;
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+      border-color: #c0392b;
+    }
+
+    .btn-outline-secondary {
+      border-color: #6c757d;
+      color: #6c757d;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .modal-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-title {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .payment-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: #3498db;
+    }
+
+    .stat-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #3498db;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 5px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1055;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-quantity {
+      width: 80px;
+    }
+
+    .item-total {
+      width: 100px;
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .total-amount {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2c3e50;
+      text-align: right;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #3498db;
+    }
+
+    .stock-warning {
+      color: #e74c3c;
+      font-size: 0.875rem;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
+        overflow: hidden;
+      }
+      
+      .brand, .nav-link span {
+        display: none;
+      }
+      
+      .nav-link {
+        text-align: center;
+        padding: 15px 5px;
+      }
+      
+      .nav-link i {
+        margin-right: 0;
+        font-size: 1.2rem;
+      }
+      
+      .content {
+        margin-left: 70px;
+      }
+
+      .payment-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="brand">Lavish Lifestyle <small style="color:#9ff3ef">Inventory</small></div>
+    <a class="nav-link" href="/dashboard.html"><i class="fa fa-chart-line me-2"></i> <span>Dashboard</span></a>
+    <a class="nav-link" href="/orders.html"><i class="fa fa-box me-2"></i> <span>Orders</span></a>
+    <a class="nav-link" href="/inventory.html"><i class="fa fa-cubes me-2"></i> <span>Product & Item Management</span></a>
+    <a class="nav-link active" href="/payments.html"><i class="fa fa-credit-card me-2"></i> <span>Payments</span></a>
+    <a class="nav-link" href="/customers.html"><i class="fa fa-users me-2"></i> <span>Customers</span></a>
+    <a class="nav-link" href="/notifications.html"><i class="fa fa-bell me-2"></i> <span>Notifications</span></a>
+    <a class="nav-link" href="/reports.html"><i class="fa fa-file-chart-line me-2"></i> <span>Reports</span></a>
+    <a class="nav-link" href="/settings.html"><i class="fa fa-cog me-2"></i> <span>Settings</span></a>
+  </div>
+  
+  <div class='content'>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2><i class="fas fa-credit-card me-2"></i> Payments</h2>
+      <div class="d-flex align-items-center">
+        <input id="searchPayments" class="form-control form-control-sm" placeholder="Search payments..." style="min-width:220px">
+        <button class="btn btn-primary ms-2" onclick="openPaymentForm()"><i class="fas fa-plus me-1"></i> New Payment</button>
+      </div>
+    </div>
+
+    <div class="payment-stats">
+      <div class="stat-card">
+        <i class="fas fa-money-bill-wave stat-icon"></i>
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value" id="totalRevenue">₦0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-check-circle stat-icon"></i>
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="completedPayments">0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-clock stat-icon"></i>
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="pendingPayments">0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-times-circle stat-icon"></i>
+        <div class="stat-label">Failed</div>
+        <div class="stat-value" id="failedPayments">0</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsTableBody">
+            <!-- Payments will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal fade" id="payViewModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="payViewTitle"></h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="payViewBody"></div>
+          <div class="modal-footer">
+            <button id="payViewEdit" class="btn btn-primary"><i class="fas fa-edit me-1"></i> Edit</button>
+            <button id="payViewDelete" class="btn btn-danger"><i class="fas fa-trash me-1"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="payFormModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5>New Payment</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input id="payFormId" type="hidden">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label">Customer *</label>
+                  <select id="payFormCustomer" class="form-select" onchange="updateOrderItems()">
+                    <option value="">Select Customer</option>
+                  </select>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label">Date</label>
+                  <input id="payFormDate" class="form-control" type="date" value="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label">Method</label>
+                  <select id="payFormMethod" class="form-select">
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Mobile Payment">Mobile Payment</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label">Order Items</label>
+                  <div id="orderItemsContainer">
+                    <div class="order-item">
+                      <div class="item-details">
+                        <select class="form-select item-select" onchange="updateItemPrice(this)">
+                          <option value="">Select Product</option>
+                        </select>
+                      </div>
+                      <div class="item-quantity">
+                        <input type="number" class="form-control item-quantity-input" min="1" value="1" onchange="calculateTotal()" placeholder="Qty">
+                      </div>
+                      <div class="item-total">
+                        ₦0
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="addOrderItem()">
+                    <i class="fas fa-plus me-1"></i> Add Item
+                  </button>
+                </div>
+                <div class="total-amount">
+                  Total: <span id="paymentTotal">₦0</span>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Status</label>
+              <select id="payFormStatus" class="form-select" onchange="handleStatusChange()">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Failed">Failed</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" data-action="savePay" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save Payment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast for notifications -->
+  <div class="toast align-items-center text-white bg-success border-0" id="successToast">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMessage">
+        Payment saved successfully!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+
+  <div class="toast align-items-center text-white bg-danger border-0" id="errorToast">
+    <div class="d-flex">
+      <div class="toast-body" id="errorToastMessage">
+        Error processing payment!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+  
+  <script>
+    // Storage keys
+    const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const CUSTOMERS_STORAGE_KEY = 'lavish_customers_v1';
+    const NOTIFICATIONS_STORAGE_KEY = 'lavish_notifications_v1';
+
+    // Initialize data
+    function initializeData() {
+      const existingPayments = getPayments();
+      if (existingPayments.length === 0) {
+        const samplePayments = [
+          { id: 8456, orderId: "ORD-7845", customer: "James Wilson", amount: 85400, method: "Credit Card", date: "2023-10-15", status: "Completed", items: [] },
+          { id: 8455, orderId: "ORD-7844", customer: "Sarah Johnson", amount: 42150, method: "Bank Transfer", date: "2023-10-14", status: "Pending", items: [] },
+          { id: 8454, orderId: "ORD-7843", customer: "Michael Brown", amount: 63800, method: "Credit Card", date: "2023-10-14", status: "Completed", items: [] }
+        ];
+        localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(samplePayments));
+      }
+    }
+
+    // Get data functions
+    function getPayments() {
+      const payments = localStorage.getItem(PAYMENTS_STORAGE_KEY);
+      return payments ? JSON.parse(payments) : [];
+    }
+
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    function getCustomers() {
+      const customers = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
+      return customers ? JSON.parse(customers) : [];
+    }
+
+    function getNotifications() {
+      const notifications = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
+      return notifications ? JSON.parse(notifications) : [];
+    }
+
+    // Save data functions
+    function savePayments(payments) {
+      localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(payments));
+    }
+
+    function saveInventoryItems(items) {
+      localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function saveNotifications(notifications) {
+      localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(notifications));
+    }
+
+    // Generate IDs
+    function generatePaymentId() {
+      const payments = getPayments();
+      return payments.length > 0 ? Math.max(...payments.map(p => p.id)) + 1 : 1;
+    }
+
+    function generateOrderId() {
+      const payments = getPayments();
+      const orderNumber = payments.length + 1;
+      return `ORD-${orderNumber.toString().padStart(4, '0')}`;
+    }
+
+    // Load payments into table
+    function loadPayments() {
+      const payments = getPayments();
+      const tbody = document.getElementById('paymentsTableBody');
+      
+      if (payments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No payments found. <a href="javascript:void(0)" onclick="openPaymentForm()">Create your first payment</a></td></tr>';
+        updateStats();
+        return;
+      }
+
+      tbody.innerHTML = payments.map(payment => `
+        <tr>
+          <td>#PAY-${payment.id}</td>
+          <td>${payment.orderId}</td>
+          <td>${payment.customer}</td>
+          <td>₦${payment.amount.toLocaleString()}</td>
+          <td>${payment.method}</td>
+          <td>${payment.date}</td>
+          <td><span class="status status-${payment.status.toLowerCase()}">${payment.status}</span></td>
+          <td>
+            <button class="btn btn-sm btn-outline-secondary" onclick="viewPayment(${payment.id})"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="editPayment(${payment.id})"><i class="fas fa-edit"></i></button>
+          </td>
+        </tr>
+      `).join('');
+
+      updateStats();
+    }
+
+    // Update statistics
+    function updateStats() {
+      const payments = getPayments();
+      const totalRevenue = payments.filter(p => p.status === 'Completed').reduce((sum, p) => sum + p.amount, 0);
+      const completedPayments = payments.filter(p => p.status === 'Completed').length;
+      const pendingPayments = payments.filter(p => p.status === 'Pending').length;
+      const failedPayments = payments.filter(p => p.status === 'Failed').length;
+
+      document.getElementById('totalRevenue').textContent = `₦${totalRevenue.toLocaleString()}`;
+      document.getElementById('completedPayments').textContent = completedPayments;
+      document.getElementById('pendingPayments').textContent = pendingPayments;
+      document.getElementById('failedPayments').textContent = failedPayments;
+    }
+
+    // Populate dropdowns
+    function populateDropdowns() {
+      const customers = getCustomers();
+      const inventory = getInventoryItems();
+      
+      // Populate customers
+      const customerSelect = document.getElementById('payFormCustomer');
+      customerSelect.innerHTML = '<option value="">Select Customer</option>';
+      customers.forEach(customer => {
+        customerSelect.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
+      });
+      
+      // Populate product dropdowns
+      const productSelects = document.querySelectorAll('.item-select');
+      productSelects.forEach(select => {
+        select.innerHTML = '<option value="">Select Product</option>';
+        inventory.forEach(item => {
+          select.innerHTML += `<option value="${item.sku}" data-price="${item.price}" data-stock="${item.stock}">${item.name} (₦${item.price.toLocaleString()}) - Stock: ${item.stock}</option>`;
+        });
+      });
+    }
+
+    // Add order item row
+    function addOrderItem() {
+      const container = document.getElementById('orderItemsContainer');
+      const inventory = getInventoryItems();
+      
+      const newItem = document.createElement('div');
+      newItem.className = 'order-item';
+      newItem.innerHTML = `
+        <div class="item-details">
+          <select class="form-select item-select" onchange="updateItemPrice(this)">
+            <option value="">Select Product</option>
+            ${inventory.map(item => 
+              `<option value="${item.sku}" data-price="${item.price}" data-stock="${item.stock}">${item.name} (₦${item.price.toLocaleString()}) - Stock: ${item.stock}</option>`
+            ).join('')}
+          </select>
+        </div>
+        <div class="item-quantity">
+          <input type="number" class="form-control item-quantity-input" min="1" value="1" onchange="calculateTotal()" placeholder="Qty">
+        </div>
+        <div class="item-total">
+          ₦0
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeOrderItem(this)">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+      container.appendChild(newItem);
+    }
+
+    // Remove order item
+    function removeOrderItem(button) {
+      const item = button.closest('.order-item');
+      item.remove();
+      calculateTotal();
+    }
+
+    // Update item price display
+    function updateItemPrice(select) {
+      const price = select.selectedOptions[0]?.dataset.price || 0;
+      const stock = select.selectedOptions[0]?.dataset.stock || 0;
+      const quantityInput = select.closest('.order-item').querySelector('.item-quantity-input');
+      const totalElement = select.closest('.order-item').querySelector('.item-total');
+      
+      const quantity = parseInt(quantityInput.value) || 1;
+      const itemTotal = price * quantity;
+      totalElement.textContent = `₦${itemTotal.toLocaleString()}`;
+      
+      // Show stock warning if quantity exceeds stock
+      if (quantity > stock) {
+        if (!select.parentNode.querySelector('.stock-warning')) {
+          const warning = document.createElement('div');
+          warning.className = 'stock-warning';
+          warning.textContent = `Only ${stock} available in stock`;
+          select.parentNode.appendChild(warning);
+        }
+      } else {
+        const warning = select.parentNode.querySelector('.stock-warning');
+        if (warning) warning.remove();
+      }
+      
+      calculateTotal();
+    }
+
+    // Calculate total amount
+    function calculateTotal() {
+      const items = document.querySelectorAll('.order-item');
+      let total = 0;
+      
+      items.forEach(item => {
+        const select = item.querySelector('.item-select');
+        const quantityInput = item.querySelector('.item-quantity-input');
+        const price = select.selectedOptions[0]?.dataset.price || 0;
+        const quantity = parseInt(quantityInput.value) || 0;
+        total += price * quantity;
+        
+        // Update individual item totals
+        const totalElement = item.querySelector('.item-total');
+        totalElement.textContent = `₦${(price * quantity).toLocaleString()}`;
+      });
+      
+      document.getElementById('paymentTotal').textContent = `₦${total.toLocaleString()}`;
+      return total;
+    }
+
+    // Handle status change
+    function handleStatusChange() {
+      const status = document.getElementById('payFormStatus').value;
+      if (status === 'Completed') {
+        // Validate stock before allowing completion
+        const items = document.querySelectorAll('.order-item');
+        let hasInsufficientStock = false;
+        
+        items.forEach(item => {
+          const select = item.querySelector('.item-select');
+          const quantityInput = item.querySelector('.item-quantity-input');
+          const stock = parseInt(select.selectedOptions[0]?.dataset.stock) || 0;
+          const quantity = parseInt(quantityInput.value) || 0;
+          
+          if (quantity > stock) {
+            hasInsufficientStock = true;
+            if (!select.parentNode.querySelector('.stock-warning')) {
+              const warning = document.createElement('div');
+              warning.className = 'stock-warning';
+              warning.textContent = `Insufficient stock! Only ${stock} available`;
+              select.parentNode.appendChild(warning);
+            }
+          }
+        });
+        
+        if (hasInsufficientStock) {
+          alert('Cannot complete payment: Some items have insufficient stock. Please adjust quantities.');
+          document.getElementById('payFormStatus').value = 'Pending';
+        }
+      }
+    }
+
+    // Update inventory stock
+    function updateInventoryStock(items) {
+      const inventory = getInventoryItems();
+      
+      items.forEach(orderItem => {
+        const inventoryItem = inventory.find(item => item.sku === orderItem.sku);
+        if (inventoryItem) {
+          inventoryItem.stock -= orderItem.quantity;
+          inventoryItem.updatedAt = new Date().toISOString();
+        }
+      });
+      
+      saveInventoryItems(inventory);
+    }
+
+    // Create sale notification
+    function createSaleNotification(payment, items) {
+      const notifications = getNotifications();
+      const inventory = getInventoryItems();
+      
+      const itemDetails = items.map(item => {
+        const inventoryItem = inventory.find(inv => inv.sku === item.sku);
+        const remainingStock = inventoryItem ? inventoryItem.stock : 0;
+        return `${item.name} (Qty: ${item.quantity}) - Remaining: ${remainingStock}`;
+      }).join('\n');
+      
+      const newNotification = {
+        id: notifications.length + 1,
+        type: 'success',
+        title: 'Sale Completed',
+        message: `Payment #PAY-${payment.id} completed for ${payment.customer}. Total: ₦${payment.amount.toLocaleString()}\n\nItems sold:\n${itemDetails}`,
+        timestamp: new Date().toISOString(),
+        read: false
+      };
+      
+      notifications.unshift(newNotification);
+      saveNotifications(notifications);
+    }
+
+    // View payment
+    function viewPayment(paymentId) {
+      const payments = getPayments();
+      const payment = payments.find(p => p.id === paymentId);
+      if (payment) {
+        document.getElementById('payViewTitle').textContent = `Payment #PAY-${payment.id}`;
+        document.getElementById('payViewBody').innerHTML = `
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Order ID:</strong> ${payment.orderId}</p>
+              <p><strong>Customer:</strong> ${payment.customer}</p>
+              <p><strong>Amount:</strong> ₦${payment.amount.toLocaleString()}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Method:</strong> ${payment.method}</p>
+              <p><strong>Date:</strong> ${payment.date}</p>
+              <p><strong>Status:</strong> <span class="status status-${payment.status.toLowerCase()}">${payment.status}</span></p>
+            </div>
+          </div>
+          ${payment.items && payment.items.length > 0 ? `
+            <div class="mt-3">
+              <h6>Order Items</h6>
+              ${payment.items.map(item => `
+                <div class="order-item">
+                  <div class="item-details">${item.name}</div>
+                  <div class="item-quantity">Qty: ${item.quantity}</div>
+                  <div class="item-total">₦${(item.price * item.quantity).toLocaleString()}</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        `;
+        
+        document.getElementById('payViewEdit').onclick = function() {
+          bootstrap.Modal.getInstance(document.getElementById('payViewModal')).hide();
+          editPayment(paymentId);
+        };
+        
+        document.getElementById('payViewDelete').onclick = function() {
+          bootstrap.Modal.getInstance(document.getElementById('payViewModal')).hide();
+          deletePayment(paymentId);
+        };
+        
+        new bootstrap.Modal(document.getElementById('payViewModal')).show();
+      }
+    }
+
+    // Edit payment
+    function editPayment(paymentId) {
+      // For simplicity, we'll just open new payment form
+      // In a real app, you'd populate the form with existing data
+      openPaymentForm();
+    }
+
+    // Delete payment
+    function deletePayment(paymentId) {
+      const payments = getPayments();
+      const payment = payments.find(p => p.id === paymentId);
+      
+      if (payment && confirm(`Are you sure you want to delete payment #PAY-${payment.id}?`)) {
+        const updatedPayments = payments.filter(p => p.id !== paymentId);
+        savePayments(updatedPayments);
+        loadPayments();
+        showToast(`Payment #PAY-${payment.id} has been deleted.`, 'success');
+      }
+    }
+
+    // Open payment form
+    function openPaymentForm() {
+      // Reset form
+      document.getElementById('payFormId').value = '';
+      document.getElementById('payFormCustomer').selectedIndex = 0;
+      document.getElementById('payFormDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('payFormMethod').selectedIndex = 0;
+      document.getElementById('payFormStatus').value = 'Pending';
+      
+      // Reset order items
+      const container = document.getElementById('orderItemsContainer');
+      container.innerHTML = `
+        <div class="order-item">
+          <div class="item-details">
+            <select class="form-select item-select" onchange="updateItemPrice(this)">
+              <option value="">Select Product</option>
+            </select>
+          </div>
+          <div class="item-quantity">
+            <input type="number" class="form-control item-quantity-input" min="1" value="1" onchange="calculateTotal()" placeholder="Qty">
+          </div>
+          <div class="item-total">
+            ₦0
+          </div>
+        </div>
+      `;
+      
+      populateDropdowns();
+      calculateTotal();
+      new bootstrap.Modal(document.getElementById('payFormModal')).show();
+    }
+
+    // Save payment
+    document.querySelector('[data-action="savePay"]').addEventListener('click', function() {
+      const customerSelect = document.getElementById('payFormCustomer');
+      const customerId = customerSelect.value;
+      const customerName = customerSelect.selectedOptions[0]?.text || 'Unknown Customer';
+      
+      if (!customerId) {
+        alert('Please select a customer');
+        return;
+      }
+      
+      const totalAmount = calculateTotal();
+      if (totalAmount === 0) {
+        alert('Please add at least one item to the order');
+        return;
+      }
+      
+      // Get order items
+      const orderItems = [];
+      const itemElements = document.querySelectorAll('.order-item');
+      
+      itemElements.forEach(item => {
+        const select = item.querySelector('.item-select');
+        const quantityInput = item.querySelector('.item-quantity-input');
+        
+        if (select.value) {
+          orderItems.push({
+            sku: select.value,
+            name: select.selectedOptions[0]?.text.split(' (')[0] || 'Unknown Item',
+            price: parseFloat(select.selectedOptions[0]?.dataset.price) || 0,
+            quantity: parseInt(quantityInput.value) || 1
+          });
+        }
+      });
+      
+      if (orderItems.length === 0) {
+        alert('Please select at least one product');
+        return;
+      }
+      
+      const paymentData = {
+        id: generatePaymentId(),
+        orderId: generateOrderId(),
+        customer: customerName,
+        amount: totalAmount,
+        method: document.getElementById('payFormMethod').value,
+        date: document.getElementById('payFormDate').value,
+        status: document.getElementById('payFormStatus').value,
+        items: orderItems,
+        createdAt: new Date().toISOString()
+      };
+      
+      const payments = getPayments();
+      payments.push(paymentData);
+      savePayments(payments);
+      
+      // If payment is completed, update inventory and create notification
+      if (paymentData.status === 'Completed') {
+        updateInventoryStock(orderItems);
+        createSaleNotification(paymentData, orderItems);
+      }
+      
+      loadPayments();
+      bootstrap.Modal.getInstance(document.getElementById('payFormModal')).hide();
+      showToast(`Payment #PAY-${paymentData.id} created successfully!`, 'success');
+    });
+
+    // Search functionality
+    document.getElementById('searchPayments').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#paymentsTableBody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      if (type === 'success') {
+        document.getElementById('toastMessage').textContent = message;
+        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+        toast.show();
+      } else {
+        document.getElementById('errorToastMessage').textContent = message;
+        const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+        toast.show();
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeData();
+      loadPayments();
+      populateDropdowns();
+    });
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

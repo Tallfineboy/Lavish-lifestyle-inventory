@@ -1,0 +1,475 @@
+{
+  "customers": [
+    {
+      "id": "CUST-1001",
+      "name": "Aisha Bello",
+      "email": "aisha.bello@gmail.com",
+      "phone": "+2348012345678",
+      "joined": "2024-11-15",
+      "avatar": "https://i.pravatar.cc/150?img=32",
+      "password": "12345"
+    },
+    {
+      "id": "CUST-1002",
+      "name": "John Okafor",
+      "email": "john.okafor@yahoo.com",
+      "phone": "+2348023456789",
+      "joined": "2024-12-02",
+      "avatar": "https://i.pravatar.cc/150?img=12",
+      "password": "12345"
+    },
+    {
+      "id": "CUST-1003",
+      "name": "Ngozi Eze",
+      "email": "ngozi.e@example.com",
+      "phone": "+2348033334444",
+      "joined": "2025-01-10",
+      "avatar": "https://i.pravatar.cc/150?img=5",
+      "password": "12345"
+    }
+  ],
+  "inventory": [
+    {
+      "sku": "ITEM-001",
+      "name": "iPhone 15 Pro",
+      "category": "Smartphone",
+      "stock": 12,
+      "price_ngn": 700000,
+      "thumb": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=60"
+    },
+    {
+      "sku": "ITEM-002",
+      "name": "MacBook Pro 14",
+      "category": "Laptop",
+      "stock": 5,
+      "price_ngn": 1400000,
+      "thumb": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=60"
+    },
+    {
+      "sku": "ITEM-003",
+      "name": "Generator EYG 7500i",
+      "category": "Generator",
+      "stock": 24,
+      "price_ngn": 450000,
+      "thumb": "https://images.unsplash.com/photo-1582719478173-7a7b7b51c0b5?w=800&q=60"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-1001",
+      "customer_id": "CUST-1001",
+      "date": "2025-09-18",
+      "status": "Completed",
+      "items": [
+        {
+          "sku": "ITEM-001",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 700000
+    },
+    {
+      "id": "ORD-1002",
+      "customer_id": "CUST-1002",
+      "date": "2025-09-20",
+      "status": "Pending",
+      "items": [
+        {
+          "sku": "ITEM-003",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 450000
+    },
+    {
+      "id": "ORD-1003",
+      "customer_id": "CUST-1003",
+      "date": "2025-09-15",
+      "status": "Cancelled",
+      "items": [
+        {
+          "sku": "ITEM-002",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 1400000
+    },
+    {
+      "id": "ORD-1004",
+      "customer_id": "CUST-1001",
+      "date": "2025-09-05",
+      "status": "Pending",
+      "items": [
+        {
+          "sku": "ITEM-002",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 250000
+    },
+    {
+      "id": "ORD-1005",
+      "customer_id": "CUST-1002",
+      "date": "2025-09-06",
+      "status": "Failed",
+      "items": [
+        {
+          "sku": "ITEM-003",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 450000
+    },
+    {
+      "id": "ORD-1006",
+      "customer_id": "CUST-1003",
+      "date": "2025-09-07",
+      "status": "Completed",
+      "items": [
+        {
+          "sku": "ITEM-001",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 450000
+    },
+    {
+      "id": "ORD-1007",
+      "customer_id": "CUST-1001",
+      "date": "2025-09-08",
+      "status": "Pending",
+      "items": [
+        {
+          "sku": "ITEM-002",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 1250000
+    },
+    {
+      "id": "ORD-1008",
+      "customer_id": "CUST-1002",
+      "date": "2025-09-09",
+      "status": "Failed",
+      "items": [
+        {
+          "sku": "ITEM-003",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 1250000
+    },
+    {
+      "id": "ORD-1009",
+      "customer_id": "CUST-1003",
+      "date": "2025-09-10",
+      "status": "Completed",
+      "items": [
+        {
+          "sku": "ITEM-001",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 1250000
+    },
+    {
+      "id": "ORD-1010",
+      "customer_id": "CUST-1001",
+      "date": "2025-09-11",
+      "status": "Pending",
+      "items": [
+        {
+          "sku": "ITEM-002",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 1250000
+    },
+    {
+      "id": "ORD-1011",
+      "customer_id": "CUST-1002",
+      "date": "2025-09-12",
+      "status": "Failed",
+      "items": [
+        {
+          "sku": "ITEM-003",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 150000
+    },
+    {
+      "id": "ORD-1012",
+      "customer_id": "CUST-1003",
+      "date": "2025-09-13",
+      "status": "Completed",
+      "items": [
+        {
+          "sku": "ITEM-001",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 700000
+    },
+    {
+      "id": "ORD-1013",
+      "customer_id": "CUST-1001",
+      "date": "2025-09-14",
+      "status": "Pending",
+      "items": [
+        {
+          "sku": "ITEM-002",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 250000
+    },
+    {
+      "id": "ORD-1014",
+      "customer_id": "CUST-1002",
+      "date": "2025-09-15",
+      "status": "Failed",
+      "items": [
+        {
+          "sku": "ITEM-003",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 700000
+    },
+    {
+      "id": "ORD-1015",
+      "customer_id": "CUST-1003",
+      "date": "2025-09-16",
+      "status": "Completed",
+      "items": [
+        {
+          "sku": "ITEM-001",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 450000
+    },
+    {
+      "id": "ORD-1016",
+      "customer_id": "CUST-1001",
+      "date": "2025-09-17",
+      "status": "Pending",
+      "items": [
+        {
+          "sku": "ITEM-002",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 450000
+    },
+    {
+      "id": "ORD-1017",
+      "customer_id": "CUST-1002",
+      "date": "2025-09-18",
+      "status": "Failed",
+      "items": [
+        {
+          "sku": "ITEM-003",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 1250000
+    },
+    {
+      "id": "ORD-1018",
+      "customer_id": "CUST-1003",
+      "date": "2025-09-19",
+      "status": "Completed",
+      "items": [
+        {
+          "sku": "ITEM-001",
+          "qty": 1
+        }
+      ],
+      "total_ngn": 150000
+    }
+  ],
+  "payments": [
+    {
+      "id": "PAY-9001",
+      "order_id": "ORD-1001",
+      "customer_id": "CUST-1001",
+      "amount_ngn": 700000,
+      "method": "Card",
+      "date": "2025-09-18",
+      "status": "Completed"
+    },
+    {
+      "id": "PAY-9002",
+      "order_id": "ORD-1002",
+      "customer_id": "CUST-1002",
+      "amount_ngn": 450000,
+      "method": "Bank Transfer",
+      "date": "2025-09-20",
+      "status": "Pending"
+    },
+    {
+      "id": "PAY-9000",
+      "order_id": "ORD-1001",
+      "customer_id": "CUST-1001",
+      "amount_ngn": 700000,
+      "method": "Bank Transfer",
+      "date": "2025-09-18",
+      "status": "Completed"
+    },
+    {
+      "id": "PAY-9001",
+      "order_id": "ORD-1002",
+      "customer_id": "CUST-1002",
+      "amount_ngn": 450000,
+      "method": "Bank Transfer",
+      "date": "2025-09-20",
+      "status": "Pending"
+    },
+    {
+      "id": "PAY-9002",
+      "order_id": "ORD-1003",
+      "customer_id": "CUST-1003",
+      "amount_ngn": 1400000,
+      "method": "Card",
+      "date": "2025-09-15",
+      "status": "Failed"
+    },
+    {
+      "id": "PAY-9003",
+      "order_id": "ORD-1004",
+      "customer_id": "CUST-1001",
+      "amount_ngn": 250000,
+      "method": "Cash",
+      "date": "2025-09-05",
+      "status": "Pending"
+    },
+    {
+      "id": "PAY-9004",
+      "order_id": "ORD-1005",
+      "customer_id": "CUST-1002",
+      "amount_ngn": 450000,
+      "method": "Cash",
+      "date": "2025-09-06",
+      "status": "Failed"
+    },
+    {
+      "id": "PAY-9005",
+      "order_id": "ORD-1006",
+      "customer_id": "CUST-1003",
+      "amount_ngn": 450000,
+      "method": "Cash",
+      "date": "2025-09-07",
+      "status": "Completed"
+    },
+    {
+      "id": "PAY-9006",
+      "order_id": "ORD-1007",
+      "customer_id": "CUST-1001",
+      "amount_ngn": 1250000,
+      "method": "Bank Transfer",
+      "date": "2025-09-08",
+      "status": "Pending"
+    },
+    {
+      "id": "PAY-9007",
+      "order_id": "ORD-1008",
+      "customer_id": "CUST-1002",
+      "amount_ngn": 1250000,
+      "method": "Cash",
+      "date": "2025-09-09",
+      "status": "Failed"
+    },
+    {
+      "id": "PAY-9008",
+      "order_id": "ORD-1009",
+      "customer_id": "CUST-1003",
+      "amount_ngn": 1250000,
+      "method": "Cash",
+      "date": "2025-09-10",
+      "status": "Completed"
+    },
+    {
+      "id": "PAY-9009",
+      "order_id": "ORD-1010",
+      "customer_id": "CUST-1001",
+      "amount_ngn": 1250000,
+      "method": "Bank Transfer",
+      "date": "2025-09-11",
+      "status": "Pending"
+    },
+    {
+      "id": "PAY-9010",
+      "order_id": "ORD-1011",
+      "customer_id": "CUST-1002",
+      "amount_ngn": 150000,
+      "method": "Card",
+      "date": "2025-09-12",
+      "status": "Failed"
+    },
+    {
+      "id": "PAY-9011",
+      "order_id": "ORD-1012",
+      "customer_id": "CUST-1003",
+      "amount_ngn": 700000,
+      "method": "Bank Transfer",
+      "date": "2025-09-13",
+      "status": "Completed"
+    },
+    {
+      "id": "PAY-9012",
+      "order_id": "ORD-1013",
+      "customer_id": "CUST-1001",
+      "amount_ngn": 250000,
+      "method": "Bank Transfer",
+      "date": "2025-09-14",
+      "status": "Pending"
+    },
+    {
+      "id": "PAY-9013",
+      "order_id": "ORD-1014",
+      "customer_id": "CUST-1002",
+      "amount_ngn": 700000,
+      "method": "Cash",
+      "date": "2025-09-15",
+      "status": "Failed"
+    },
+    {
+      "id": "PAY-9014",
+      "order_id": "ORD-1015",
+      "customer_id": "CUST-1003",
+      "amount_ngn": 450000,
+      "method": "Bank Transfer",
+      "date": "2025-09-16",
+      "status": "Completed"
+    },
+    {
+      "id": "PAY-9015",
+      "order_id": "ORD-1016",
+      "customer_id": "CUST-1001",
+      "amount_ngn": 450000,
+      "method": "Card",
+      "date": "2025-09-17",
+      "status": "Pending"
+    },
+    {
+      "id": "PAY-9016",
+      "order_id": "ORD-1017",
+      "customer_id": "CUST-1002",
+      "amount_ngn": 1250000,
+      "method": "Bank Transfer",
+      "date": "2025-09-18",
+      "status": "Failed"
+    },
+    {
+      "id": "PAY-9017",
+      "order_id": "ORD-1018",
+      "customer_id": "CUST-1003",
+      "amount_ngn": 150000,
+      "method": "Card",
+      "date": "2025-09-19",
+      "status": "Completed"
+    }
+  ]
+}
