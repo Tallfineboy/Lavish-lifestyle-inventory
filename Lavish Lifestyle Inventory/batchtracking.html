@@ -459,7 +459,49 @@
       border: 1px solid rgba(46, 204, 113, 0.3);
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile overlay for sidebar */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
     /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .batch-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 992px) {
+      .batch-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
@@ -493,10 +535,118 @@
       .notification-badge {
         margin-left: auto;
       }
+
+      .mobile-menu-toggle {
+        display: flex;
+      }
+
+      .sidebar-overlay.mobile-open {
+        display: block;
+      }
+
+      .batch-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome-header {
+        margin-top: 20px;
+      }
+
+      /* Responsive table styles */
+      .table-wrap {
+        border: 0;
+      }
+
+      .table-wrap table {
+        border: 0;
+      }
+
+      .table-wrap thead {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+      }
+
+      .table-wrap tr {
+        border-bottom: 3px solid #ddd;
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      .table-wrap td {
+        border-bottom: 1px solid #ddd;
+        display: block;
+        text-align: right;
+        padding: 0.75rem;
+      }
+
+      .table-wrap td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .table-wrap td:last-child {
+        border-bottom: 0;
+      }
+
+      /* Adjust modal for mobile */
+      .modal-dialog {
+        margin: 20px 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 15px 10px;
+      }
+
+      .welcome-header {
+        padding: 15px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .batch-kpi {
+        padding: 15px;
+      }
+
+      .batch-kpi h3 {
+        font-size: 1.5rem;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-3 {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-3 > div {
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile menu toggle button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Mobile overlay for sidebar -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -969,15 +1119,16 @@
           expiryBadge = '<span class="expiry-badge expiry-critical ms-2">Expired</span>';
         }
         
+        // For mobile view, we'll add data-label attributes
         return `
           <tr>
-            <td><strong>${batch.id}</strong></td>
-            <td>${batch.productName}</td>
-            <td>${batch.quantity}</td>
-            <td>${batch.manufactureDate}</td>
-            <td>${batch.expiryDate} ${expiryBadge}</td>
-            <td><span class="status ${statusClass}">${statusText}</span></td>
-            <td>
+            <td data-label="Batch ID"><strong>${batch.id}</strong></td>
+            <td data-label="Product">${batch.productName}</td>
+            <td data-label="Quantity">${batch.quantity}</td>
+            <td data-label="Manufacture Date">${batch.manufactureDate}</td>
+            <td data-label="Expiry Date">${batch.expiryDate} ${expiryBadge}</td>
+            <td data-label="Status"><span class="status ${statusClass}">${statusText}</span></td>
+            <td data-label="Actions">
               <button class="btn btn-sm btn-outline-primary" onclick="editBatch('${batch.id}')">
                 <i class="fas fa-edit"></i>
               </button>
@@ -1237,6 +1388,34 @@
       }
     }
 
+    // Mobile menu toggle functionality
+    function toggleMobileMenu() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const toggleButton = document.getElementById('mobileMenuToggle');
+      
+      if (sidebar.classList.contains('mobile-open')) {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('mobile-open');
+        toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+      } else {
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('mobile-open');
+        toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+      }
+    }
+
+    // Close mobile menu when clicking on overlay
+    function closeMobileMenu() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const toggleButton = document.getElementById('mobileMenuToggle');
+      
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('mobile-open');
+      toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+    }
+
     // ---------- UI interactions for sidebar submenus ----------
     document.addEventListener('DOMContentLoaded', function() {
       // Wire up product submenu toggle
@@ -1297,6 +1476,18 @@
       }
 
       // Continue with other submenu toggles...
+
+      // Mobile menu toggle event listeners
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+      }
+      
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeMobileMenu);
+      }
 
       // Initialize page
       const user = checkAuthentication();

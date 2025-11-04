@@ -302,7 +302,7 @@
     }
     
     .chart-container {
-      height: 150px;
+      height: 200px;
       position: relative;
     }
 
@@ -448,7 +448,7 @@
       color: rgba(255,255,255,0.85);
       padding-top: 8px;
       padding-bottom: 8px;
-      text-decoration: none; /* REMOVED: Underlines from submenu links */
+      text-decoration: none;
     }
     #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
       background: rgba(255,255,255,0.05);
@@ -472,6 +472,23 @@
 
     .sidebar-content::-webkit-scrollbar-thumb:hover {
       background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1001;
+      background: var(--primary-color);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     /* Responsive adjustments */
@@ -508,10 +525,54 @@
       .notification-badge {
         margin-left: auto;
       }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .card h6 {
+        font-size: 0.9rem;
+      }
+
+      .chart-container {
+        height: 180px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      .kpi h3 {
+        font-size: 1.5rem;
+      }
+      
+      .welcome-header {
+        padding: 15px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.3rem;
+      }
+      
+      .content {
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -537,7 +598,6 @@
             <i class="fas fa-chevron-down small" id="productChevron"></i>
           </a>
           <div id="productSubmenu" style="max-height:0;">
-            <!-- CHANGED: Link directly to product-masterlist.html -->
             <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
             <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
             <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
@@ -560,7 +620,7 @@
           </div>
         </div>
 
-        <!-- NEW: Stock Movement & Transfers with collapsible submenu -->
+        <!-- Stock Movement & Transfers with collapsible submenu -->
         <div class="nav-item">
           <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
             <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
@@ -573,7 +633,7 @@
           </div>
         </div>
 
-        <!-- NEW: Purchase Management with collapsible submenu -->
+        <!-- Purchase Management with collapsible submenu -->
         <div class="nav-item">
           <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
             <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
@@ -588,7 +648,7 @@
           </div>
         </div>
 
-        <!-- NEW: Sales Management with collapsible submenu -->
+        <!-- Sales Management with collapsible submenu -->
         <div class="nav-item">
           <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
             <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
@@ -603,7 +663,7 @@
           </div>
         </div>
 
-        <!-- NEW: Reporting & Analytics with collapsible submenu -->
+        <!-- Reporting & Analytics with collapsible submenu -->
         <div class="nav-item">
           <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
             <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
@@ -740,8 +800,6 @@
         </div>
       </div>
     </div>
-
-    <!-- REMOVED: Product Master List UI from dashboard since it now has its own page -->
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
@@ -1259,7 +1317,29 @@
       }, 5000); // Refresh every 5 seconds
     }
 
-    // ---------- UI interactions for sidebar submenus ----------
+    // Mobile menu toggle functionality
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+          const isClickInsideSidebar = sidebar.contains(event.target);
+          const isClickOnToggle = mobileMenuToggle.contains(event.target);
+          
+          if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 768) {
+            sidebar.classList.remove('mobile-open');
+          }
+        });
+      }
+    }
+
+    // Initialize all functionality
     document.addEventListener('DOMContentLoaded', function() {
       // Wire up product submenu toggle
       const productToggle = document.getElementById('productToggle');
@@ -1299,7 +1379,7 @@
         });
       }
 
-      // NEW: Wire up stock movement submenu toggle
+      // Wire up stock movement submenu toggle
       const stockMovementToggle = document.getElementById('stockMovementToggle');
       const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
       const stockMovementChevron = document.getElementById('stockMovementChevron');
@@ -1356,7 +1436,7 @@
         });
       }
 
-      // NEW: Wire up reporting & analytics submenu toggle
+      // Wire up reporting & analytics submenu toggle
       const reportingAnalyticsToggle = document.getElementById('reportingAnalyticsToggle');
       const reportingAnalyticsSubmenu = document.getElementById('reportingAnalyticsSubmenu');
       const reportingAnalyticsChevron = document.getElementById('reportingAnalyticsChevron');
@@ -1385,6 +1465,7 @@
       loadRecentTransactions();
       initializeCharts();
       updateNotificationBadge();
+      setupMobileMenu();
       setupAutoRefresh();
     });
   </script>

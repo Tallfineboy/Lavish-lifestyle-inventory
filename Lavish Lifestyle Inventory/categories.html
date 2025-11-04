@@ -440,11 +440,26 @@
       font-size: 0.8rem;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 1.2rem;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1050;
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 992px) {
       .sidebar {
         transform: translateX(-100%);
-        width: 250px;
+        width: 280px;
       }
       
       .sidebar.mobile-open {
@@ -474,10 +489,291 @@
       .notification-badge {
         margin-left: auto;
       }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      /* Adjust tables for mobile */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        min-width: 600px;
+      }
+
+      /* Adjust stats cards for mobile */
+      .stats-card .number {
+        font-size: 1.5rem;
+      }
+
+      /* Adjust tabs for mobile */
+      .nav-tabs .nav-link {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+
+      /* Adjust welcome header for mobile */
+      .welcome-header {
+        padding: 15px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+
+      /* Adjust action buttons for mobile */
+      .action-buttons {
+        flex-wrap: wrap;
+      }
+
+      .action-buttons .btn {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+      }
+
+      /* Adjust modal for mobile */
+      .modal-dialog {
+        margin: 20px 10px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      /* Further adjustments for smaller screens */
+      .content {
+        padding: 15px;
+      }
+
+      .welcome-header {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.3rem;
+      }
+
+      .welcome-header p {
+        font-size: 0.9rem;
+      }
+
+      .stats-card {
+        padding: 10px;
+        margin-bottom: 15px;
+      }
+
+      .stats-card .number {
+        font-size: 1.3rem;
+      }
+
+      .stats-card .label {
+        font-size: 0.8rem;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .nav-tabs .nav-link {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+
+      .nav-tabs .nav-link i {
+        margin-right: 5px;
+      }
+
+      .table-wrap {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+      }
+
+      th, td {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+      }
+
+      .empty-state {
+        padding: 30px 15px;
+      }
+
+      .empty-state i {
+        font-size: 2.5rem;
+      }
+
+      .empty-state h4 {
+        font-size: 1.2rem;
+      }
+
+      .empty-state p {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      /* Mobile-first adjustments for very small screens */
+      .content {
+        padding: 10px;
+      }
+
+      .welcome-header {
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.2rem;
+      }
+
+      .welcome-header p {
+        font-size: 0.85rem;
+      }
+
+      .stats-card {
+        padding: 8px;
+        margin-bottom: 10px;
+      }
+
+      .stats-card .number {
+        font-size: 1.2rem;
+      }
+
+      .stats-card .label {
+        font-size: 0.75rem;
+      }
+
+      .card {
+        padding: 12px;
+        border-radius: 8px;
+      }
+
+      .nav-tabs .nav-link {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+
+      th, td {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+      }
+
+      .action-buttons {
+        gap: 5px;
+      }
+
+      .action-buttons .btn {
+        padding: 3px 6px;
+        font-size: 0.75rem;
+      }
+
+      .empty-state {
+        padding: 20px 10px;
+      }
+
+      .empty-state i {
+        font-size: 2rem;
+      }
+
+      .empty-state h4 {
+        font-size: 1.1rem;
+      }
+
+      .empty-state p {
+        font-size: 0.85rem;
+      }
+
+      .modal-dialog {
+        margin: 10px 5px;
+      }
+
+      .modal-header, .modal-body, .modal-footer {
+        padding: 15px;
+      }
+
+      .modal-title {
+        font-size: 1.1rem;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Card view for mobile tables */
+    @media (max-width: 768px) {
+      .mobile-card-view {
+        display: block;
+      }
+
+      .mobile-card-view .table {
+        display: none;
+      }
+
+      .mobile-card-view .card-item {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .mobile-card-view .card-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .mobile-card-view .card-item-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+
+      .mobile-card-view .card-item-details {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+      }
+
+      .mobile-card-view .card-item-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+      }
+    }
+
+    /* Overlay for mobile sidebar */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -695,6 +991,10 @@
               </button>
             </div>
           </div>
+          <!-- Mobile Card View for Categories -->
+          <div id="categoriesCardView" class="mobile-card-view" style="display: none;">
+            <!-- Categories cards will be loaded here -->
+          </div>
         </div>
       </div>
       
@@ -732,6 +1032,10 @@
               </button>
             </div>
           </div>
+          <!-- Mobile Card View for Brands -->
+          <div id="brandsCardView" class="mobile-card-view" style="display: none;">
+            <!-- Brands cards will be loaded here -->
+          </div>
         </div>
       </div>
       
@@ -768,6 +1072,10 @@
                 <i class="fas fa-plus me-1"></i> Add Unit
               </button>
             </div>
+          </div>
+          <!-- Mobile Card View for Units -->
+          <div id="unitsCardView" class="mobile-card-view" style="display: none;">
+            <!-- Units cards will be loaded here -->
           </div>
         </div>
       </div>
@@ -1046,10 +1354,12 @@
     function loadCategoriesTable() {
       const categories = getCategories();
       const tbody = document.getElementById('categoriesTableBody');
+      const cardView = document.getElementById('categoriesCardView');
       const emptyState = document.getElementById('emptyCategories');
       
       if (categories.length === 0) {
         tbody.innerHTML = '';
+        cardView.innerHTML = '';
         emptyState.style.display = 'block';
         return;
       }
@@ -1076,16 +1386,47 @@
           </tr>
         `;
       }).join('');
+      
+      // Load card view for mobile
+      cardView.innerHTML = categories.map(category => {
+        const statusClass = category.status === 'active' ? 'status-active' : 'status-inactive';
+        return `
+          <div class="card-item">
+            <div class="card-item-header">
+              <div>
+                <div class="card-item-title">${category.name}</div>
+                <div class="card-item-details">${category.description || 'No description'}</div>
+              </div>
+              <span class="status ${statusClass}">${category.status}</span>
+            </div>
+            <div class="card-item-details">
+              <strong>Products:</strong> ${category.productCount || 0}
+            </div>
+            <div class="card-item-footer">
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editCategory(${category.id})">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${category.id})">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // Load brands table
     function loadBrandsTable() {
       const brands = getBrands();
       const tbody = document.getElementById('brandsTableBody');
+      const cardView = document.getElementById('brandsCardView');
       const emptyState = document.getElementById('emptyBrands');
       
       if (brands.length === 0) {
         tbody.innerHTML = '';
+        cardView.innerHTML = '';
         emptyState.style.display = 'block';
         return;
       }
@@ -1112,16 +1453,47 @@
           </tr>
         `;
       }).join('');
+      
+      // Load card view for mobile
+      cardView.innerHTML = brands.map(brand => {
+        const statusClass = brand.status === 'active' ? 'status-active' : 'status-inactive';
+        return `
+          <div class="card-item">
+            <div class="card-item-header">
+              <div>
+                <div class="card-item-title">${brand.name}</div>
+                <div class="card-item-details">${brand.description || 'No description'}</div>
+              </div>
+              <span class="status ${statusClass}">${brand.status}</span>
+            </div>
+            <div class="card-item-details">
+              <strong>Products:</strong> ${brand.productCount || 0}
+            </div>
+            <div class="card-item-footer">
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editBrand(${brand.id})">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteBrand(${brand.id})">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // Load units table
     function loadUnitsTable() {
       const units = getUnits();
       const tbody = document.getElementById('unitsTableBody');
+      const cardView = document.getElementById('unitsCardView');
       const emptyState = document.getElementById('emptyUnits');
       
       if (units.length === 0) {
         tbody.innerHTML = '';
+        cardView.innerHTML = '';
         emptyState.style.display = 'block';
         return;
       }
@@ -1145,6 +1517,34 @@
               </button>
             </td>
           </tr>
+        `;
+      }).join('');
+      
+      // Load card view for mobile
+      cardView.innerHTML = units.map(unit => {
+        return `
+          <div class="card-item">
+            <div class="card-item-header">
+              <div>
+                <div class="card-item-title">${unit.name}</div>
+                <div class="card-item-details">${unit.description || 'No description'}</div>
+              </div>
+              <span class="badge-unit">${unit.abbreviation}</span>
+            </div>
+            <div class="card-item-details">
+              <strong>Type:</strong> ${unit.type.charAt(0).toUpperCase() + unit.type.slice(1)}
+            </div>
+            <div class="card-item-footer">
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editUnit(${unit.id})">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteUnit(${unit.id})">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
         `;
       }).join('');
     }
@@ -1315,6 +1715,31 @@
       }
     }
 
+    // Toggle mobile sidebar
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active');
+    }
+
+    // Toggle between table and card view based on screen size
+    function toggleViewBasedOnScreenSize() {
+      const screenWidth = window.innerWidth;
+      const cardViews = document.querySelectorAll('.mobile-card-view');
+      const tables = document.querySelectorAll('.table-wrap');
+      
+      if (screenWidth <= 768) {
+        // Show card view, hide table
+        cardViews.forEach(view => view.style.display = 'block');
+        tables.forEach(table => table.style.display = 'none');
+      } else {
+        // Show table, hide card view
+        cardViews.forEach(view => view.style.display = 'none');
+        tables.forEach(table => table.style.display = 'block');
+      }
+    }
+
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
       const user = checkAuthentication();
@@ -1330,6 +1755,24 @@
       
       // Wire up all sidebar submenus like in dashboard
       setupSidebarNavigation();
+      
+      // Set up mobile menu toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileSidebar);
+      }
+      
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', toggleMobileSidebar);
+      }
+      
+      // Set initial view based on screen size
+      toggleViewBasedOnScreenSize();
+      
+      // Update view on window resize
+      window.addEventListener('resize', toggleViewBasedOnScreenSize);
     });
 
     // Setup sidebar navigation like in dashboard

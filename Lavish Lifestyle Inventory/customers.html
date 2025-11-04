@@ -13,8 +13,10 @@
       --warning-color: #f39c12;
       --danger-color: #e74c3c;
       --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
     }
-
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f8f9fa;
@@ -29,17 +31,42 @@
       color: white;
       height: 100vh;
       position: fixed;
-      padding: 20px 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
     }
 
     .brand {
       font-size: 1.5rem;
       font-weight: bold;
-      padding: 0 20px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 20px;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
     }
 
     .nav-link {
@@ -48,18 +75,73 @@
       text-decoration: none;
       transition: all 0.3s;
       border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
     .nav-link:hover, .nav-link.active {
       color: white;
       background: rgba(255,255,255,0.1);
-      border-left: 3px solid #3498db;
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
     }
 
     .content {
       flex: 1;
       margin-left: 250px;
       padding: 20px;
+      transition: all 0.3s ease;
     }
 
     .card {
@@ -68,6 +150,11 @@
       padding: 20px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
       height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
 
     .table-wrap {
@@ -100,8 +187,8 @@
     }
 
     .btn-primary {
-      background-color: #3498db;
-      border-color: #3498db;
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
     }
 
     .btn-primary:hover {
@@ -110,8 +197,8 @@
     }
 
     .btn-success {
-      background-color: #2ecc71;
-      border-color: #2ecc71;
+      background-color: var(--success-color);
+      border-color: var(--success-color);
     }
 
     .btn-success:hover {
@@ -120,8 +207,8 @@
     }
 
     .btn-danger {
-      background-color: #e74c3c;
-      border-color: #e74c3c;
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
     }
 
     .btn-danger:hover {
@@ -130,12 +217,12 @@
     }
 
     .btn-outline-secondary {
-      border-color: #6c757d;
-      color: #6c757d;
+      border-color: var(--text-muted);
+      color: var(--text-muted);
     }
 
     .btn-outline-secondary:hover {
-      background-color: #6c757d;
+      background-color: var(--text-muted);
       color: white;
     }
 
@@ -223,50 +310,308 @@
       border: 1px solid #dee2e6;
     }
 
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1001;
+      background: var(--primary-color);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .sidebar {
-        width: 70px;
-        overflow: hidden;
+        transform: translateX(-100%);
+        width: 250px;
       }
       
-      .brand, .nav-link span {
-        display: none;
-      }
-      
-      .nav-link {
-        text-align: center;
-        padding: 15px 5px;
-      }
-      
-      .nav-link i {
-        margin-right: 0;
-        font-size: 1.2rem;
+      .sidebar.mobile-open {
+        transform: translateX(0);
       }
       
       .content {
-        margin-left: 70px;
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
       }
 
       .customer-stats {
         flex-direction: column;
       }
+
+      .d-flex.justify-content-between.align-items-center.mb-3 {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-3 > div {
+        width: 100%;
+      }
+
+      #searchCustomers {
+        width: 100% !important;
+        margin-bottom: 10px;
+      }
+
+      .btn-primary.ms-2 {
+        margin-left: 0 !important;
+        width: 100%;
+      }
+
+      table {
+        font-size: 0.875rem;
+      }
+
+      th, td {
+        padding: 8px 10px;
+      }
+
+      .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .modal-dialog {
+        margin: 10px;
+      }
+
+      .customer-avatar {
+        width: 32px;
+        height: 32px;
+      }
+
+      .stat-card {
+        padding: 10px;
+      }
+
+      .stat-value {
+        font-size: 1.2rem;
+      }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="brand">Lavish Lifestyle <small style="color:#9ff3ef">Inventory</small></div>
-    <a class="nav-link" href="/dashboard.html"><i class="fa fa-chart-line me-2"></i> <span>Dashboard</span></a>
-    <a class="nav-link" href="/orders.html"><i class="fa fa-box me-2"></i> <span>Orders</span></a>
-    <a class="nav-link" href="/inventory.html"><i class="fa fa-cubes me-2"></i> <span>Product & Item Management</span></a>
-    <a class="nav-link" href="/payments.html"><i class="fa fa-credit-card me-2"></i> <span>Payments</span></a>
-    <a class="nav-link active" href="/customers.html"><i class="fa fa-users me-2"></i> <span>Customers</span></a>
-    <a class="nav-link" href="/notifications.html"><i class="fa fa-bell me-2"></i> <span>Notifications</span></a>
-    <a class="nav-link" href="/reports.html"><i class="fa fa-file-chart-line me-2"></i> <span>Reports</span></a>
-    <a class="nav-link" href="/settings.html"><i class="fa fa-cog me-2"></i> <span>Settings</span></a>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="/product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="/cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link active" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
   </div>
   
-  <div class='content'>
+  <div class='content' id="content">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2><i class="fas fa-users me-2"></i> Customers</h2>
       <div class="d-flex align-items-center">
@@ -416,6 +761,47 @@
   </div>
   
   <script>
+    // Authentication check
+    const AUTH_KEY = 'lavish_auth_v1';
+    
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
     // Customer data management
     const CUSTOMERS_STORAGE_KEY = 'lavish_customers_v1';
     const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
@@ -858,10 +1244,155 @@
       }
     }
 
+    // Mobile menu toggle functionality
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+          const isClickInsideSidebar = sidebar.contains(event.target);
+          const isClickOnToggle = mobileMenuToggle.contains(event.target);
+          
+          if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 768) {
+            sidebar.classList.remove('mobile-open');
+          }
+        });
+      }
+    }
+
+    // Initialize submenu toggles
+    function initializeSubmenus() {
+      // Wire up product submenu toggle
+      const productToggle = document.getElementById('productToggle');
+      const productSubmenu = document.getElementById('productSubmenu');
+      const productChevron = document.getElementById('productChevron');
+      if (productToggle && productSubmenu) {
+        productToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+          productToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+            productSubmenu.style.maxHeight = '0';
+            productChevron.style.transform = '';
+          } else {
+            productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+            productChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up inventory control submenu toggle
+      const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+      const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+      const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+      if (inventoryControlToggle && inventoryControlSubmenu) {
+        inventoryControlToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+          inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+            inventoryControlSubmenu.style.maxHeight = '0';
+            inventoryControlChevron.style.transform = '';
+          } else {
+            inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+            inventoryControlChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up stock movement submenu toggle
+      const stockMovementToggle = document.getElementById('stockMovementToggle');
+      const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
+      const stockMovementChevron = document.getElementById('stockMovementChevron');
+      if (stockMovementToggle && stockMovementSubmenu) {
+        stockMovementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = stockMovementToggle.getAttribute('aria-expanded') === 'true';
+          stockMovementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (stockMovementSubmenu.style.maxHeight && stockMovementSubmenu.style.maxHeight !== '0px') {
+            stockMovementSubmenu.style.maxHeight = '0';
+            stockMovementChevron.style.transform = '';
+          } else {
+            stockMovementSubmenu.style.maxHeight = (stockMovementSubmenu.scrollHeight + 20) + 'px';
+            stockMovementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up purchase management submenu toggle
+      const purchaseManagementToggle = document.getElementById('purchaseManagementToggle');
+      const purchaseManagementSubmenu = document.getElementById('purchaseManagementSubmenu');
+      const purchaseManagementChevron = document.getElementById('purchaseManagementChevron');
+      if (purchaseManagementToggle && purchaseManagementSubmenu) {
+        purchaseManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = purchaseManagementToggle.getAttribute('aria-expanded') === 'true';
+          purchaseManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (purchaseManagementSubmenu.style.maxHeight && purchaseManagementSubmenu.style.maxHeight !== '0px') {
+            purchaseManagementSubmenu.style.maxHeight = '0';
+            purchaseManagementChevron.style.transform = '';
+          } else {
+            purchaseManagementSubmenu.style.maxHeight = (purchaseManagementSubmenu.scrollHeight + 20) + 'px';
+            purchaseManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up sales management submenu toggle
+      const salesManagementToggle = document.getElementById('salesManagementToggle');
+      const salesManagementSubmenu = document.getElementById('salesManagementSubmenu');
+      const salesManagementChevron = document.getElementById('salesManagementChevron');
+      if (salesManagementToggle && salesManagementSubmenu) {
+        salesManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = salesManagementToggle.getAttribute('aria-expanded') === 'true';
+          salesManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (salesManagementSubmenu.style.maxHeight && salesManagementSubmenu.style.maxHeight !== '0px') {
+            salesManagementSubmenu.style.maxHeight = '0';
+            salesManagementChevron.style.transform = '';
+          } else {
+            salesManagementSubmenu.style.maxHeight = (salesManagementSubmenu.scrollHeight + 20) + 'px';
+            salesManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up reporting & analytics submenu toggle
+      const reportingAnalyticsToggle = document.getElementById('reportingAnalyticsToggle');
+      const reportingAnalyticsSubmenu = document.getElementById('reportingAnalyticsSubmenu');
+      const reportingAnalyticsChevron = document.getElementById('reportingAnalyticsChevron');
+      if (reportingAnalyticsToggle && reportingAnalyticsSubmenu) {
+        reportingAnalyticsToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = reportingAnalyticsToggle.getAttribute('aria-expanded') === 'true';
+          reportingAnalyticsToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (reportingAnalyticsSubmenu.style.maxHeight && reportingAnalyticsSubmenu.style.maxHeight !== '0px') {
+            reportingAnalyticsSubmenu.style.maxHeight = '0';
+            reportingAnalyticsChevron.style.transform = '';
+          } else {
+            reportingAnalyticsSubmenu.style.maxHeight = (reportingAnalyticsSubmenu.scrollHeight + 20) + 'px';
+            reportingAnalyticsChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+    }
+
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
       initializeCustomers();
       loadCustomers();
+      setupMobileMenu();
+      initializeSubmenus();
     });
   </script>
   <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>

@@ -148,8 +148,8 @@
         .cart-sidebar {
             position: fixed;
             top: 0;
-            right: -400px;
-            width: 400px;
+            right: -100%;
+            width: 100%;
             height: 100vh;
             background: white;
             box-shadow: -5px 0 15px rgba(0,0,0,0.1);
@@ -321,18 +321,6 @@
             margin-top: 40px;
         }
 
-        @media (max-width: 768px) {
-            .cart-sidebar {
-                width: 100%;
-                right: -100%;
-            }
-            
-            .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 20px;
-            }
-        }
-
         .empty-cart {
             text-align: center;
             padding: 40px 20px;
@@ -377,6 +365,171 @@
             right: 20px;
             z-index: 1055;
         }
+
+        /* Responsive improvements */
+        @media (min-width: 768px) {
+            .cart-sidebar {
+                width: 400px;
+                right: -400px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .hero-section {
+                padding: 40px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero-section p {
+                font-size: 1rem;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+            }
+            
+            .product-image {
+                height: 160px;
+                font-size: 2.5rem;
+            }
+            
+            .product-body {
+                padding: 15px;
+            }
+            
+            .filter-section .row {
+                gap: 15px;
+            }
+            
+            .filter-section .col-md-6,
+            .filter-section .col-md-3 {
+                width: 100%;
+            }
+            
+            .nav-tabs .nav-link {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+            
+            .tab-content {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .profile-section,
+            .order-history {
+                padding: 15px;
+                margin-top: 20px;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .cart-item-image {
+                align-self: center;
+            }
+            
+            .cart-item-details {
+                width: 100%;
+            }
+            
+            .quantity-controls {
+                justify-content: center;
+            }
+            
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+            
+            .table-responsive th,
+            .table-responsive td {
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar-nav {
+                flex-direction: row;
+                gap: 10px;
+            }
+            
+            .btn-outline-light {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .nav-tabs .nav-item {
+                flex-shrink: 0;
+            }
+            
+            .cart-header h4 {
+                font-size: 1.2rem;
+            }
+            
+            .cart-body {
+                padding: 15px;
+            }
+            
+            .cart-footer {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .brand {
+                font-size: 1.1rem;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.5rem;
+            }
+            
+            .product-grid {
+                gap: 10px;
+            }
+            
+            .product-image {
+                height: 140px;
+            }
+            
+            .product-price {
+                font-size: 1.1rem;
+            }
+            
+            .stock-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -387,24 +540,29 @@
                 <div class="brand">Lavish Lifestyle</div>
                 <div class="brand-subtitle">Customer Portal</div>
             </div>
-            <div class="navbar-nav ms-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-2"></i>
-                        <span id="customerName">Customer</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><span class="dropdown-item-text user-role" id="customerRole">Customer</span></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="showProfile()"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="viewOrderHistory()"><i class="fas fa-history me-2"></i>Order History</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a></li>
-                    </ul>
+            <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-2"></i>
+                            <span id="customerName">Customer</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><span class="dropdown-item-text user-role" id="customerRole">Customer</span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="showProfile()"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="viewOrderHistory()"><i class="fas fa-history me-2"></i>Order History</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a></li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-outline-light ms-3" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Cart <span class="badge bg-danger" id="cartCount">0</span>
+                    </button>
                 </div>
-                <button class="btn btn-outline-light ms-3" onclick="toggleCart()">
-                    <i class="fas fa-shopping-cart me-2"></i>
-                    Cart <span class="badge bg-danger" id="cartCount">0</span>
-                </button>
             </div>
         </div>
     </nav>
@@ -444,7 +602,7 @@
             <div class="tab-pane fade show active" id="products" role="tabpanel">
                 <!-- Filter Section -->
                 <div class="filter-section">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <input type="text" class="form-control" id="searchProducts" placeholder="Search products...">
                         </div>

@@ -23,6 +23,35 @@
       margin: 0;
       padding: 0;
       display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Mobile header for sidebar toggle */
+    .mobile-header {
+      display: none;
+      background: var(--sidebar-bg);
+      color: white;
+      padding: 12px 15px;
+      position: sticky;
+      top: 0;
+      z-index: 1050;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .mobile-header .brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      padding: 5px 10px;
+      cursor: pointer;
     }
 
     .sidebar {
@@ -37,6 +66,8 @@
       transition: all 0.3s ease;
       z-index: 1000;
       box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      left: 0;
+      top: 0;
     }
 
     .sidebar-header {
@@ -142,6 +173,7 @@
       margin-left: 250px;
       padding: 20px;
       transition: all 0.3s ease;
+      width: calc(100% - 250px);
     }
 
     .card {
@@ -171,6 +203,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 800px;
     }
 
     th {
@@ -321,11 +354,13 @@
     .welcome-header h2 {
       margin: 0;
       font-weight: 600;
+      font-size: 1.5rem;
     }
 
     .welcome-header p {
       margin: 5px 0 0;
       opacity: 0.9;
+      font-size: 0.9rem;
     }
 
     /* Customer specific styles */
@@ -410,11 +445,37 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
-    /* Responsive adjustments */
+    /* Mobile responsive styles */
+    @media (max-width: 992px) {
+      .content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.3rem;
+      }
+      
+      .stats-card .number {
+        font-size: 1.5rem;
+      }
+      
+      .stats-card .label {
+        font-size: 0.8rem;
+      }
+    }
+
     @media (max-width: 768px) {
+      .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
       .sidebar {
         transform: translateX(-100%);
-        width: 250px;
+        width: 280px;
       }
       
       .sidebar.mobile-open {
@@ -422,32 +483,183 @@
       }
       
       .content {
-        margin-left: 0;
+        padding: 10px;
+      }
+      
+      .welcome-header {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .welcome-header p {
+        font-size: 0.85rem;
+      }
+      
+      .stats-card {
+        padding: 15px;
+      }
+      
+      .stats-card .number {
+        font-size: 1.3rem;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-4 {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-4 > div {
+        margin-top: 10px;
         width: 100%;
       }
       
-      .brand, .nav-link span, .user-info, .logout-btn span {
-        display: block;
+      .d-flex.justify-content-between.align-items-center.mb-4 > div button {
+        width: 100%;
       }
       
-      .nav-link, .logout-btn {
-        text-align: left;
-        padding: 12px 20px;
-        justify-content: flex-start;
+      .table-wrap {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
       }
       
-      .nav-link i, .logout-btn i {
-        margin-right: 10px;
-        font-size: 1rem;
+      /* Mobile table styles */
+      .mobile-customer-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       }
+      
+      .mobile-customer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+      
+      .mobile-customer-info {
+        display: flex;
+        align-items: center;
+      }
+      
+      .mobile-customer-details {
+        margin-top: 10px;
+      }
+      
+      .mobile-customer-detail {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #f1f1f1;
+      }
+      
+      .mobile-customer-detail:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      
+      .mobile-customer-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+      }
+      
+      .mobile-customer-actions .btn {
+        flex: 1;
+        margin: 0 5px;
+      }
+      
+      .mobile-customer-actions .btn:first-child {
+        margin-left: 0;
+      }
+      
+      .mobile-customer-actions .btn:last-child {
+        margin-right: 0;
+      }
+    }
 
-      .notification-badge {
-        margin-left: auto;
+    @media (max-width: 576px) {
+      .row.g-3.mb-4 {
+        margin-bottom: 15px !important;
       }
+      
+      .col-md-3 {
+        margin-bottom: 10px;
+      }
+      
+      .card.mb-4 .row.g-3.align-items-center {
+        flex-direction: column;
+      }
+      
+      .card.mb-4 .row.g-3.align-items-center > div {
+        margin-bottom: 10px;
+        width: 100%;
+      }
+      
+      .card.mb-4 .row.g-3.align-items-center > div:last-child {
+        margin-bottom: 0;
+      }
+      
+      .mobile-customer-actions {
+        flex-direction: column;
+      }
+      
+      .mobile-customer-actions .btn {
+        margin: 5px 0;
+        width: 100%;
+      }
+      
+      .mobile-customer-actions .btn:first-child {
+        margin-top: 0;
+      }
+      
+      .mobile-customer-actions .btn:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    /* Overlay for mobile sidebar */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="brand">Lavish Lifestyle <small style="color:#9ff3ef">Inventory</small></div>
+  </div>
+  
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -662,7 +874,7 @@
     <div class="card">
       <h6><i class="fas fa-list me-2"></i> Customer List</h6>
       <div class="table-wrap">
-        <table class="table">
+        <table class="table" id="customersTable">
           <thead>
             <tr>
               <th>Customer</th>
@@ -686,6 +898,11 @@
             <i class="fas fa-plus me-1"></i> Add First Customer
           </button>
         </div>
+      </div>
+      
+      <!-- Mobile Customer Cards (hidden on larger screens) -->
+      <div id="mobileCustomersList" style="display: none;">
+        <!-- Mobile customer cards will be loaded here -->
       </div>
     </div>
   </div>
@@ -754,6 +971,30 @@
     const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
     const AUTH_KEY = 'lavish_auth_v1';
     const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+
+    // Check if device is mobile
+    function isMobileDevice() {
+      return window.innerWidth <= 768;
+    }
+
+    // Toggle sidebar for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      
+      if (sidebar.classList.contains('mobile-open')) {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+      } else {
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('active');
+      }
+    }
+
+    // Close sidebar when clicking overlay
+    document.getElementById('sidebarOverlay').addEventListener('click', function() {
+      toggleSidebar();
+    });
 
     // Authentication check
     function checkAuthentication() {
@@ -894,11 +1135,16 @@
     function loadCustomers() {
       const customers = getCustomers();
       const tbody = document.getElementById('customersTableBody');
+      const mobileList = document.getElementById('mobileCustomersList');
       const emptyState = document.getElementById('emptyCustomers');
+      const table = document.getElementById('customersTable');
       
       if (customers.length === 0) {
         tbody.innerHTML = '';
+        mobileList.innerHTML = '';
         emptyState.style.display = 'block';
+        table.style.display = 'none';
+        mobileList.style.display = 'none';
         return;
       }
       
@@ -932,49 +1178,117 @@
         }
       });
       
-      tbody.innerHTML = filteredCustomers.map(customer => {
-        const statusClass = `status-${customer.status}`;
-        const typeClass = customer.type === 'premium' || customer.type === 'vip' ? 'status-premium' : 'status-active';
-        const initials = customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+      // Show/hide table and mobile list based on screen size
+      if (isMobileDevice()) {
+        table.style.display = 'none';
+        mobileList.style.display = 'block';
         
-        return `
-          <tr>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="customer-avatar me-3">${initials}</div>
+        // Render mobile cards
+        mobileList.innerHTML = filteredCustomers.map(customer => {
+          const statusClass = `status-${customer.status}`;
+          const typeClass = customer.type === 'premium' || customer.type === 'vip' ? 'status-premium' : 'status-active';
+          const initials = customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+          
+          return `
+            <div class="mobile-customer-card">
+              <div class="mobile-customer-header">
+                <div class="mobile-customer-info">
+                  <div class="customer-avatar me-3">${initials}</div>
+                  <div>
+                    <div class="fw-bold">${customer.name}</div>
+                    <small class="text-muted">${customer.company || 'Individual'}</small>
+                  </div>
+                </div>
                 <div>
-                  <div class="fw-bold">${customer.name}</div>
-                  <small class="text-muted">${customer.company || 'Individual'}</small>
+                  <span class="status ${typeClass}">${customer.type.toUpperCase()}</span>
+                  <span class="status ${statusClass} ms-1">${customer.status.toUpperCase()}</span>
                 </div>
               </div>
-            </td>
-            <td>
-              <div>${customer.email}</div>
-              <small class="text-muted">${customer.phone}</small>
-            </td>
-            <td>${customer.joinDate}</td>
-            <td>${customer.totalOrders}</td>
-            <td>₦${customer.totalSpent.toLocaleString()}</td>
-            <td>
-              <span class="status ${typeClass}">${customer.type.toUpperCase()}</span>
-              <span class="status ${statusClass} ms-1">${customer.status.toUpperCase()}</span>
-            </td>
-            <td>
-              <div class="customer-actions">
+              <div class="mobile-customer-details">
+                <div class="mobile-customer-detail">
+                  <span>Email:</span>
+                  <span>${customer.email}</span>
+                </div>
+                <div class="mobile-customer-detail">
+                  <span>Phone:</span>
+                  <span>${customer.phone}</span>
+                </div>
+                <div class="mobile-customer-detail">
+                  <span>Join Date:</span>
+                  <span>${customer.joinDate}</span>
+                </div>
+                <div class="mobile-customer-detail">
+                  <span>Total Orders:</span>
+                  <span>${customer.totalOrders}</span>
+                </div>
+                <div class="mobile-customer-detail">
+                  <span>Total Spent:</span>
+                  <span>₦${customer.totalSpent.toLocaleString()}</span>
+                </div>
+              </div>
+              <div class="mobile-customer-actions">
                 <button class="btn btn-sm btn-outline-primary" onclick="viewCustomer(${customer.id})" title="View Details">
-                  <i class="fas fa-eye"></i>
+                  <i class="fas fa-eye"></i> View
                 </button>
                 <button class="btn btn-sm btn-outline-secondary" onclick="editCustomer(${customer.id})" title="Edit">
-                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-edit"></i> Edit
                 </button>
                 <button class="btn btn-sm btn-outline-danger" onclick="deleteCustomer(${customer.id})" title="Delete">
-                  <i class="fas fa-trash"></i>
+                  <i class="fas fa-trash"></i> Delete
                 </button>
               </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
+            </div>
+          `;
+        }).join('');
+      } else {
+        table.style.display = 'table';
+        mobileList.style.display = 'none';
+        
+        // Render table rows
+        tbody.innerHTML = filteredCustomers.map(customer => {
+          const statusClass = `status-${customer.status}`;
+          const typeClass = customer.type === 'premium' || customer.type === 'vip' ? 'status-premium' : 'status-active';
+          const initials = customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+          
+          return `
+            <tr>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="customer-avatar me-3">${initials}</div>
+                  <div>
+                    <div class="fw-bold">${customer.name}</div>
+                    <small class="text-muted">${customer.company || 'Individual'}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div>${customer.email}</div>
+                <small class="text-muted">${customer.phone}</small>
+              </td>
+              <td>${customer.joinDate}</td>
+              <td>${customer.totalOrders}</td>
+              <td>₦${customer.totalSpent.toLocaleString()}</td>
+              <td>
+                <span class="status ${typeClass}">${customer.type.toUpperCase()}</span>
+                <span class="status ${statusClass} ms-1">${customer.status.toUpperCase()}</span>
+              </td>
+              <td>
+                <div class="customer-actions">
+                  <button class="btn btn-sm btn-outline-primary" onclick="viewCustomer(${customer.id})" title="View Details">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="editCustomer(${customer.id})" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteCustomer(${customer.id})" title="Delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
     // Update customer statistics
@@ -1248,6 +1562,10 @@
       document.getElementById('searchCustomers').addEventListener('input', loadCustomers);
       document.getElementById('statusFilter').addEventListener('change', loadCustomers);
       document.getElementById('sortBy').addEventListener('change', loadCustomers);
+      document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+      
+      // Handle window resize to switch between table and mobile view
+      window.addEventListener('resize', loadCustomers);
     }
 
     // ---------- UI interactions for sidebar submenus ----------
