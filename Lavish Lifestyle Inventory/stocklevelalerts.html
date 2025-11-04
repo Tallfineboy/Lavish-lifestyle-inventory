@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-critical {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .status-warning {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-normal {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-expired {
+      background: rgba(149, 165, 166, 0.2);
+      color: #7f8c8d;
+    }
+
+    .alert-badge {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .alert-high {
+      background: var(--danger-color);
+    }
+
+    .alert-medium {
+      background: var(--warning-color);
+    }
+
+    .alert-low {
+      background: var(--info-color);
+    }
+
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+
+    /* Stock Aging specific styles */
+    .aging-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: #ecf0f1;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .aging-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .aging-0-30 { background: var(--success-color); width: 25%; }
+    .aging-31-60 { background: var(--warning-color); width: 50%; }
+    .aging-61-90 { background: #e67e22; width: 75%; }
+    .aging-90-plus { background: var(--danger-color); width: 100%; }
+
+    .filter-section {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .stat-card h4 {
+      margin: 0;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .stat-card p {
+      margin: 5px 0 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .stat-card.critical { border-left-color: var(--danger-color); }
+    .stat-card.warning { border-left-color: var(--warning-color); }
+    .stat-card.normal { border-left-color: var(--success-color); }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link active">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Stock Aging & Reorder Level Alerts</h2>
+      <p>Monitor inventory health with aging analysis and automatic reorder notifications</p>
+    </div>
+
+    <!-- Alert Summary Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="stat-card critical">
+          <h4 id="criticalAlertsCount">0</h4>
+          <p>Critical Stock Alerts</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card warning">
+          <h4 id="warningAlertsCount">0</h4>
+          <p>Reorder Level Warnings</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <h4 id="agingItemsCount">0</h4>
+          <p>Aging Inventory Items</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card normal">
+          <h4 id="healthyItemsCount">0</h4>
+          <p>Healthy Stock Items</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filter-section">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Alert Level</label>
+          <select class="form-select" id="alertLevelFilter">
+            <option value="all">All Alerts</option>
+            <option value="critical">Critical Only</option>
+            <option value="warning">Warning Only</option>
+            <option value="normal">Normal Only</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Aging Period</label>
+          <select class="form-select" id="agingFilter">
+            <option value="all">All Periods</option>
+            <option value="0-30">0-30 Days</option>
+            <option value="31-60">31-60 Days</option>
+            <option value="61-90">61-90 Days</option>
+            <option value="90-plus">90+ Days</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="categoryFilter">
+            <option value="all">All Categories</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">&nbsp;</label>
+          <div>
+            <button class="btn btn-outline-primary w-100" onclick="applyFilters()">
+              <i class="fas fa-filter me-1"></i> Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reorder Level Alerts Card -->
+    <div class="card">
+      <h6><i class="fas fa-exclamation-triangle me-2 text-warning"></i> Reorder Level Alerts</h6>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Current Stock</th>
+              <th>Reorder Level</th>
+              <th>Alert Level</th>
+              <th>Last Sold</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="reorderAlertsBody">
+            <!-- Reorder alerts will be loaded here -->
+          </tbody>
+        </table>
+        <div id="emptyReorderAlerts" class="empty-state" style="display: none;">
+          <i class="fas fa-check-circle"></i>
+          <h4>No Reorder Alerts</h4>
+          <p>All products are sufficiently stocked.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stock Aging Analysis Card -->
+    <div class="card">
+      <h6><i class="fas fa-clock me-2 text-info"></i> Stock Aging Analysis</h6>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Current Stock</th>
+              <th>Days in Inventory</th>
+              <th>Aging Status</th>
+              <th>Last Movement</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="stockAgingBody">
+            <!-- Stock aging data will be loaded here -->
+          </tbody>
+        </table>
+        <div id="emptyStockAging" class="empty-state" style="display: none;">
+          <i class="fas fa-chart-line"></i>
+          <h4>No Aging Data</h4>
+          <p>All inventory items are moving well.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between mt-4">
+      <div>
+        <button class="btn btn-outline-primary" onclick="generateAgingReport()">
+          <i class="fas fa-download me-1"></i> Export Aging Report
+        </button>
+        <button class="btn btn-outline-primary ms-2" onclick="configureAlerts()">
+          <i class="fas fa-cog me-1"></i> Configure Alert Settings
+        </button>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="createPurchaseOrders()">
+          <i class="fas fa-cart-plus me-1"></i> Create Purchase Orders
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Storage keys
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+    const ALERT_SETTINGS_KEY = 'lavish_alert_settings_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Get inventory items
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    // Get alert settings
+    function getAlertSettings() {
+      const settings = localStorage.getItem(ALERT_SETTINGS_KEY);
+      if (settings) {
+        return JSON.parse(settings);
+      } else {
+        // Default settings
+        const defaultSettings = {
+          criticalThreshold: 5,
+          warningThreshold: 15,
+          agingThreshold: 60,
+          autoReorder: true,
+          emailNotifications: true
+        };
+        localStorage.setItem(ALERT_SETTINGS_KEY, JSON.stringify(defaultSettings));
+        return defaultSettings;
+      }
+    }
+
+    // Initialize demo data for stock aging
+    function initializeStockAgingData() {
+      const inventory = getInventoryItems();
+      const alertSettings = getAlertSettings();
+      
+      // Add aging data to inventory items if not present
+      let needsUpdate = false;
+      inventory.forEach(item => {
+        if (!item.daysInInventory) {
+          item.daysInInventory = Math.floor(Math.random() * 120) + 1;
+          item.lastMovement = new Date(Date.now() - Math.floor(Math.random() * 120) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+          item.reorderLevel = Math.floor(item.stock * 0.3);
+          needsUpdate = true;
+        }
+      });
+      
+      if (needsUpdate) {
+        localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
+      }
+      
+      return inventory;
+    }
+
+    // Calculate alert level based on stock and reorder level
+    function calculateAlertLevel(item) {
+      const alertSettings = getAlertSettings();
+      
+      if (item.stock <= alertSettings.criticalThreshold) {
+        return 'critical';
+      } else if (item.stock <= alertSettings.warningThreshold) {
+        return 'warning';
+      } else {
+        return 'normal';
+      }
+    }
+
+    // Calculate aging status
+    function calculateAgingStatus(days) {
+      if (days <= 30) return '0-30';
+      if (days <= 60) return '31-60';
+      if (days <= 90) return '61-90';
+      return '90-plus';
+    }
+
+    // Load reorder level alerts
+    function loadReorderAlerts() {
+      const inventory = initializeStockAgingData();
+      const alertSettings = getAlertSettings();
+      
+      const reorderAlerts = inventory.filter(item => 
+        item.stock <= alertSettings.warningThreshold
+      ).sort((a, b) => a.stock - b.stock);
+      
+      const tbody = document.getElementById('reorderAlertsBody');
+      const emptyState = document.getElementById('emptyReorderAlerts');
+      
+      if (reorderAlerts.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = reorderAlerts.map(item => {
+        const alertLevel = calculateAlertLevel(item);
+        const statusClass = `status-${alertLevel}`;
+        const alertBadgeClass = `alert-${alertLevel}`;
+        
+        return `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.sku}</td>
+            <td>${item.stock}</td>
+            <td>${item.reorderLevel || Math.floor(item.stock * 0.3)}</td>
+            <td>
+              <span class="status ${statusClass}">${alertLevel.toUpperCase()}</span>
+              <span class="alert-badge ${alertBadgeClass} ms-1">${alertLevel === 'critical' ? 'URGENT' : 'ALERT'}</span>
+            </td>
+            <td>${item.lastMovement || 'N/A'}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="reorderProduct('${item.sku}')">
+                <i class="fas fa-cart-plus me-1"></i> Reorder
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load stock aging analysis
+    function loadStockAging() {
+      const inventory = initializeStockAgingData();
+      const alertSettings = getAlertSettings();
+      
+      const agingItems = inventory.filter(item => 
+        item.daysInInventory > alertSettings.agingThreshold
+      ).sort((a, b) => b.daysInInventory - a.daysInInventory);
+      
+      const tbody = document.getElementById('stockAgingBody');
+      const emptyState = document.getElementById('emptyStockAging');
+      
+      if (agingItems.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = agingItems.map(item => {
+        const agingStatus = calculateAgingStatus(item.daysInInventory);
+        const agingClass = `aging-${agingStatus}`;
+        
+        return `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.sku}</td>
+            <td>${item.stock}</td>
+            <td>${item.daysInInventory}</td>
+            <td>
+              <div>${agingStatus} days</div>
+              <div class="aging-bar">
+                <div class="aging-fill ${agingClass}"></div>
+              </div>
+            </td>
+            <td>${item.lastMovement || 'N/A'}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="createPromotion('${item.sku}')">
+                <i class="fas fa-tag me-1"></i> Promote
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Update alert summary counts
+    function updateAlertSummary() {
+      const inventory = initializeStockAgingData();
+      const alertSettings = getAlertSettings();
+      
+      const criticalAlerts = inventory.filter(item => item.stock <= alertSettings.criticalThreshold).length;
+      const warningAlerts = inventory.filter(item => 
+        item.stock > alertSettings.criticalThreshold && item.stock <= alertSettings.warningThreshold
+      ).length;
+      const agingItems = inventory.filter(item => item.daysInInventory > alertSettings.agingThreshold).length;
+      const healthyItems = inventory.filter(item => 
+        item.stock > alertSettings.warningThreshold && item.daysInInventory <= alertSettings.agingThreshold
+      ).length;
+      
+      document.getElementById('criticalAlertsCount').textContent = criticalAlerts;
+      document.getElementById('warningAlertsCount').textContent = warningAlerts;
+      document.getElementById('agingItemsCount').textContent = agingItems;
+      document.getElementById('healthyItemsCount').textContent = healthyItems;
+    }
+
+    // Apply filters
+    function applyFilters() {
+      // This would filter the displayed data based on selected filters
+      alert('Filters applied! This would filter the displayed alerts and aging data.');
+    }
+
+    // Generate aging report
+    function generateAgingReport() {
+      const inventory = initializeStockAgingData();
+      
+      let csvContent = "Stock Aging and Reorder Level Report\n";
+      csvContent += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
+      
+      csvContent += "REORDER LEVEL ALERTS\n";
+      csvContent += "Product,SKU,Current Stock,Reorder Level,Alert Level,Last Movement\n";
+      
+      const alertSettings = getAlertSettings();
+      const reorderAlerts = inventory.filter(item => item.stock <= alertSettings.warningThreshold);
+      
+      reorderAlerts.forEach(item => {
+        const alertLevel = calculateAlertLevel(item);
+        csvContent += `${item.name},${item.sku},${item.stock},${item.reorderLevel},${alertLevel},${item.lastMovement}\n`;
+      });
+      
+      csvContent += "\nSTOCK AGING ANALYSIS\n";
+      csvContent += "Product,SKU,Current Stock,Days in Inventory,Aging Status,Last Movement\n";
+      
+      const agingItems = inventory.filter(item => item.daysInInventory > alertSettings.agingThreshold);
+      agingItems.forEach(item => {
+        const agingStatus = calculateAgingStatus(item.daysInInventory);
+        csvContent += `${item.name},${item.sku},${item.stock},${item.daysInInventory},${agingStatus},${item.lastMovement}\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stock-aging-report-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Stock aging report downloaded successfully!');
+    }
+
+    // Configure alert settings
+    function configureAlerts() {
+      alert('This would open a modal to configure alert thresholds and notification settings.');
+      // In a real implementation, this would open a settings modal
+    }
+
+    // Create purchase orders for low stock items
+    function createPurchaseOrders() {
+      const inventory = initializeStockAgingData();
+      const alertSettings = getAlertSettings();
+      
+      const itemsToReorder = inventory.filter(item => item.stock <= alertSettings.criticalThreshold);
+      
+      if (itemsToReorder.length === 0) {
+        alert('No critical stock items found that need immediate reordering.');
+        return;
+      }
+      
+      if (confirm(`Create purchase orders for ${itemsToReorder.length} critical stock items?`)) {
+        alert(`Purchase orders created for ${itemsToReorder.length} items!`);
+        // In a real implementation, this would create actual purchase orders
+      }
+    }
+
+    // Reorder a specific product
+    function reorderProduct(sku) {
+      alert(`Creating purchase order for product with SKU: ${sku}`);
+      // In a real implementation, this would open a purchase order form
+    }
+
+    // Create promotion for aging stock
+    function createPromotion(sku) {
+      alert(`Creating promotion for aging product with SKU: ${sku}`);
+      // In a real implementation, this would open a promotion creation form
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      loadReorderAlerts();
+      loadStockAging();
+      updateAlertSummary();
+      
+      // Set up sidebar navigation interactions (same as dashboard)
+      setupSidebarNavigation();
+    });
+
+    // Setup sidebar navigation (same functionality as dashboard)
+    function setupSidebarNavigation() {
+      // Wire up all submenu toggles (same code as dashboard)
+      const submenuToggles = [
+        { toggle: 'productToggle', submenu: 'productSubmenu', chevron: 'productChevron' },
+        { toggle: 'inventoryControlToggle', submenu: 'inventoryControlSubmenu', chevron: 'inventoryControlChevron' },
+        { toggle: 'stockMovementToggle', submenu: 'stockMovementSubmenu', chevron: 'stockMovementChevron' },
+        { toggle: 'purchaseManagementToggle', submenu: 'purchaseManagementSubmenu', chevron: 'purchaseManagementChevron' },
+        { toggle: 'salesManagementToggle', submenu: 'salesManagementSubmenu', chevron: 'salesManagementChevron' },
+        { toggle: 'reportingAnalyticsToggle', submenu: 'reportingAnalyticsSubmenu', chevron: 'reportingAnalyticsChevron' }
+      ];
+
+      submenuToggles.forEach(({ toggle, submenu, chevron }) => {
+        const toggleEl = document.getElementById(toggle);
+        const submenuEl = document.getElementById(submenu);
+        const chevronEl = document.getElementById(chevron);
+        
+        if (toggleEl && submenuEl) {
+          toggleEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            const expanded = toggleEl.getAttribute('aria-expanded') === 'true';
+            toggleEl.setAttribute('aria-expanded', (!expanded).toString());
+            
+            if (submenuEl.style.maxHeight && submenuEl.style.maxHeight !== '0px') {
+              submenuEl.style.maxHeight = '0';
+              chevronEl.style.transform = '';
+            } else {
+              submenuEl.style.maxHeight = (submenuEl.scrollHeight + 20) + 'px';
+              chevronEl.style.transform = 'rotate(180deg)';
+            }
+          });
+        }
+      });
+    }
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

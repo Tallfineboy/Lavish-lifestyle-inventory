@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-active {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-expired {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .status-warning {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-inactive {
+      background: rgba(108, 117, 125, 0.2);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: #2980b9;
+      border-color: #2980b9;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Batch tracking specific styles */
+    .batch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .batch-kpi {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .batch-kpi:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .batch-kpi::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+    }
+
+    .batch-kpi:nth-child(1)::before { background: var(--primary-color); }
+    .batch-kpi:nth-child(2)::before { background: var(--warning-color); }
+    .batch-kpi:nth-child(3)::before { background: var(--danger-color); }
+    .batch-kpi:nth-child(4)::before { background: var(--success-color); }
+
+    .batch-kpi-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .batch-kpi:nth-child(1) .batch-kpi-icon { color: var(--primary-color); }
+    .batch-kpi:nth-child(2) .batch-kpi-icon { color: var(--warning-color); }
+    .batch-kpi:nth-child(3) .batch-kpi-icon { color: var(--danger-color); }
+    .batch-kpi:nth-child(4) .batch-kpi-icon { color: var(--success-color); }
+
+    .batch-kpi h6 {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .batch-kpi h3 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .expiry-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .expiry-critical {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .expiry-warning {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+      border: 1px solid rgba(243, 156, 18, 0.3);
+    }
+
+    .expiry-safe {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+      border: 1px solid rgba(46, 204, 113, 0.3);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link active">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Batch & Expiry Tracking</h2>
+      <p>Manage product batches, monitor expiry dates, and track inventory shelf life</p>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Batch Overview</h3>
+      <div>
+        <button class="btn btn-sm btn-outline-primary me-2" onclick="exportBatchData()">
+          <i class="fas fa-download me-1"></i> Export Data
+        </button>
+        <button class="btn btn-sm btn-primary" onclick="showAddBatchModal()">
+          <i class="fas fa-plus me-1"></i> Add New Batch
+        </button>
+      </div>
+    </div>
+    
+    <div class="batch-grid">
+      <div class="batch-kpi">
+        <i class="fas fa-boxes batch-kpi-icon"></i>
+        <h6>Total Batches</h6>
+        <h3 id="totalBatches">0</h3>
+        <div class="kpi-trend">
+          <span>Active batches in system</span>
+        </div>
+      </div>
+      <div class="batch-kpi">
+        <i class="fas fa-exclamation-triangle batch-kpi-icon"></i>
+        <h6>Expiring Soon</h6>
+        <h3 id="expiringSoon">0</h3>
+        <div class="kpi-trend">
+          <span>Within 30 days</span>
+        </div>
+      </div>
+      <div class="batch-kpi">
+        <i class="fas fa-skull-crossbones batch-kpi-icon"></i>
+        <h6>Expired Items</h6>
+        <h3 id="expiredItems">0</h3>
+        <div class="kpi-trend">
+          <span>Require attention</span>
+        </div>
+      </div>
+      <div class="batch-kpi">
+        <i class="fas fa-check-circle batch-kpi-icon"></i>
+        <h6>Good Stock</h6>
+        <h3 id="goodStock">0</h3>
+        <div class="kpi-trend">
+          <span>No expiry concerns</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div class="card">
+          <h6><i class="fas fa-list me-2"></i> Batch Inventory</h6>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Batch ID</th>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Manufacture Date</th>
+                  <th>Expiry Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="batchTableBody">
+                <!-- Batch data will be loaded here -->
+              </tbody>
+            </table>
+            <div id="emptyBatchState" class="empty-state" style="display: none;">
+              <i class="fas fa-box-open"></i>
+              <h4>No Batch Data</h4>
+              <p>Add your first batch to start tracking expiry dates.</p>
+              <button class="btn btn-primary mt-2" onclick="showAddBatchModal()">
+                <i class="fas fa-plus me-1"></i> Add First Batch
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="card">
+          <h6><i class="fas fa-clock me-2"></i> Expiry Alerts</h6>
+          <div id="expiryAlerts" style="max-height: 400px; overflow-y: auto;">
+            <!-- Alerts will be loaded here -->
+          </div>
+          <div id="noAlerts" class="empty-state" style="display: none; padding: 20px;">
+            <i class="fas fa-check-circle"></i>
+            <p class="mb-0">No expiry alerts at this time</p>
+          </div>
+        </div>
+        
+        <div class="card mt-3">
+          <h6><i class="fas fa-chart-bar me-2"></i> Batch Status Overview</h6>
+          <div class="chart-container">
+            <canvas id="batchStatusChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Batch Modal -->
+  <div class="modal fade" id="addBatchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Batch</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="batchForm">
+            <div class="mb-3">
+              <label class="form-label">Product</label>
+              <select class="form-select" id="batchProduct" required>
+                <option value="">Select Product</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Batch ID</label>
+              <input type="text" class="form-control" id="batchId" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="batchQuantity" min="1" required>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Manufacture Date</label>
+                  <input type="date" class="form-control" id="manufactureDate" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Expiry Date</label>
+                  <input type="date" class="form-control" id="expiryDate" required>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Supplier</label>
+              <input type="text" class="form-control" id="batchSupplier">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Storage Location</label>
+              <input type="text" class="form-control" id="storageLocation">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveBatch()">Save Batch</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+  <script>
+    // Storage keys
+    const BATCH_TRACKING_KEY = 'lavish_batch_tracking_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Get batch data
+    function getBatchData() {
+      const batches = localStorage.getItem(BATCH_TRACKING_KEY);
+      return batches ? JSON.parse(batches) : [];
+    }
+
+    // Save batch data
+    function saveBatchData(batches) {
+      localStorage.setItem(BATCH_TRACKING_KEY, JSON.stringify(batches));
+    }
+
+    // Get inventory items for product selection
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    // Initialize demo batch data
+    function initializeDemoBatchData() {
+      const existingBatches = getBatchData();
+      if (existingBatches.length === 0) {
+        const demoBatches = [
+          {
+            id: 'BATCH-001',
+            productId: 1,
+            productName: 'Premium Leather Handbag',
+            quantity: 50,
+            manufactureDate: '2024-01-15',
+            expiryDate: '2025-01-15',
+            supplier: 'Leather Crafts Ltd',
+            location: 'Warehouse A, Shelf 2',
+            status: 'active',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'BATCH-002',
+            productId: 2,
+            productName: 'Designer Sunglasses',
+            quantity: 100,
+            manufactureDate: '2024-02-01',
+            expiryDate: '2024-08-01',
+            supplier: 'Vision Optics Inc',
+            location: 'Warehouse B, Shelf 1',
+            status: 'warning',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'BATCH-003',
+            productId: 3,
+            productName: 'Luxury Watch',
+            quantity: 25,
+            manufactureDate: '2023-12-01',
+            expiryDate: '2024-06-01',
+            supplier: 'Timepiece Manufacturers',
+            location: 'Warehouse A, Safe 1',
+            status: 'critical',
+            createdAt: new Date().toISOString()
+          }
+        ];
+        saveBatchData(demoBatches);
+      }
+    }
+
+    // Calculate batch status based on expiry date
+    function calculateBatchStatus(expiryDate) {
+      const today = new Date();
+      const expiry = new Date(expiryDate);
+      const diffTime = expiry - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 0) {
+        return 'expired';
+      } else if (diffDays <= 30) {
+        return 'critical';
+      } else if (diffDays <= 90) {
+        return 'warning';
+      } else {
+        return 'safe';
+      }
+    }
+
+    // Update batch statistics
+    function updateBatchStats() {
+      const batches = getBatchData();
+      
+      const totalBatches = batches.length;
+      const expiringSoon = batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'critical').length;
+      const expiredItems = batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'expired').length;
+      const goodStock = batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'safe').length;
+      
+      document.getElementById('totalBatches').textContent = totalBatches;
+      document.getElementById('expiringSoon').textContent = expiringSoon;
+      document.getElementById('expiredItems').textContent = expiredItems;
+      document.getElementById('goodStock').textContent = goodStock;
+    }
+
+    // Load batch table data
+    function loadBatchTable() {
+      const batches = getBatchData();
+      const tbody = document.getElementById('batchTableBody');
+      const emptyState = document.getElementById('emptyBatchState');
+      
+      if (batches.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      tbody.innerHTML = batches.map(batch => {
+        const status = calculateBatchStatus(batch.expiryDate);
+        const statusClass = `status-${status}`;
+        const statusText = status === 'safe' ? 'Good' : 
+                          status === 'warning' ? 'Expiring Soon' : 
+                          status === 'critical' ? 'Critical' : 'Expired';
+        
+        let expiryBadge = '';
+        if (status === 'critical') {
+          expiryBadge = '<span class="expiry-badge expiry-critical ms-2">Critical</span>';
+        } else if (status === 'warning') {
+          expiryBadge = '<span class="expiry-badge expiry-warning ms-2">Warning</span>';
+        } else if (status === 'expired') {
+          expiryBadge = '<span class="expiry-badge expiry-critical ms-2">Expired</span>';
+        }
+        
+        return `
+          <tr>
+            <td><strong>${batch.id}</strong></td>
+            <td>${batch.productName}</td>
+            <td>${batch.quantity}</td>
+            <td>${batch.manufactureDate}</td>
+            <td>${batch.expiryDate} ${expiryBadge}</td>
+            <td><span class="status ${statusClass}">${statusText}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="editBatch('${batch.id}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteBatch('${batch.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load expiry alerts
+    function loadExpiryAlerts() {
+      const batches = getBatchData();
+      const alertsContainer = document.getElementById('expiryAlerts');
+      const noAlerts = document.getElementById('noAlerts');
+      
+      const criticalBatches = batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'critical');
+      const expiredBatches = batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'expired');
+      
+      if (criticalBatches.length === 0 && expiredBatches.length === 0) {
+        alertsContainer.innerHTML = '';
+        noAlerts.style.display = 'block';
+        return;
+      }
+      
+      noAlerts.style.display = 'none';
+      
+      let alertsHTML = '';
+      
+      if (expiredBatches.length > 0) {
+        alertsHTML += '<div class="alert alert-danger mb-2">';
+        alertsHTML += '<h6><i class="fas fa-skull-crossbones me-1"></i> Expired Items</h6>';
+        expiredBatches.forEach(batch => {
+          alertsHTML += `<div class="small">${batch.productName} (${batch.id})</div>`;
+        });
+        alertsHTML += '</div>';
+      }
+      
+      if (criticalBatches.length > 0) {
+        alertsHTML += '<div class="alert alert-warning mb-2">';
+        alertsHTML += '<h6><i class="fas fa-exclamation-triangle me-1"></i> Expiring Soon</h6>';
+        criticalBatches.forEach(batch => {
+          alertsHTML += `<div class="small">${batch.productName} (${batch.id}) - ${batch.expiryDate}</div>`;
+        });
+        alertsHTML += '</div>';
+      }
+      
+      alertsContainer.innerHTML = alertsHTML;
+    }
+
+    // Initialize batch status chart
+    function initializeBatchChart() {
+      const batches = getBatchData();
+      
+      const statusCounts = {
+        safe: batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'safe').length,
+        warning: batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'warning').length,
+        critical: batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'critical').length,
+        expired: batches.filter(batch => calculateBatchStatus(batch.expiryDate) === 'expired').length
+      };
+      
+      const ctx = document.getElementById('batchStatusChart');
+      if (!ctx) return;
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Good', 'Expiring Soon', 'Critical', 'Expired'],
+          datasets: [{
+            data: [statusCounts.safe, statusCounts.warning, statusCounts.critical, statusCounts.expired],
+            backgroundColor: ['#2ecc71', '#f39c12', '#e74c3c', '#7f8c8d'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12,
+                font: {
+                  size: 11
+                }
+              }
+            }
+          },
+          cutout: '60%'
+        }
+      });
+    }
+
+    // Show add batch modal
+    function showAddBatchModal() {
+      // Populate product dropdown
+      const products = getInventoryItems();
+      const productSelect = document.getElementById('batchProduct');
+      productSelect.innerHTML = '<option value="">Select Product</option>';
+      
+      products.forEach(product => {
+        productSelect.innerHTML += `<option value="${product.id}">${product.name} (${product.sku})</option>`;
+      });
+      
+      // Set default batch ID
+      const batches = getBatchData();
+      const nextBatchId = `BATCH-${String(batches.length + 1).padStart(3, '0')}`;
+      document.getElementById('batchId').value = nextBatchId;
+      
+      // Set today's date as manufacture date
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('manufactureDate').value = today;
+      
+      // Set default expiry date (1 year from today)
+      const nextYear = new Date();
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
+      document.getElementById('expiryDate').value = nextYear.toISOString().split('T')[0];
+      
+      // Clear form
+      document.getElementById('batchQuantity').value = '';
+      document.getElementById('batchSupplier').value = '';
+      document.getElementById('storageLocation').value = '';
+      
+      // Show modal
+      new bootstrap.Modal(document.getElementById('addBatchModal')).show();
+    }
+
+    // Save batch
+    function saveBatch() {
+      const form = document.getElementById('batchForm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      
+      const productId = parseInt(document.getElementById('batchProduct').value);
+      const batchId = document.getElementById('batchId').value;
+      const quantity = parseInt(document.getElementById('batchQuantity').value);
+      const manufactureDate = document.getElementById('manufactureDate').value;
+      const expiryDate = document.getElementById('expiryDate').value;
+      const supplier = document.getElementById('batchSupplier').value;
+      const location = document.getElementById('storageLocation').value;
+      
+      // Get product name
+      const products = getInventoryItems();
+      const product = products.find(p => p.id === productId);
+      
+      if (!product) {
+        alert('Please select a valid product');
+        return;
+      }
+      
+      const batches = getBatchData();
+      
+      // Check if batch ID already exists
+      if (batches.some(batch => batch.id === batchId)) {
+        alert('Batch ID already exists. Please use a different ID.');
+        return;
+      }
+      
+      const newBatch = {
+        id: batchId,
+        productId: productId,
+        productName: product.name,
+        quantity: quantity,
+        manufactureDate: manufactureDate,
+        expiryDate: expiryDate,
+        supplier: supplier,
+        location: location,
+        status: 'active',
+        createdAt: new Date().toISOString()
+      };
+      
+      batches.push(newBatch);
+      saveBatchData(batches);
+      
+      // Close modal
+      bootstrap.Modal.getInstance(document.getElementById('addBatchModal')).hide();
+      
+      // Refresh data
+      updateBatchStats();
+      loadBatchTable();
+      loadExpiryAlerts();
+      initializeBatchChart();
+      
+      alert('Batch added successfully!');
+    }
+
+    // Edit batch
+    function editBatch(batchId) {
+      alert(`Edit functionality for batch ${batchId} would be implemented here.`);
+      // In a real implementation, this would open a modal with the batch data pre-filled
+    }
+
+    // Delete batch
+    function deleteBatch(batchId) {
+      if (confirm(`Are you sure you want to delete batch ${batchId}?`)) {
+        const batches = getBatchData();
+        const updatedBatches = batches.filter(batch => batch.id !== batchId);
+        saveBatchData(updatedBatches);
+        
+        updateBatchStats();
+        loadBatchTable();
+        loadExpiryAlerts();
+        initializeBatchChart();
+        
+        alert('Batch deleted successfully!');
+      }
+    }
+
+    // Export batch data
+    function exportBatchData() {
+      const batches = getBatchData();
+      
+      if (batches.length === 0) {
+        alert('No batch data to export.');
+        return;
+      }
+      
+      let csvContent = "Batch ID,Product,Quantity,Manufacture Date,Expiry Date,Supplier,Location,Status\n";
+      
+      batches.forEach(batch => {
+        const status = calculateBatchStatus(batch.expiryDate);
+        const statusText = status === 'safe' ? 'Good' : 
+                          status === 'warning' ? 'Expiring Soon' : 
+                          status === 'critical' ? 'Critical' : 'Expired';
+        
+        csvContent += `"${batch.id}","${batch.productName}",${batch.quantity},"${batch.manufactureDate}","${batch.expiryDate}","${batch.supplier}","${batch.location}","${statusText}"\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `batch-tracking-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Batch data exported successfully!');
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = JSON.parse(localStorage.getItem(NOTIFICATIONS_KEY) || '[]');
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // ---------- UI interactions for sidebar submenus ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wire up product submenu toggle
+      const productToggle = document.getElementById('productToggle');
+      const productSubmenu = document.getElementById('productSubmenu');
+      const productChevron = document.getElementById('productChevron');
+      if (productToggle && productSubmenu) {
+        productToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+          productToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+            productSubmenu.style.maxHeight = '0';
+            productChevron.style.transform = '';
+          } else {
+            productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+            productChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up inventory control submenu toggle
+      const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+      const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+      const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+      if (inventoryControlToggle && inventoryControlSubmenu) {
+        inventoryControlToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+          inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+            inventoryControlSubmenu.style.maxHeight = '0';
+            inventoryControlChevron.style.transform = '';
+          } else {
+            inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+            inventoryControlChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up other submenu toggles...
+      const stockMovementToggle = document.getElementById('stockMovementToggle');
+      const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
+      const stockMovementChevron = document.getElementById('stockMovementChevron');
+      if (stockMovementToggle && stockMovementSubmenu) {
+        stockMovementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = stockMovementToggle.getAttribute('aria-expanded') === 'true';
+          stockMovementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (stockMovementSubmenu.style.maxHeight && stockMovementSubmenu.style.maxHeight !== '0px') {
+            stockMovementSubmenu.style.maxHeight = '0';
+            stockMovementChevron.style.transform = '';
+          } else {
+            stockMovementSubmenu.style.maxHeight = (stockMovementSubmenu.scrollHeight + 20) + 'px';
+            stockMovementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Continue with other submenu toggles...
+
+      // Initialize page
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      initializeDemoBatchData();
+      updateBatchStats();
+      loadBatchTable();
+      loadExpiryAlerts();
+      initializeBatchChart();
+      updateNotificationBadge();
+    });
+  </script>
+</body>
+</html>

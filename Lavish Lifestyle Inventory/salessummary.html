@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-completed {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-pending {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Enhanced charts */
+    .chart-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(131, 89, 182, 0.1) 100%);
+      border-radius: 0 0 0 100px;
+      z-index: 0;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Sales Summary Specific Styles */
+    .period-selector {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .summary-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .summary-card .value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .summary-card .label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .trend-indicator {
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+
+    .trend-up {
+      color: var(--success-color);
+    }
+
+    .trend-down {
+      color: var(--danger-color);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link active">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Sales Summary Reports</h2>
+      <p>Analyze your sales performance across different time periods</p>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Daily/Weekly/Monthly Sales Summaries</h3>
+      <div>
+        <button class="btn btn-sm btn-outline-primary" onclick="downloadSalesReport()">
+          <i class="fas fa-download me-1"></i> Export Report
+        </button>
+      </div>
+    </div>
+
+    <!-- Period Selector -->
+    <div class="period-selector">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary active" data-period="daily">Daily</button>
+            <button type="button" class="btn btn-outline-primary" data-period="weekly">Weekly</button>
+            <button type="button" class="btn btn-outline-primary" data-period="monthly">Monthly</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-group">
+            <input type="date" class="form-control" id="dateSelector">
+            <button class="btn btn-outline-secondary" type="button" onclick="loadSalesData()">
+              <i class="fas fa-filter"></i> Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="kpi-grid">
+      <div class="summary-card">
+        <i class="fas fa-shopping-cart text-primary" style="font-size: 1.8rem;"></i>
+        <div class="value" id="totalOrders">0</div>
+        <div class="label">Total Orders</div>
+        <div class="trend-indicator trend-up" id="ordersTrend">
+          <i class="fas fa-caret-up me-1"></i> <span>0%</span>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i class="fas fa-money-bill-wave text-success" style="font-size: 1.8rem;"></i>
+        <div class="value" id="totalRevenue">₦0</div>
+        <div class="label">Total Revenue</div>
+        <div class="trend-indicator trend-up" id="revenueTrend">
+          <i class="fas fa-caret-up me-1"></i> <span>0%</span>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i class="fas fa-users text-info" style="font-size: 1.8rem;"></i>
+        <div class="value" id="totalCustomers">0</div>
+        <div class="label">Unique Customers</div>
+        <div class="trend-indicator trend-up" id="customersTrend">
+          <i class="fas fa-caret-up me-1"></i> <span>0%</span>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i class="fas fa-cube text-warning" style="font-size: 1.8rem;"></i>
+        <div class="value" id="avgOrderValue">₦0</div>
+        <div class="label">Average Order Value</div>
+        <div class="trend-indicator trend-up" id="aovTrend">
+          <i class="fas fa-caret-up me-1"></i> <span>0%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div class="card chart-card">
+          <h6><i class="fas fa-chart-line me-2"></i> Sales Trend</h6>
+          <div class="chart-container">
+            <canvas id="salesTrendChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card chart-card">
+          <h6><i class="fas fa-chart-pie me-2"></i> Sales by Category</h6>
+          <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3 mt-3">
+      <div class="col-lg-6">
+        <div class="card">
+          <h6><i class="fas fa-list me-2"></i> Top Selling Products</h6>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Units Sold</th>
+                  <th>Revenue</th>
+                </tr>
+              </thead>
+              <tbody id="topProductsBody">
+                <!-- Top products will be loaded here -->
+              </tbody>
+            </table>
+            <div id="emptyProducts" class="empty-state" style="display: none;">
+              <i class="fas fa-box-open"></i>
+              <h4>No Sales Data</h4>
+              <p>Top selling products will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <h6><i class="fas fa-users me-2"></i> Top Customers</h6>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Orders</th>
+                  <th>Total Spent</th>
+                  <th>Last Order</th>
+                </tr>
+              </thead>
+              <tbody id="topCustomersBody">
+                <!-- Top customers will be loaded here -->
+              </tbody>
+            </table>
+            <div id="emptyCustomers" class="empty-state" style="display: none;">
+              <i class="fas fa-user-friends"></i>
+              <h4>No Customer Data</h4>
+              <p>Top customers will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Storage keys
+    const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
+    const CUSTOMERS_STORAGE_KEY = 'lavish_customers_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+    const SALES_SUMMARY_KEY = 'lavish_sales_summary_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Data getters
+    function getPayments() {
+      const payments = localStorage.getItem(PAYMENTS_STORAGE_KEY);
+      return payments ? JSON.parse(payments) : [];
+    }
+
+    function getCustomers() {
+      const customers = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
+      return customers ? JSON.parse(customers) : [];
+    }
+
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    function getNotifications() {
+      const notifications = localStorage.getItem(NOTIFICATIONS_KEY);
+      return notifications ? JSON.parse(notifications) : [];
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // Generate sample sales data for demonstration
+    function generateSampleSalesData() {
+      const payments = getPayments();
+      if (payments.length === 0) return null;
+
+      const completedPayments = payments.filter(p => p.status === 'Completed');
+      
+      // Group by date for daily analysis
+      const dailySales = {};
+      completedPayments.forEach(payment => {
+        const date = payment.date;
+        if (!dailySales[date]) {
+          dailySales[date] = {
+            orders: 0,
+            revenue: 0,
+            customers: new Set(),
+            items: {}
+          };
+        }
+        dailySales[date].orders++;
+        dailySales[date].revenue += payment.amount;
+        dailySales[date].customers.add(payment.customer);
+        
+        // Simulate product sales (in a real app, this would come from order details)
+        const inventory = getInventoryItems();
+        if (inventory.length > 0) {
+          const randomProduct = inventory[Math.floor(Math.random() * inventory.length)];
+          if (!dailySales[date].items[randomProduct.name]) {
+            dailySales[date].items[randomProduct.name] = {
+              category: randomProduct.category,
+              units: 0,
+              revenue: 0
+            };
+          }
+          const units = Math.floor(payment.amount / randomProduct.price) || 1;
+          dailySales[date].items[randomProduct.name].units += units;
+          dailySales[date].items[randomProduct.name].revenue += units * randomProduct.price;
+        }
+      });
+
+      return dailySales;
+    }
+
+    // Load sales data based on selected period
+    function loadSalesData() {
+      const period = document.querySelector('.btn-group .btn.active').dataset.period;
+      const date = document.getElementById('dateSelector').value;
+      
+      const salesData = generateSampleSalesData();
+      if (!salesData) {
+        showEmptyState();
+        return;
+      }
+
+      updateSummaryCards(salesData, period, date);
+      updateCharts(salesData, period, date);
+      updateTopProducts(salesData);
+      updateTopCustomers();
+    }
+
+    // Update summary cards
+    function updateSummaryCards(salesData, period, selectedDate) {
+      let totalOrders = 0;
+      let totalRevenue = 0;
+      let uniqueCustomers = new Set();
+      const allItems = {};
+
+      Object.values(salesData).forEach(day => {
+        totalOrders += day.orders;
+        totalRevenue += day.revenue;
+        day.customers.forEach(customer => uniqueCustomers.add(customer));
+        
+        // Aggregate product data
+        Object.entries(day.items).forEach(([product, data]) => {
+          if (!allItems[product]) {
+            allItems[product] = { ...data };
+          } else {
+            allItems[product].units += data.units;
+            allItems[product].revenue += data.revenue;
+          }
+        });
+      });
+
+      const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+      document.getElementById('totalOrders').textContent = totalOrders.toLocaleString();
+      document.getElementById('totalRevenue').textContent = `₦${totalRevenue.toLocaleString()}`;
+      document.getElementById('totalCustomers').textContent = uniqueCustomers.size.toLocaleString();
+      document.getElementById('avgOrderValue').textContent = `₦${avgOrderValue.toLocaleString()}`;
+
+      // Simulate trends (in real app, compare with previous period)
+      const trends = ['ordersTrend', 'revenueTrend', 'customersTrend', 'aovTrend'];
+      trends.forEach(trendId => {
+        const element = document.getElementById(trendId);
+        const randomChange = (Math.random() * 20 - 5).toFixed(1);
+        const isPositive = parseFloat(randomChange) >= 0;
+        
+        element.className = `trend-indicator ${isPositive ? 'trend-up' : 'trend-down'}`;
+        element.innerHTML = `<i class="fas fa-caret-${isPositive ? 'up' : 'down'} me-1"></i> <span>${Math.abs(randomChange)}%</span>`;
+      });
+    }
+
+    // Update charts
+    function updateCharts(salesData, period, selectedDate) {
+      const dates = Object.keys(salesData).sort();
+      const revenues = dates.map(date => salesData[date].revenue);
+      const orders = dates.map(date => salesData[date].orders);
+
+      // Sales Trend Chart
+      const trendCtx = document.getElementById('salesTrendChart');
+      if (window.trendChart) {
+        window.trendChart.destroy();
+      }
+      
+      window.trendChart = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              label: 'Revenue (₦)',
+              data: revenues,
+              borderColor: '#3498db',
+              backgroundColor: 'rgba(52, 152, 219, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Orders',
+              data: orders,
+              borderColor: '#2ecc71',
+              backgroundColor: 'rgba(46, 204, 113, 0.1)',
+              borderWidth: 2,
+              fill: false,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Revenue (₦)'
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: {
+                display: true,
+                text: 'Orders'
+              },
+              grid: {
+                drawOnChartArea: false,
+              },
+            }
+          }
+        }
+      });
+
+      // Category Chart
+      const categoryCtx = document.getElementById('categoryChart');
+      const categories = {
+        'Accessories': 45,
+        'Clothing': 30,
+        'Electronics': 15,
+        'Home Goods': 10
+      };
+
+      if (window.categoryChart) {
+        window.categoryChart.destroy();
+      }
+
+      window.categoryChart = new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(categories),
+          datasets: [{
+            data: Object.values(categories),
+            backgroundColor: [
+              '#3498db',
+              '#2ecc71',
+              '#e74c3c',
+              '#f39c12'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          },
+          cutout: '60%'
+        }
+      });
+    }
+
+    // Update top products table
+    function updateTopProducts(salesData) {
+      const allItems = {};
+      
+      Object.values(salesData).forEach(day => {
+        Object.entries(day.items).forEach(([product, data]) => {
+          if (!allItems[product]) {
+            allItems[product] = { ...data };
+          } else {
+            allItems[product].units += data.units;
+            allItems[product].revenue += data.revenue;
+          }
+        });
+      });
+
+      const topProducts = Object.entries(allItems)
+        .sort((a, b) => b[1].revenue - a[1].revenue)
+        .slice(0, 5);
+
+      const tbody = document.getElementById('topProductsBody');
+      const emptyState = document.getElementById('emptyProducts');
+
+      if (topProducts.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      tbody.innerHTML = topProducts.map(([product, data]) => `
+        <tr>
+          <td>${product}</td>
+          <td>${data.category}</td>
+          <td>${data.units}</td>
+          <td>₦${data.revenue.toLocaleString()}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Update top customers table
+    function updateTopCustomers() {
+      const payments = getPayments();
+      const completedPayments = payments.filter(p => p.status === 'Completed');
+      
+      const customerStats = {};
+      completedPayments.forEach(payment => {
+        if (!customerStats[payment.customer]) {
+          customerStats[payment.customer] = {
+            orders: 0,
+            totalSpent: 0,
+            lastOrder: payment.date
+          };
+        }
+        customerStats[payment.customer].orders++;
+        customerStats[payment.customer].totalSpent += payment.amount;
+        if (payment.date > customerStats[payment.customer].lastOrder) {
+          customerStats[payment.customer].lastOrder = payment.date;
+        }
+      });
+
+      const topCustomers = Object.entries(customerStats)
+        .sort((a, b) => b[1].totalSpent - a[1].totalSpent)
+        .slice(0, 5);
+
+      const tbody = document.getElementById('topCustomersBody');
+      const emptyState = document.getElementById('emptyCustomers');
+
+      if (topCustomers.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      tbody.innerHTML = topCustomers.map(([customer, stats]) => `
+        <tr>
+          <td>${customer}</td>
+          <td>${stats.orders}</td>
+          <td>₦${stats.totalSpent.toLocaleString()}</td>
+          <td>${stats.lastOrder}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Show empty state
+    function showEmptyState() {
+      document.getElementById('emptyProducts').style.display = 'block';
+      document.getElementById('emptyCustomers').style.display = 'block';
+    }
+
+    // Download sales report
+    function downloadSalesReport() {
+      const salesData = generateSampleSalesData();
+      if (!salesData) {
+        alert('No sales data available to export.');
+        return;
+      }
+
+      let csvContent = "Lavish Lifestyle - Sales Summary Report\n";
+      csvContent += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
+      
+      csvContent += "SALES SUMMARY\n";
+      csvContent += "Date,Orders,Revenue (₦),Unique Customers\n";
+      
+      Object.entries(salesData).forEach(([date, data]) => {
+        csvContent += `${date},${data.orders},${data.revenue},${data.customers.size}\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sales-summary-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Sales summary report downloaded successfully!');
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      updateNotificationBadge();
+      
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateSelector').value = today;
+      
+      // Load initial data
+      loadSalesData();
+      
+      // Period selector event listeners
+      document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          loadSalesData();
+        });
+      });
+
+      // Initialize sidebar submenus (same as dashboard)
+      initializeSidebarSubmenus();
+    });
+
+    // Initialize sidebar submenus (same functionality as dashboard)
+    function initializeSidebarSubmenus() {
+      // Wire up all submenu toggles
+      const submenus = [
+        'product', 'inventoryControl', 'stockMovement', 
+        'purchaseManagement', 'salesManagement', 'reportingAnalytics'
+      ];
+
+      submenus.forEach(menu => {
+        const toggle = document.getElementById(`${menu}Toggle`);
+        const submenu = document.getElementById(`${menu}Submenu`);
+        const chevron = document.getElementById(`${menu}Chevron`);
+
+        if (toggle && submenu) {
+          toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', (!expanded).toString());
+            
+            if (submenu.style.maxHeight && submenu.style.maxHeight !== '0px') {
+              submenu.style.maxHeight = '0';
+              chevron.style.transform = '';
+            } else {
+              submenu.style.maxHeight = (submenu.scrollHeight + 20) + 'px';
+              chevron.style.transform = 'rotate(180deg)';
+            }
+          });
+        }
+      });
+    }
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

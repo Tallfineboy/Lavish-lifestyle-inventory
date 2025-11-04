@@ -1,0 +1,1528 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .kpi {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .kpi:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .kpi::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: var(--primary-color);
+    }
+
+    .kpi-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .kpi h6 {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .kpi h3 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .kpi-trend {
+      font-size: 0.8rem;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .trend-up {
+      color: var(--success-color);
+    }
+
+    .trend-down {
+      color: var(--danger-color);
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-completed {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-pending {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-processing {
+      background: rgba(52, 152, 219, 0.2);
+      color: var(--primary-color);
+    }
+
+    .status-failed {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Enhanced KPI Cards with different colors */
+    .kpi:nth-child(1)::before { background: var(--primary-color); }
+    .kpi:nth-child(2)::before { background: var(--accent-color); }
+    .kpi:nth-child(3)::before { background: var(--success-color); }
+    .kpi:nth-child(4)::before { background: var(--warning-color); }
+
+    .kpi:nth-child(1) .kpi-icon { color: var(--primary-color); }
+    .kpi:nth-child(2) .kpi-icon { color: var(--accent-color); }
+    .kpi:nth-child(3) .kpi-icon { color: var(--success-color); }
+    .kpi:nth-child(4) .kpi-icon { color: var(--warning-color); }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Enhanced charts */
+    .chart-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(131, 89, 182, 0.1) 100%);
+      border-radius: 0 0 0 100px;
+      z-index: 0;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Inventory Valuation specific styles */
+    .valuation-kpi {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .valuation-kpi .value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .valuation-kpi .label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .valuation-kpi.positive .value {
+      color: var(--success-color);
+    }
+
+    .valuation-kpi.negative .value {
+      color: var(--danger-color);
+    }
+
+    .valuation-kpi.neutral .value {
+      color: var(--warning-color);
+    }
+
+    .filter-controls {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .valuation-table th, .valuation-table td {
+      text-align: right;
+    }
+
+    .valuation-table th:first-child, .valuation-table td:first-child {
+      text-align: left;
+    }
+
+    .valuation-method {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .method-fifo {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .method-lifo {
+      background: rgba(52, 152, 219, 0.2);
+      color: var(--primary-color);
+    }
+
+    .method-weighted {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1001;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center active" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:1000px;">
+            <a href="/invalreports.html" class="submenu-link active">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Inventory Valuation Reports</h2>
+      <p>Track and analyze your inventory value across different valuation methods and categories.</p>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Valuation Overview</h3>
+      <div>
+        <button class="btn btn-sm btn-outline-primary" onclick="downloadValuationReport()">
+          <i class="fas fa-download me-1"></i> Export Report
+        </button>
+      </div>
+    </div>
+    
+    <!-- Filter Controls -->
+    <div class="filter-controls">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label for="valuationMethod" class="form-label">Valuation Method</label>
+          <select class="form-select" id="valuationMethod">
+            <option value="all">All Methods</option>
+            <option value="fifo" selected>FIFO (First-In, First-Out)</option>
+            <option value="lifo">LIFO (Last-In, First-Out)</option>
+            <option value="weighted">Weighted Average</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="categoryFilter" class="form-label">Category</label>
+          <select class="form-select" id="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="accessories">Accessories</option>
+            <option value="clothing">Clothing</option>
+            <option value="footwear">Footwear</option>
+            <option value="jewelry">Jewelry</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="warehouseFilter" class="form-label">Warehouse</label>
+          <select class="form-select" id="warehouseFilter">
+            <option value="all">All Warehouses</option>
+            <option value="main">Main Warehouse</option>
+            <option value="store1">Store 1</option>
+            <option value="store2">Store 2</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" onclick="applyFilters()">
+            <i class="fas fa-filter me-1"></i> Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Valuation KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <i class="fas fa-calculator kpi-icon"></i>
+        <h6>Total Inventory Value</h6>
+        <h3 id="k_totalValue">₦8,425,750</h3>
+        <div class="kpi-trend" id="totalValueTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>5.2% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-boxes kpi-icon"></i>
+        <h6>Total SKUs</h6>
+        <h3 id="k_totalSKUs">156</h3>
+        <div class="kpi-trend" id="totalSKUsTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>12 new items</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-percentage kpi-icon"></i>
+        <h6>Avg. Gross Margin</h6>
+        <h3 id="k_avgMargin">42.8%</h3>
+        <div class="kpi-trend" id="avgMarginTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>1.5% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-exchange-alt kpi-icon"></i>
+        <h6>Inventory Turnover</h6>
+        <h3 id="k_turnover">6.2x</h3>
+        <div class="kpi-trend" id="turnoverTrend">
+          <i class="fas fa-caret-down me-1 trend-down"></i> <span>0.3x from last month</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3 mt-2">
+      <div class="col-lg-8">
+        <div class="card chart-card">
+          <h6><i class="fas fa-chart-bar me-2"></i> Inventory Value by Category</h6>
+          <div class="chart-container">
+            <canvas id="valueByCategoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card chart-card">
+          <h6><i class="fas fa-chart-pie me-2"></i> Value Distribution</h6>
+          <div class="chart-container">
+            <canvas id="valueDistributionChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3 mt-2">
+      <div class="col-lg-6">
+        <div class="card chart-card">
+          <h6><i class="fas fa-chart-line me-2"></i> Inventory Value Trend</h6>
+          <div class="chart-container">
+            <canvas id="valueTrendChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <h6><i class="fas fa-star me-2"></i> Highest Value Items</h6>
+          <div class="valuation-kpi positive">
+            <div class="value">₦2,150,000</div>
+            <div class="label">Premium Leather Handbag Collection</div>
+          </div>
+          <div class="valuation-kpi positive">
+            <div class="value">₦1,980,000</div>
+            <div class="label">Luxury Watch Collection</div>
+          </div>
+          <div class="valuation-kpi neutral">
+            <div class="value">₦1,250,000</div>
+            <div class="label">Designer Sunglasses</div>
+          </div>
+          <div class="valuation-kpi neutral">
+            <div class="value">₦875,000</div>
+            <div class="label">Jewelry Collection</div>
+          </div>
+          <div class="valuation-kpi negative">
+            <div class="value">₦425,000</div>
+            <div class="label">Footwear Collection</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Valuation Comparison Table -->
+    <div class="card mt-3">
+      <h6><i class="fas fa-balance-scale me-2"></i> Valuation Method Comparison</h6>
+      <div class="table-wrap">
+        <table class="table valuation-table">
+          <thead>
+            <tr>
+              <th>Product Category</th>
+              <th>FIFO Value</th>
+              <th>LIFO Value</th>
+              <th>Weighted Avg Value</th>
+              <th>Quantity</th>
+              <th>Avg Unit Cost</th>
+              <th>Variance %</th>
+            </tr>
+          </thead>
+          <tbody id="valuationTableBody">
+            <tr>
+              <td>Accessories</td>
+              <td>₦4,250,000</td>
+              <td>₦4,120,000</td>
+              <td>₦4,185,000</td>
+              <td>85</td>
+              <td>₦49,235</td>
+              <td><span class="trend-up">3.1%</span></td>
+            </tr>
+            <tr>
+              <td>Clothing</td>
+              <td>₦1,875,000</td>
+              <td>₦1,920,000</td>
+              <td>₦1,895,000</td>
+              <td>42</td>
+              <td>₦45,119</td>
+              <td><span class="trend-down">-2.4%</span></td>
+            </tr>
+            <tr>
+              <td>Footwear</td>
+              <td>₦1,250,000</td>
+              <td>₦1,280,000</td>
+              <td>₦1,265,000</td>
+              <td>18</td>
+              <td>₦70,278</td>
+              <td><span class="trend-down">-2.4%</span></td>
+            </tr>
+            <tr>
+              <td>Jewelry</td>
+              <td>₦1,050,750</td>
+              <td>₦1,025,500</td>
+              <td>₦1,038,000</td>
+              <td>11</td>
+              <td>₦94,364</td>
+              <td><span class="trend-up">2.4%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Detailed Inventory Valuation Table -->
+    <div class="card mt-3">
+      <h6><i class="fas fa-table me-2"></i> Detailed Inventory Valuation</h6>
+      <div class="table-wrap">
+        <table class="table valuation-table">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>SKU</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Unit Cost</th>
+              <th>Total Value</th>
+              <th>Valuation Method</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody id="detailedValuationTableBody">
+            <tr>
+              <td>Premium Leather Handbag</td>
+              <td>LLH-001</td>
+              <td>Accessories</td>
+              <td>15</td>
+              <td>₦45,000</td>
+              <td>₦675,000</td>
+              <td><span class="valuation-method method-fifo">FIFO</span></td>
+              <td>2024-01-15</td>
+            </tr>
+            <tr>
+              <td>Luxury Watch - Gold</td>
+              <td>LLW-001</td>
+              <td>Accessories</td>
+              <td>8</td>
+              <td>₦120,000</td>
+              <td>₦960,000</td>
+              <td><span class="valuation-method method-fifo">FIFO</span></td>
+              <td>2024-01-14</td>
+            </tr>
+            <tr>
+              <td>Designer Sunglasses</td>
+              <td>LLS-001</td>
+              <td>Accessories</td>
+              <td>32</td>
+              <td>₦25,000</td>
+              <td>₦800,000</td>
+              <td><span class="valuation-method method-weighted">Weighted Avg</span></td>
+              <td>2024-01-13</td>
+            </tr>
+            <tr>
+              <td>Cashmere Scarf</td>
+              <td>LLC-001</td>
+              <td>Clothing</td>
+              <td>25</td>
+              <td>₦18,000</td>
+              <td>₦450,000</td>
+              <td><span class="valuation-method method-lifo">LIFO</span></td>
+              <td>2024-01-12</td>
+            </tr>
+            <tr>
+              <td>Designer Dress</td>
+              <td>LLD-001</td>
+              <td>Clothing</td>
+              <td>12</td>
+              <td>₦35,000</td>
+              <td>₦420,000</td>
+              <td><span class="valuation-method method-fifo">FIFO</span></td>
+              <td>2024-01-11</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Storage keys
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+    const INVENTORY_VALUATION_KEY = 'lavish_inventory_valuation_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Get notifications
+    function getNotifications() {
+      const notifications = localStorage.getItem(NOTIFICATIONS_KEY);
+      return notifications ? JSON.parse(notifications) : [];
+    }
+
+    // Get inventory valuation data
+    function getInventoryValuationData() {
+      const data = localStorage.getItem(INVENTORY_VALUATION_KEY);
+      return data ? JSON.parse(data) : null;
+    }
+
+    // Save inventory valuation data
+    function saveInventoryValuationData(data) {
+      localStorage.setItem(INVENTORY_VALUATION_KEY, JSON.stringify(data));
+    }
+
+    // Initialize demo inventory valuation data if none exists
+    function initializeDemoValuationData() {
+      const existingData = getInventoryValuationData();
+      if (!existingData) {
+        const demoData = {
+          totalValue: 8425750,
+          totalSKUs: 156,
+          avgMargin: 42.8,
+          turnover: 6.2,
+          categoryValues: {
+            accessories: 4250000,
+            clothing: 1875000,
+            footwear: 1250000,
+            jewelry: 1050750
+          },
+          valueDistribution: {
+            accessories: 50.4,
+            clothing: 22.3,
+            footwear: 14.8,
+            jewelry: 12.5
+          },
+          valueTrend: [7200000, 7350000, 7520000, 7680000, 7820000, 7950000, 8100000, 8250000, 8320000, 8400000, 8420000, 8425750],
+          topItems: [
+            { name: "Premium Leather Handbag Collection", value: 2150000 },
+            { name: "Luxury Watch Collection", value: 1980000 },
+            { name: "Designer Sunglasses", value: 1250000 },
+            { name: "Jewelry Collection", value: 875000 },
+            { name: "Footwear Collection", value: 425000 }
+          ],
+          valuationComparison: [
+            { category: "Accessories", fifo: 4250000, lifo: 4120000, weighted: 4185000, quantity: 85, unitCost: 49235 },
+            { category: "Clothing", fifo: 1875000, lifo: 1920000, weighted: 1895000, quantity: 42, unitCost: 45119 },
+            { category: "Footwear", fifo: 1250000, lifo: 1280000, weighted: 1265000, quantity: 18, unitCost: 70278 },
+            { category: "Jewelry", fifo: 1050750, lifo: 1025500, weighted: 1038000, quantity: 11, unitCost: 94364 }
+          ],
+          detailedItems: [
+            { name: "Premium Leather Handbag", sku: "LLH-001", category: "Accessories", quantity: 15, unitCost: 45000, totalValue: 675000, method: "fifo", lastUpdated: "2024-01-15" },
+            { name: "Luxury Watch - Gold", sku: "LLW-001", category: "Accessories", quantity: 8, unitCost: 120000, totalValue: 960000, method: "fifo", lastUpdated: "2024-01-14" },
+            { name: "Designer Sunglasses", sku: "LLS-001", category: "Accessories", quantity: 32, unitCost: 25000, totalValue: 800000, method: "weighted", lastUpdated: "2024-01-13" },
+            { name: "Cashmere Scarf", sku: "LLC-001", category: "Clothing", quantity: 25, unitCost: 18000, totalValue: 450000, method: "lifo", lastUpdated: "2024-01-12" },
+            { name: "Designer Dress", sku: "LLD-001", category: "Clothing", quantity: 12, unitCost: 35000, totalValue: 420000, method: "fifo", lastUpdated: "2024-01-11" }
+          ]
+        };
+        saveInventoryValuationData(demoData);
+      }
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+        
+        // Add alert animation to bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.add('notification-alert');
+        }
+      } else {
+        badge.style.display = 'none';
+        
+        // Remove alert animation from bell icon
+        const bellIcon = document.querySelector('#notificationsLink i');
+        if (bellIcon) {
+          bellIcon.classList.remove('notification-alert');
+        }
+      }
+    }
+
+    // Initialize charts
+    function initializeCharts() {
+      const data = getInventoryValuationData();
+      if (!data) return;
+
+      // Value by Category Chart
+      const categoryCtx = document.getElementById('valueByCategoryChart');
+      if (categoryCtx) {
+        window.valueByCategoryChart = new Chart(categoryCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Accessories', 'Clothing', 'Footwear', 'Jewelry'],
+            datasets: [{
+              label: 'Inventory Value (₦)',
+              data: [
+                data.categoryValues.accessories,
+                data.categoryValues.clothing,
+                data.categoryValues.footwear,
+                data.categoryValues.jewelry
+              ],
+              backgroundColor: [
+                '#3498db',
+                '#2ecc71',
+                '#f39c12',
+                '#9b59b6'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    if (value >= 1000000) {
+                      return '₦' + (value / 1000000).toFixed(1) + 'M';
+                    } else if (value >= 1000) {
+                      return '₦' + (value / 1000).toFixed(0) + 'K';
+                    }
+                    return '₦' + value;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Value Distribution Chart
+      const distributionCtx = document.getElementById('valueDistributionChart');
+      if (distributionCtx) {
+        window.valueDistributionChart = new Chart(distributionCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Accessories', 'Clothing', 'Footwear', 'Jewelry'],
+            datasets: [{
+              data: [
+                data.valueDistribution.accessories,
+                data.valueDistribution.clothing,
+                data.valueDistribution.footwear,
+                data.valueDistribution.jewelry
+              ],
+              backgroundColor: [
+                '#3498db',
+                '#2ecc71',
+                '#f39c12',
+                '#9b59b6'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  boxWidth: 12,
+                  font: {
+                    size: 11
+                  }
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+      }
+
+      // Value Trend Chart
+      const trendCtx = document.getElementById('valueTrendChart');
+      if (trendCtx) {
+        window.valueTrendChart = new Chart(trendCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+              label: 'Inventory Value (₦)',
+              data: data.valueTrend,
+              borderColor: '#3498db',
+              backgroundColor: 'rgba(52, 152, 219, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: false,
+                ticks: {
+                  callback: function(value) {
+                    if (value >= 1000000) {
+                      return '₦' + (value / 1000000).toFixed(1) + 'M';
+                    } else if (value >= 1000) {
+                      return '₦' + (value / 1000).toFixed(0) + 'K';
+                    }
+                    return '₦' + value;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Apply filters
+    function applyFilters() {
+      const valuationMethod = document.getElementById('valuationMethod').value;
+      const category = document.getElementById('categoryFilter').value;
+      const warehouse = document.getElementById('warehouseFilter').value;
+      
+      // In a real application, this would filter the data and update charts
+      alert(`Filters applied: ${valuationMethod}, ${category}, ${warehouse}`);
+      
+      // For demo purposes, we'll just update the KPIs with some variation
+      const data = getInventoryValuationData();
+      if (data) {
+        // Add some random variation to simulate filtered data
+        const variation = (Math.random() * 3) - 1.5; // -1.5 to +1.5
+        
+        document.getElementById('k_totalValue').textContent = '₦' + Math.round(data.totalValue * (1 + variation/100)).toLocaleString();
+        document.getElementById('k_avgMargin').textContent = (data.avgMargin + variation).toFixed(1) + '%';
+        document.getElementById('k_turnover').textContent = (data.turnover + (variation/10)).toFixed(1) + 'x';
+      }
+    }
+
+    // Download valuation report
+    function downloadValuationReport() {
+      const data = getInventoryValuationData();
+      if (!data) return;
+      
+      let csvContent = "Lavish Lifestyle Inventory - Valuation Report\n";
+      csvContent += `Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n\n`;
+      
+      csvContent += "VALUATION OVERVIEW\n";
+      csvContent += "Metric,Value\n";
+      csvContent += `Total Inventory Value,₦${data.totalValue.toLocaleString()}\n`;
+      csvContent += `Total SKUs,${data.totalSKUs}\n`;
+      csvContent += `Average Gross Margin,${data.avgMargin}%\n`;
+      csvContent += `Inventory Turnover,${data.turnover}x\n\n`;
+      
+      csvContent += "VALUATION BY CATEGORY\n";
+      csvContent += "Category,Value (₦),Percentage\n";
+      csvContent += `Accessories,${data.categoryValues.accessories},${data.valueDistribution.accessories}%\n`;
+      csvContent += `Clothing,${data.categoryValues.clothing},${data.valueDistribution.clothing}%\n`;
+      csvContent += `Footwear,${data.categoryValues.footwear},${data.valueDistribution.footwear}%\n`;
+      csvContent += `Jewelry,${data.categoryValues.jewelry},${data.valueDistribution.jewelry}%\n\n`;
+      
+      csvContent += "VALUATION METHOD COMPARISON\n";
+      csvContent += "Category,FIFO Value (₦),LIFO Value (₦),Weighted Avg Value (₦),Quantity,Avg Unit Cost (₦)\n";
+      data.valuationComparison.forEach(item => {
+        csvContent += `${item.category},${item.fifo},${item.lifo},${item.weighted},${item.quantity},${item.unitCost}\n`;
+      });
+      csvContent += "\n";
+      
+      csvContent += "DETAILED INVENTORY VALUATION\n";
+      csvContent += "Product Name,SKU,Category,Quantity,Unit Cost (₦),Total Value (₦),Valuation Method,Last Updated\n";
+      data.detailedItems.forEach(item => {
+        csvContent += `${item.name},${item.sku},${item.category},${item.quantity},${item.unitCost},${item.totalValue},${item.method},${item.lastUpdated}\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lavish-valuation-report-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Valuation report downloaded as CSV successfully!');
+    }
+
+    // Mobile menu toggle functionality
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+        });
+        
+        // Close sidebar when clicking on a link (for mobile)
+        const navLinks = document.querySelectorAll('.nav-link, .submenu-link');
+        navLinks.forEach(link => {
+          link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+              sidebar.classList.remove('mobile-open');
+            }
+          });
+        });
+      }
+    }
+
+    // Initialize all sidebar submenu toggles
+    function initializeSidebarSubmenus() {
+      // Wire up product submenu toggle
+      const productToggle = document.getElementById('productToggle');
+      const productSubmenu = document.getElementById('productSubmenu');
+      const productChevron = document.getElementById('productChevron');
+      if (productToggle && productSubmenu) {
+        productToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+          productToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+            productSubmenu.style.maxHeight = '0';
+            productChevron.style.transform = '';
+          } else {
+            productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+            productChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up inventory control submenu toggle
+      const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+      const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+      const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+      if (inventoryControlToggle && inventoryControlSubmenu) {
+        inventoryControlToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+          inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+            inventoryControlSubmenu.style.maxHeight = '0';
+            inventoryControlChevron.style.transform = '';
+          } else {
+            inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+            inventoryControlChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up stock movement submenu toggle
+      const stockMovementToggle = document.getElementById('stockMovementToggle');
+      const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
+      const stockMovementChevron = document.getElementById('stockMovementChevron');
+      if (stockMovementToggle && stockMovementSubmenu) {
+        stockMovementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = stockMovementToggle.getAttribute('aria-expanded') === 'true';
+          stockMovementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (stockMovementSubmenu.style.maxHeight && stockMovementSubmenu.style.maxHeight !== '0px') {
+            stockMovementSubmenu.style.maxHeight = '0';
+            stockMovementChevron.style.transform = '';
+          } else {
+            stockMovementSubmenu.style.maxHeight = (stockMovementSubmenu.scrollHeight + 20) + 'px';
+            stockMovementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up purchase management submenu toggle
+      const purchaseManagementToggle = document.getElementById('purchaseManagementToggle');
+      const purchaseManagementSubmenu = document.getElementById('purchaseManagementSubmenu');
+      const purchaseManagementChevron = document.getElementById('purchaseManagementChevron');
+      if (purchaseManagementToggle && purchaseManagementSubmenu) {
+        purchaseManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = purchaseManagementToggle.getAttribute('aria-expanded') === 'true';
+          purchaseManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (purchaseManagementSubmenu.style.maxHeight && purchaseManagementSubmenu.style.maxHeight !== '0px') {
+            purchaseManagementSubmenu.style.maxHeight = '0';
+            purchaseManagementChevron.style.transform = '';
+          } else {
+            purchaseManagementSubmenu.style.maxHeight = (purchaseManagementSubmenu.scrollHeight + 20) + 'px';
+            purchaseManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up sales management submenu toggle
+      const salesManagementToggle = document.getElementById('salesManagementToggle');
+      const salesManagementSubmenu = document.getElementById('salesManagementSubmenu');
+      const salesManagementChevron = document.getElementById('salesManagementChevron');
+      if (salesManagementToggle && salesManagementSubmenu) {
+        salesManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = salesManagementToggle.getAttribute('aria-expanded') === 'true';
+          salesManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (salesManagementSubmenu.style.maxHeight && salesManagementSubmenu.style.maxHeight !== '0px') {
+            salesManagementSubmenu.style.maxHeight = '0';
+            salesManagementChevron.style.transform = '';
+          } else {
+            salesManagementSubmenu.style.maxHeight = (salesManagementSubmenu.scrollHeight + 20) + 'px';
+            salesManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up reporting & analytics submenu toggle (keep expanded on this page)
+      const reportingAnalyticsToggle = document.getElementById('reportingAnalyticsToggle');
+      const reportingAnalyticsSubmenu = document.getElementById('reportingAnalyticsSubmenu');
+      const reportingAnalyticsChevron = document.getElementById('reportingAnalyticsChevron');
+      
+      if (reportingAnalyticsToggle && reportingAnalyticsSubmenu) {
+        // Keep the reporting analytics submenu expanded on this page
+        reportingAnalyticsToggle.setAttribute('aria-expanded', 'true');
+        reportingAnalyticsSubmenu.style.maxHeight = (reportingAnalyticsSubmenu.scrollHeight + 20) + 'px';
+        reportingAnalyticsChevron.style.transform = 'rotate(180deg)';
+        
+        reportingAnalyticsToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = reportingAnalyticsToggle.getAttribute('aria-expanded') === 'true';
+          reportingAnalyticsToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (reportingAnalyticsSubmenu.style.maxHeight && reportingAnalyticsSubmenu.style.maxHeight !== '0px') {
+            reportingAnalyticsSubmenu.style.maxHeight = '0';
+            reportingAnalyticsChevron.style.transform = '';
+          } else {
+            reportingAnalyticsSubmenu.style.maxHeight = (reportingAnalyticsSubmenu.scrollHeight + 20) + 'px';
+            reportingAnalyticsChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      initializeDemoValuationData();
+      updateNotificationBadge();
+      initializeCharts();
+      initializeSidebarSubmenus();
+      setupMobileMenu();
+    });
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

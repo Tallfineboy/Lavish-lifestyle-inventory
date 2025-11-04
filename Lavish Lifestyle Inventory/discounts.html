@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-active {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-inactive {
+      background: rgba(108, 117, 125, 0.2);
+      color: var(--text-muted);
+    }
+
+    .status-expired {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .status-scheduled {
+      background: rgba(52, 152, 219, 0.2);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* KPI Grid for Discounts */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .kpi {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .kpi:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .kpi::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: var(--primary-color);
+    }
+
+    .kpi-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .kpi h6 {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .kpi h3 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .kpi-trend {
+      font-size: 0.8rem;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .trend-up {
+      color: var(--success-color);
+    }
+
+    .trend-down {
+      color: var(--danger-color);
+    }
+
+    /* Enhanced KPI Cards with different colors */
+    .kpi:nth-child(1)::before { background: #3498db; }
+    .kpi:nth-child(2)::before { background: #e74c3c; }
+    .kpi:nth-child(3)::before { background: #f39c12; }
+    .kpi:nth-child(4)::before { background: #2ecc71; }
+
+    .kpi:nth-child(1) .kpi-icon { color: #3498db; }
+    .kpi:nth-child(2) .kpi-icon { color: #e74c3c; }
+    .kpi:nth-child(3) .kpi-icon { color: #f39c12; }
+    .kpi:nth-child(4) .kpi-icon { color: #2ecc71; }
+
+    /* Form sections */
+    .form-section {
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .form-section h5 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f8f9fa;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* Discount badge */
+    .discount-badge {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link active">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Discounts Header -->
+    <div class="welcome-header">
+      <h2><i class="fas fa-percentage me-2"></i>Discounts, Taxes & Credit Sales</h2>
+      <p>Manage promotional discounts, tax settings, and customer credit terms</p>
+    </div>
+    
+    <!-- KPI Grid -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <i class="fas fa-tags kpi-icon"></i>
+        <h6>Active Discounts</h6>
+        <h3 id="k_activeDiscounts">12</h3>
+        <div class="kpi-trend" id="discountsTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>15% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-money-bill-wave kpi-icon"></i>
+        <h6>Total Discounts Given</h6>
+        <h3 id="k_totalDiscounts">₦245,800</h3>
+        <div class="kpi-trend" id="savingsTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>8% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-receipt kpi-icon"></i>
+        <h6>Credit Sales</h6>
+        <h3 id="k_creditSales">₦1.2M</h3>
+        <div class="kpi-trend" id="creditTrend">
+          <i class="fas fa-caret-down me-1 trend-down"></i> <span>5% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-chart-line kpi-icon"></i>
+        <h6>Tax Collection</h6>
+        <h3 id="k_taxCollection">₦89,400</h3>
+        <div class="kpi-trend" id="taxTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>12% from last month</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3>Discount Management</h3>
+      <div>
+        <button class="btn btn-sm btn-outline-primary me-2" onclick="loadDiscountAnalytics()">
+          <i class="fas fa-chart-bar me-1"></i> View Analytics
+        </button>
+        <button class="btn btn-sm btn-primary" onclick="showCreateDiscountModal()">
+          <i class="fas fa-plus me-1"></i> Create Discount
+        </button>
+      </div>
+    </div>
+    
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <!-- Active Discounts -->
+        <div class="card">
+          <h6><i class="fas fa-tags me-2"></i> Active Discounts</h6>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Discount Name</th>
+                  <th>Type</th>
+                  <th>Value</th>
+                  <th>Applicable To</th>
+                  <th>Valid Until</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="discountsTableBody">
+                <tr>
+                  <td>Summer Sale 2024</td>
+                  <td>Percentage</td>
+                  <td><span class="discount-badge">20% OFF</span></td>
+                  <td>All Products</td>
+                  <td>2024-08-31</td>
+                  <td><span class="status status-active">Active</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>New Customer Welcome</td>
+                  <td>Fixed Amount</td>
+                  <td><span class="discount-badge">₦5,000 OFF</span></td>
+                  <td>First Order</td>
+                  <td>2024-12-31</td>
+                  <td><span class="status status-active">Active</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Bulk Purchase</td>
+                  <td>Percentage</td>
+                  <td><span class="discount-badge">15% OFF</span></td>
+                  <td>Orders over ₦100,000</td>
+                  <td>2024-09-15</td>
+                  <td><span class="status status-scheduled">Scheduled</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Tax Settings -->
+        <div class="card mt-4">
+          <h6><i class="fas fa-receipt me-2"></i> Tax Configuration</h6>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Tax Name</th>
+                  <th>Rate</th>
+                  <th>Type</th>
+                  <th>Applicable To</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>VAT</td>
+                  <td>7.5%</td>
+                  <td>Sales Tax</td>
+                  <td>All Products</td>
+                  <td><span class="status status-active">Active</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Luxury Tax</td>
+                  <td>10%</td>
+                  <td>Additional Tax</td>
+                  <td>Premium Products</td>
+                  <td><span class="status status-active">Active</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card">
+          <h6><i class="fas fa-bolt me-2"></i> Quick Actions</h6>
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary text-start" onclick="showCreateDiscountModal()">
+              <i class="fas fa-tag me-2"></i> Create New Discount
+            </button>
+            <button class="btn btn-outline-success text-start" onclick="manageTaxSettings()">
+              <i class="fas fa-receipt me-2"></i> Manage Tax Settings
+            </button>
+            <button class="btn btn-outline-info text-start" onclick="viewCreditTerms()">
+              <i class="fas fa-credit-card me-2"></i> Credit Terms Setup
+            </button>
+            <button class="btn btn-outline-warning text-start" onclick="generateDiscountReport()">
+              <i class="fas fa-chart-pie me-2"></i> Generate Report
+            </button>
+          </div>
+        </div>
+        
+        <!-- Credit Sales Summary -->
+        <div class="card mt-4">
+          <h6><i class="fas fa-credit-card me-2"></i> Credit Sales Overview</h6>
+          <div class="mb-3">
+            <small class="text-muted">Outstanding Credit</small>
+            <h4 class="text-warning">₦450,000</h4>
+          </div>
+          <div class="mb-3">
+            <small class="text-muted">Overdue Payments</small>
+            <h4 class="text-danger">₦125,000</h4>
+          </div>
+          <div class="mb-3">
+            <small class="text-muted">Credit Customers</small>
+            <h4 class="text-info">24</h4>
+          </div>
+          <button class="btn btn-sm btn-outline-primary w-100" onclick="manageCreditSales()">
+            <i class="fas fa-cog me-1"></i> Manage Credit Terms
+          </button>
+        </div>
+        
+        <!-- Recent Discount Activity -->
+        <div class="card mt-4">
+          <h6><i class="fas fa-history me-2"></i> Recent Activity</h6>
+          <div class="list-group list-group-flush">
+            <div class="list-group-item px-0">
+              <small class="text-muted">2 hours ago</small>
+              <p class="mb-1">"Summer Sale" discount applied to 5 orders</p>
+            </div>
+            <div class="list-group-item px-0">
+              <small class="text-muted">Yesterday</small>
+              <p class="mb-1">New customer welcome discount created</p>
+            </div>
+            <div class="list-group-item px-0">
+              <small class="text-muted">2 days ago</small>
+              <p class="mb-1">Bulk purchase discount scheduled</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Create Discount Modal -->
+    <div class="modal fade" id="createDiscountModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Create New Discount</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-section">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Discount Name</label>
+                  <input type="text" class="form-control" id="discountName" placeholder="e.g., Summer Sale 2024">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Discount Type</label>
+                  <select class="form-select" id="discountType">
+                    <option value="percentage">Percentage</option>
+                    <option value="fixed">Fixed Amount</option>
+                    <option value="bogo">Buy One Get One</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Discount Value</label>
+                  <input type="number" class="form-control" id="discountValue" placeholder="e.g., 20">
+                  <small class="text-muted">Enter percentage or fixed amount</small>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Applicable To</label>
+                  <select class="form-select" id="applicableTo">
+                    <option value="all">All Products</option>
+                    <option value="category">Specific Category</option>
+                    <option value="product">Specific Products</option>
+                    <option value="customer">Customer Groups</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Start Date</label>
+                  <input type="datetime-local" class="form-control" id="startDate">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">End Date</label>
+                  <input type="datetime-local" class="form-control" id="endDate">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" id="discountDescription" rows="3" placeholder="Discount description and terms..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="createDiscount()">Create Discount</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Storage keys
+    const DISCOUNTS_STORAGE_KEY = 'lavish_discounts_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Get discounts from storage
+    function getDiscounts() {
+      const discounts = localStorage.getItem(DISCOUNTS_STORAGE_KEY);
+      return discounts ? JSON.parse(discounts) : [];
+    }
+
+    // Save discounts to storage
+    function saveDiscounts(discounts) {
+      localStorage.setItem(DISCOUNTS_STORAGE_KEY, JSON.stringify(discounts));
+    }
+
+    // Show create discount modal
+    function showCreateDiscountModal() {
+      const modal = new bootstrap.Modal(document.getElementById('createDiscountModal'));
+      modal.show();
+    }
+
+    // Create new discount
+    function createDiscount() {
+      const discountData = {
+        id: Date.now(),
+        name: document.getElementById('discountName').value,
+        type: document.getElementById('discountType').value,
+        value: document.getElementById('discountValue').value,
+        applicableTo: document.getElementById('applicableTo').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        description: document.getElementById('discountDescription').value,
+        status: 'active',
+        createdAt: new Date().toISOString()
+      };
+
+      if (!discountData.name || !discountData.value) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const discounts = getDiscounts();
+      discounts.push(discountData);
+      saveDiscounts(discounts);
+
+      // Close modal and refresh
+      bootstrap.Modal.getInstance(document.getElementById('createDiscountModal')).hide();
+      alert('Discount created successfully!');
+      loadDiscountsTable();
+    }
+
+    // Load discounts table
+    function loadDiscountsTable() {
+      const discounts = getDiscounts();
+      const tbody = document.getElementById('discountsTableBody');
+      
+      if (discounts.length === 0) {
+        // Initialize with sample data if empty
+        const sampleDiscounts = [
+          {
+            id: 1,
+            name: "Summer Sale 2024",
+            type: "percentage",
+            value: "20",
+            applicableTo: "all",
+            startDate: "2024-06-01T00:00",
+            endDate: "2024-08-31T23:59",
+            description: "Summer promotion discount",
+            status: "active"
+          },
+          {
+            id: 2,
+            name: "New Customer Welcome",
+            type: "fixed",
+            value: "5000",
+            applicableTo: "customer",
+            startDate: "2024-01-01T00:00",
+            endDate: "2024-12-31T23:59",
+            description: "Welcome discount for new customers",
+            status: "active"
+          }
+        ];
+        saveDiscounts(sampleDiscounts);
+        loadDiscountsTable();
+        return;
+      }
+
+      tbody.innerHTML = discounts.map(discount => {
+        const statusClass = `status-${discount.status}`;
+        const statusText = discount.status.charAt(0).toUpperCase() + discount.status.slice(1);
+        const discountBadge = discount.type === 'percentage' 
+          ? `<span class="discount-badge">${discount.value}% OFF</span>`
+          : `<span class="discount-badge">₦${parseInt(discount.value).toLocaleString()} OFF</span>`;
+
+        return `
+          <tr>
+            <td>${discount.name}</td>
+            <td>${discount.type.charAt(0).toUpperCase() + discount.type.slice(1)}</td>
+            <td>${discountBadge}</td>
+            <td>${discount.applicableTo.charAt(0).toUpperCase() + discount.applicableTo.slice(1)}</td>
+            <td>${new Date(discount.endDate).toLocaleDateString()}</td>
+            <td><span class="status ${statusClass}">${statusText}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="editDiscount(${discount.id})" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteDiscount(${discount.id})" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Edit discount
+    function editDiscount(discountId) {
+      alert(`Edit discount with ID: ${discountId}\nThis would open the edit modal in a full implementation.`);
+    }
+
+    // Delete discount
+    function deleteDiscount(discountId) {
+      if (confirm('Are you sure you want to delete this discount?')) {
+        const discounts = getDiscounts();
+        const updatedDiscounts = discounts.filter(d => d.id !== discountId);
+        saveDiscounts(updatedDiscounts);
+        loadDiscountsTable();
+        alert('Discount deleted successfully!');
+      }
+    }
+
+    // Other management functions
+    function manageTaxSettings() {
+      alert('Tax settings management would open here.');
+    }
+
+    function viewCreditTerms() {
+      alert('Credit terms management would open here.');
+    }
+
+    function generateDiscountReport() {
+      alert('Generating discount report...');
+      // This would generate and download a report
+    }
+
+    function loadDiscountAnalytics() {
+      alert('Loading discount analytics...');
+      // This would show detailed analytics
+    }
+
+    function manageCreditSales() {
+      alert('Credit sales management would open here.');
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      loadDiscountsTable();
+      setupSubmenuToggles();
+    });
+
+    // Setup submenu toggles (same as other pages)
+    function setupSubmenuToggles() {
+      const toggles = [
+        { toggle: 'productToggle', submenu: 'productSubmenu', chevron: 'productChevron' },
+        { toggle: 'inventoryControlToggle', submenu: 'inventoryControlSubmenu', chevron: 'inventoryControlChevron' },
+        { toggle: 'salesManagementToggle', submenu: 'salesManagementSubmenu', chevron: 'salesManagementChevron' },
+        { toggle: 'purchaseManagementToggle', submenu: 'purchaseManagementSubmenu', chevron: 'purchaseManagementChevron' },
+        { toggle: 'stockMovementToggle', submenu: 'stockMovementSubmenu', chevron: 'stockMovementChevron' },
+        { toggle: 'reportingAnalyticsToggle', submenu: 'reportingAnalyticsSubmenu', chevron: 'reportingAnalyticsChevron' }
+      ];
+
+      toggles.forEach(({ toggle, submenu, chevron }) => {
+        const toggleEl = document.getElementById(toggle);
+        const submenuEl = document.getElementById(submenu);
+        const chevronEl = document.getElementById(chevron);
+        
+        if (toggleEl && submenuEl) {
+          toggleEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            const expanded = toggleEl.getAttribute('aria-expanded') === 'true';
+            toggleEl.setAttribute('aria-expanded', (!expanded).toString());
+            
+            if (submenuEl.style.maxHeight && submenuEl.style.maxHeight !== '0px') {
+              submenuEl.style.maxHeight = '0';
+              chevronEl.style.transform = '';
+            } else {
+              submenuEl.style.maxHeight = (submenuEl.scrollHeight + 20) + 'px';
+              chevronEl.style.transform = 'rotate(180deg)';
+            }
+          });
+        }
+      });
+    }
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

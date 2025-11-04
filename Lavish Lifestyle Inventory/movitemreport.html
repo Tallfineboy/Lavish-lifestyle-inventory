@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-fast {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-medium {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-slow {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Movement indicator styles */
+    .movement-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    
+    .movement-fast {
+      background-color: var(--success-color);
+    }
+    
+    .movement-medium {
+      background-color: var(--warning-color);
+    }
+    
+    .movement-slow {
+      background-color: var(--danger-color);
+    }
+    
+    .trend-up {
+      color: var(--success-color);
+    }
+    
+    .trend-down {
+      color: var(--danger-color);
+    }
+    
+    .filter-section {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link active">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Fast-Moving / Slow-Moving Items Report</h2>
+      <p>Analyze product performance and identify sales trends</p>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Product Movement Analysis</h3>
+      <div>
+        <button class="btn btn-sm btn-outline-primary" onclick="downloadMovementReport()">
+          <i class="fas fa-download me-1"></i> Export Report
+        </button>
+      </div>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Time Period</label>
+          <select class="form-select" id="timePeriod">
+            <option value="7">Last 7 Days</option>
+            <option value="30" selected>Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+            <option value="180">Last 6 Months</option>
+            <option value="365">Last Year</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Movement Type</label>
+          <select class="form-select" id="movementType">
+            <option value="all">All Types</option>
+            <option value="fast">Fast-Moving Only</option>
+            <option value="medium">Medium-Moving Only</option>
+            <option value="slow">Slow-Moving Only</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="accessories">Accessories</option>
+            <option value="clothing">Clothing</option>
+            <option value="footwear">Footwear</option>
+            <option value="jewelry">Jewelry</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" onclick="applyFilters()">
+            <i class="fas fa-filter me-1"></i> Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Fast-Moving Items</h6>
+              <h3 id="fastMovingCount">0</h3>
+              <small class="text-success"><i class="fas fa-caret-up me-1"></i> High demand</small>
+            </div>
+            <div class="text-success">
+              <i class="fas fa-bolt fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Medium-Moving Items</h6>
+              <h3 id="mediumMovingCount">0</h3>
+              <small class="text-warning"><i class="fas fa-minus me-1"></i> Steady sales</small>
+            </div>
+            <div class="text-warning">
+              <i class="fas fa-chart-line fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Slow-Moving Items</h6>
+              <h3 id="slowMovingCount">0</h3>
+              <small class="text-danger"><i class="fas fa-caret-down me-1"></i> Low demand</small>
+            </div>
+            <div class="text-danger">
+              <i class="fas fa-exclamation-triangle fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Total Products</h6>
+              <h3 id="totalProductsCount">0</h3>
+              <small class="text-primary">Analyzed items</small>
+            </div>
+            <div class="text-primary">
+              <i class="fas fa-cubes fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Fast-Moving Items Table -->
+    <div class="card mb-4">
+      <h6><i class="fas fa-bolt me-2 text-success"></i> Fast-Moving Items</h6>
+      <p class="text-muted mb-3">Products with highest sales velocity - consider increasing stock levels</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Category</th>
+              <th>Units Sold</th>
+              <th>Turnover Rate</th>
+              <th>Revenue</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="fastMovingTableBody">
+            <!-- Fast-moving items will be loaded here -->
+          </tbody>
+        </table>
+        <div id="emptyFastMoving" class="empty-state" style="display: none;">
+          <i class="fas fa-bolt"></i>
+          <h4>No Fast-Moving Items</h4>
+          <p>No products meet the fast-moving criteria with current filters.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slow-Moving Items Table -->
+    <div class="card">
+      <h6><i class="fas fa-exclamation-triangle me-2 text-danger"></i> Slow-Moving Items</h6>
+      <p class="text-muted mb-3">Products with lowest sales velocity - consider promotions or discontinuation</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Category</th>
+              <th>Units Sold</th>
+              <th>Turnover Rate</th>
+              <th>Current Stock</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="slowMovingTableBody">
+            <!-- Slow-moving items will be loaded here -->
+          </tbody>
+        </table>
+        <div id="emptySlowMoving" class="empty-state" style="display: none;">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h4>No Slow-Moving Items</h4>
+          <p>No products meet the slow-moving criteria with current filters.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Storage keys
+    const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
+    const CUSTOMERS_STORAGE_KEY = 'lavish_customers_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+    const MOVEMENT_DATA_KEY = 'lavish_movement_data_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Get inventory items
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    // Get movement data
+    function getMovementData() {
+      const data = localStorage.getItem(MOVEMENT_DATA_KEY);
+      return data ? JSON.parse(data) : null;
+    }
+
+    // Save movement data
+    function saveMovementData(data) {
+      localStorage.setItem(MOVEMENT_DATA_KEY, JSON.stringify(data));
+    }
+
+    // Generate demo movement data if none exists
+    function generateMovementData() {
+      const inventory = getInventoryItems();
+      const movementData = [];
+      
+      inventory.forEach(item => {
+        // Generate random sales data based on product type
+        let unitsSold, turnoverRate, movementType;
+        
+        if (item.category === 'Accessories') {
+          // Accessories tend to be fast-moving
+          unitsSold = Math.floor(Math.random() * 50) + 30;
+          turnoverRate = (Math.random() * 0.8 + 0.5).toFixed(2);
+          movementType = 'fast';
+        } else if (item.category === 'Clothing') {
+          // Clothing tends to be medium-moving
+          unitsSold = Math.floor(Math.random() * 30) + 10;
+          turnoverRate = (Math.random() * 0.5 + 0.2).toFixed(2);
+          movementType = 'medium';
+        } else {
+          // Other categories tend to be slow-moving
+          unitsSold = Math.floor(Math.random() * 15) + 1;
+          turnoverRate = (Math.random() * 0.3).toFixed(2);
+          movementType = 'slow';
+        }
+        
+        // Calculate revenue
+        const revenue = unitsSold * item.price;
+        
+        movementData.push({
+          id: item.id,
+          name: item.name,
+          sku: item.sku,
+          category: item.category,
+          unitsSold: unitsSold,
+          turnoverRate: turnoverRate,
+          revenue: revenue,
+          currentStock: item.stock,
+          movementType: movementType
+        });
+      });
+      
+      saveMovementData(movementData);
+      return movementData;
+    }
+
+    // Apply filters and update tables
+    function applyFilters() {
+      const timePeriod = document.getElementById('timePeriod').value;
+      const movementType = document.getElementById('movementType').value;
+      const category = document.getElementById('categoryFilter').value;
+      
+      updateMovementTables(timePeriod, movementType, category);
+    }
+
+    // Update movement tables with filtered data
+    function updateMovementTables(timePeriod, movementType, category) {
+      let movementData = getMovementData();
+      
+      // If no movement data exists, generate it
+      if (!movementData) {
+        movementData = generateMovementData();
+      }
+      
+      // Apply filters
+      let filteredData = [...movementData];
+      
+      if (category !== 'all') {
+        filteredData = filteredData.filter(item => 
+          item.category.toLowerCase() === category.toLowerCase()
+        );
+      }
+      
+      if (movementType !== 'all') {
+        filteredData = filteredData.filter(item => 
+          item.movementType === movementType
+        );
+      }
+      
+      // Sort by units sold (descending)
+      filteredData.sort((a, b) => b.unitsSold - a.unitsSold);
+      
+      // Update summary counts
+      const fastMoving = filteredData.filter(item => item.movementType === 'fast').length;
+      const mediumMoving = filteredData.filter(item => item.movementType === 'medium').length;
+      const slowMoving = filteredData.filter(item => item.movementType === 'slow').length;
+      
+      document.getElementById('fastMovingCount').textContent = fastMoving;
+      document.getElementById('mediumMovingCount').textContent = mediumMoving;
+      document.getElementById('slowMovingCount').textContent = slowMoving;
+      document.getElementById('totalProductsCount').textContent = filteredData.length;
+      
+      // Update fast-moving table
+      const fastMovingData = filteredData.filter(item => item.movementType === 'fast');
+      const fastMovingTable = document.getElementById('fastMovingTableBody');
+      const emptyFastMoving = document.getElementById('emptyFastMoving');
+      
+      if (fastMovingData.length === 0) {
+        fastMovingTable.innerHTML = '';
+        emptyFastMoving.style.display = 'block';
+      } else {
+        emptyFastMoving.style.display = 'none';
+        fastMovingTable.innerHTML = fastMovingData.map(item => `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.sku}</td>
+            <td>${item.category}</td>
+            <td>${item.unitsSold}</td>
+            <td>${item.turnoverRate}</td>
+            <td>₦${item.revenue.toLocaleString()}</td>
+            <td><span class="status status-fast"><span class="movement-indicator movement-fast"></span>Fast-Moving</span></td>
+          </tr>
+        `).join('');
+      }
+      
+      // Update slow-moving table
+      const slowMovingData = filteredData.filter(item => item.movementType === 'slow');
+      const slowMovingTable = document.getElementById('slowMovingTableBody');
+      const emptySlowMoving = document.getElementById('emptySlowMoving');
+      
+      if (slowMovingData.length === 0) {
+        slowMovingTable.innerHTML = '';
+        emptySlowMoving.style.display = 'block';
+      } else {
+        emptySlowMoving.style.display = 'none';
+        slowMovingTable.innerHTML = slowMovingData.map(item => `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.sku}</td>
+            <td>${item.category}</td>
+            <td>${item.unitsSold}</td>
+            <td>${item.turnoverRate}</td>
+            <td>${item.currentStock}</td>
+            <td><span class="status status-slow"><span class="movement-indicator movement-slow"></span>Slow-Moving</span></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // Download movement report
+    function downloadMovementReport() {
+      const movementData = getMovementData() || generateMovementData();
+      const timePeriod = document.getElementById('timePeriod').value;
+      const movementType = document.getElementById('movementType').value;
+      const category = document.getElementById('categoryFilter').value;
+      
+      let csvContent = "Lavish Lifestyle - Fast/Slow Moving Items Report\n";
+      csvContent += `Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n`;
+      csvContent += `Time Period: Last ${timePeriod} days\n`;
+      csvContent += `Movement Type: ${movementType === 'all' ? 'All Types' : movementType}\n`;
+      csvContent += `Category: ${category === 'all' ? 'All Categories' : category}\n\n`;
+      
+      csvContent += "PRODUCT MOVEMENT ANALYSIS\n";
+      csvContent += "Product Name,SKU,Category,Units Sold,Turnover Rate,Revenue (₦),Current Stock,Movement Type\n";
+      
+      movementData.forEach(item => {
+        csvContent += `"${item.name}",${item.sku},${item.category},${item.unitsSold},${item.turnoverRate},${item.revenue},${item.currentStock},${item.movementType}\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `movement-report-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Movement report downloaded as CSV successfully!');
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = JSON.parse(localStorage.getItem(NOTIFICATIONS_KEY) || '[]');
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // ---------- UI interactions for sidebar submenus ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wire up product submenu toggle
+      const productToggle = document.getElementById('productToggle');
+      const productSubmenu = document.getElementById('productSubmenu');
+      const productChevron = document.getElementById('productChevron');
+      if (productToggle && productSubmenu) {
+        productToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = productToggle.getAttribute('aria-expanded') === 'true';
+          productToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (productSubmenu.style.maxHeight && productSubmenu.style.maxHeight !== '0px') {
+            productSubmenu.style.maxHeight = '0';
+            productChevron.style.transform = '';
+          } else {
+            productSubmenu.style.maxHeight = (productSubmenu.scrollHeight + 20) + 'px';
+            productChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up inventory control submenu toggle
+      const inventoryControlToggle = document.getElementById('inventoryControlToggle');
+      const inventoryControlSubmenu = document.getElementById('inventoryControlSubmenu');
+      const inventoryControlChevron = document.getElementById('inventoryControlChevron');
+      if (inventoryControlToggle && inventoryControlSubmenu) {
+        inventoryControlToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = inventoryControlToggle.getAttribute('aria-expanded') === 'true';
+          inventoryControlToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (inventoryControlSubmenu.style.maxHeight && inventoryControlSubmenu.style.maxHeight !== '0px') {
+            inventoryControlSubmenu.style.maxHeight = '0';
+            inventoryControlChevron.style.transform = '';
+          } else {
+            inventoryControlSubmenu.style.maxHeight = (inventoryControlSubmenu.scrollHeight + 20) + 'px';
+            inventoryControlChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up stock movement submenu toggle
+      const stockMovementToggle = document.getElementById('stockMovementToggle');
+      const stockMovementSubmenu = document.getElementById('stockMovementSubmenu');
+      const stockMovementChevron = document.getElementById('stockMovementChevron');
+      if (stockMovementToggle && stockMovementSubmenu) {
+        stockMovementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = stockMovementToggle.getAttribute('aria-expanded') === 'true';
+          stockMovementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (stockMovementSubmenu.style.maxHeight && stockMovementSubmenu.style.maxHeight !== '0px') {
+            stockMovementSubmenu.style.maxHeight = '0';
+            stockMovementChevron.style.transform = '';
+          } else {
+            stockMovementSubmenu.style.maxHeight = (stockMovementSubmenu.scrollHeight + 20) + 'px';
+            stockMovementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up purchase management submenu toggle
+      const purchaseManagementToggle = document.getElementById('purchaseManagementToggle');
+      const purchaseManagementSubmenu = document.getElementById('purchaseManagementSubmenu');
+      const purchaseManagementChevron = document.getElementById('purchaseManagementChevron');
+      if (purchaseManagementToggle && purchaseManagementSubmenu) {
+        purchaseManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = purchaseManagementToggle.getAttribute('aria-expanded') === 'true';
+          purchaseManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (purchaseManagementSubmenu.style.maxHeight && purchaseManagementSubmenu.style.maxHeight !== '0px') {
+            purchaseManagementSubmenu.style.maxHeight = '0';
+            purchaseManagementChevron.style.transform = '';
+          } else {
+            purchaseManagementSubmenu.style.maxHeight = (purchaseManagementSubmenu.scrollHeight + 20) + 'px';
+            purchaseManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up sales management submenu toggle
+      const salesManagementToggle = document.getElementById('salesManagementToggle');
+      const salesManagementSubmenu = document.getElementById('salesManagementSubmenu');
+      const salesManagementChevron = document.getElementById('salesManagementChevron');
+      if (salesManagementToggle && salesManagementSubmenu) {
+        salesManagementToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = salesManagementToggle.getAttribute('aria-expanded') === 'true';
+          salesManagementToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (salesManagementSubmenu.style.maxHeight && salesManagementSubmenu.style.maxHeight !== '0px') {
+            salesManagementSubmenu.style.maxHeight = '0';
+            salesManagementChevron.style.transform = '';
+          } else {
+            salesManagementSubmenu.style.maxHeight = (salesManagementSubmenu.scrollHeight + 20) + 'px';
+            salesManagementChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Wire up reporting & analytics submenu toggle
+      const reportingAnalyticsToggle = document.getElementById('reportingAnalyticsToggle');
+      const reportingAnalyticsSubmenu = document.getElementById('reportingAnalyticsSubmenu');
+      const reportingAnalyticsChevron = document.getElementById('reportingAnalyticsChevron');
+      if (reportingAnalyticsToggle && reportingAnalyticsSubmenu) {
+        reportingAnalyticsToggle.addEventListener('click', function(e){
+          e.preventDefault();
+          const expanded = reportingAnalyticsToggle.getAttribute('aria-expanded') === 'true';
+          reportingAnalyticsToggle.setAttribute('aria-expanded', (!expanded).toString());
+          if (reportingAnalyticsSubmenu.style.maxHeight && reportingAnalyticsSubmenu.style.maxHeight !== '0px') {
+            reportingAnalyticsSubmenu.style.maxHeight = '0';
+            reportingAnalyticsChevron.style.transform = '';
+          } else {
+            reportingAnalyticsSubmenu.style.maxHeight = (reportingAnalyticsSubmenu.scrollHeight + 20) + 'px';
+            reportingAnalyticsChevron.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+
+      // Initialize page
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      updateMovementTables(30, 'all', 'all');
+      updateNotificationBadge();
+    });
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>

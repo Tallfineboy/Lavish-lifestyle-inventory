@@ -1,0 +1,1751 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --sidebar-bg: #021527;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --text-muted: #6c757d;
+      --accent-color: #030723;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-text {
+      display: inline-block;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px 0;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .nav-section {
+      padding: 0;
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: #9ff3ef;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .logout-btn {
+      color: rgba(255,255,255,0.8);
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .logout-btn:hover {
+      color: white;
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    .content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-paid {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-pending {
+      background: rgba(243, 156, 18, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-overdue {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger-color);
+    }
+
+    .status-draft {
+      background: rgba(149, 165, 166, 0.2);
+      color: #95a5a6;
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--text-muted);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    .notification-badge {
+      background: var(--danger-color);
+      color: white;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+
+    .notification-alert {
+      color: var(--danger-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-3px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .welcome-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .welcome-header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Product submenu styles */
+    #productSubmenu, #inventoryControlSubmenu, #purchaseManagementSubmenu, #salesManagementSubmenu, #stockMovementSubmenu, #reportingAnalyticsSubmenu {
+      transition: max-height 0.22s ease;
+      overflow: hidden;
+    }
+    #productSubmenu .submenu-link, #inventoryControlSubmenu .submenu-link, #purchaseManagementSubmenu .submenu-link, #salesManagementSubmenu .submenu-link, #stockMovementSubmenu .submenu-link, #reportingAnalyticsSubmenu .submenu-link {
+      font-size: 0.88rem;
+      padding-left: 28px;
+      display: block;
+      color: rgba(255,255,255,0.85);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-decoration: none;
+    }
+    #productSubmenu .submenu-link:hover, #inventoryControlSubmenu .submenu-link:hover, #purchaseManagementSubmenu .submenu-link:hover, #salesManagementSubmenu .submenu-link:hover, #stockMovementSubmenu .submenu-link:hover, #reportingAnalyticsSubmenu .submenu-link:hover {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      color: white;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Invoice specific styles */
+    .invoice-header {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .invoice-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .invoice-card {
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .payment-card {
+      border-left: 4px solid var(--success-color);
+    }
+
+    .overdue-card {
+      border-left: 4px solid var(--danger-color);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .kpi {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .kpi:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .kpi::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: var(--primary-color);
+    }
+
+    .kpi-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .kpi h6 {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .kpi h3 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .kpi-trend {
+      font-size: 0.8rem;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .trend-up {
+      color: var(--success-color);
+    }
+
+    .trend-down {
+      color: var(--danger-color);
+    }
+
+    /* Enhanced KPI Cards with different colors */
+    .kpi:nth-child(1)::before { background: var(--primary-color); }
+    .kpi:nth-child(2)::before { background: var(--accent-color); }
+    .kpi:nth-child(3)::before { background: var(--success-color); }
+    .kpi:nth-child(4)::before { background: var(--warning-color); }
+
+    .kpi:nth-child(1) .kpi-icon { color: var(--primary-color); }
+    .kpi:nth-child(2) .kpi-icon { color: var(--accent-color); }
+    .kpi:nth-child(3) .kpi-icon { color: var(--success-color); }
+    .kpi:nth-child(4) .kpi-icon { color: var(--warning-color); }
+
+    /* Modal styles */
+    .modal-content {
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid #dee2e6;
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      border-top: 1px solid #dee2e6;
+      padding: 1rem 1.5rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+
+      .invoice-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <!-- Fixed header section -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-text">Lavish Lifestyle <small style="color:#9ff3ef"><br>Inventory</small></span>
+      </div>
+    </div>
+    
+    <!-- Scrollable navigation content -->
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <a class="nav-link" href="/dashboard.html">
+          <i class="fa fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/orders.html">
+          <i class="fa fa-box"></i> <span>Orders</span>
+        </a>
+
+        <!-- Product & Item Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="productToggle" role="button" aria-expanded="false" aria-controls="productSubmenu">
+            <span><i class="fa fa-cubes"></i> <span>Product & Item Management</span></span>
+            <i class="fas fa-chevron-down small" id="productChevron"></i>
+          </a>
+          <div id="productSubmenu" style="max-height:0;">
+            <a href="product-masterlist.html" class="submenu-link">• Product Master List</a>
+            <a href="/categories.html" class="submenu-link">• Categories, Brands & Units of Storage</a>
+            <a href="/barcodegen.html" class="submenu-link">• Barcode Generation</a>
+            <a href="/productbundling.html" class="submenu-link">• Product Bundling</a>
+          </div>
+        </div>
+
+        <!-- Inventory Control with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="inventoryControlToggle" role="button" aria-expanded="false" aria-controls="inventoryControlSubmenu">
+            <span><i class="fa fa-clipboard-check"></i> <span>Inventory Control</span></span>
+            <i class="fas fa-chevron-down small" id="inventoryControlChevron"></i>
+          </a>
+          <div id="inventoryControlSubmenu" style="max-height:0;">
+            <a href="/stockleveltracking.html" class="submenu-link">• Stock Level Tracking</a>
+            <a href="/goodsreceived.html" class="submenu-link">• Goods Received (GRN) Entry</a>
+            <a href="/stockadjustments.html" class="submenu-link">• Stock Adjustments</a>
+            <a href="/warehouse.html" class="submenu-link">• Warehouse/Location Management</a>
+            <a href="/batchtracking.html" class="submenu-link">• Batch and Expiry Tracking</a>
+          </div>
+        </div>
+
+        <!-- Stock Movement & Transfers with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="stockMovementToggle" role="button" aria-expanded="false" aria-controls="stockMovementSubmenu">
+            <span><i class="fa fa-exchange-alt"></i> <span>Stock Movement & Transfers</span></span>
+            <i class="fas fa-chevron-down small" id="stockMovementChevron"></i>
+          </a>
+          <div id="stockMovementSubmenu" style="max-height:0;">
+            <a href="/wstocktransfer.html" class="submenu-link">• Inter-warehouse Stock Transfer</a>
+            <a href="/stockintransit.html" class="submenu-link">• Stock in Transit</a>
+            <a href="/deliverynote.html" class="submenu-link">• Delivery Note and Receiving Confirmation</a>
+          </div>
+        </div>
+
+        <!-- Purchase Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="purchaseManagementToggle" role="button" aria-expanded="false" aria-controls="purchaseManagementSubmenu">
+            <span><i class="fa fa-shopping-cart"></i> <span>Purchase Management</span></span>
+            <i class="fas fa-chevron-down small" id="purchaseManagementChevron"></i>
+          </a>
+          <div id="purchaseManagementSubmenu" style="max-height:0;">
+            <a href="/supplierdatabase.html" class="submenu-link">• Supplier Database</a>
+            <a href="/purchaseR.html" class="submenu-link">• Purchase Requisitions (PR)</a>
+            <a href="/purchaseorder.html" class="submenu-link">• Purchase Orders (PO)</a>
+            <a href="/goodsreceipt.html" class="submenu-link">• Goods Receipt Note (GRN)</a>
+            <a href="/supinvoice.html" class="submenu-link">• Supplier Invoice & Payment Tracking</a>
+          </div>
+        </div>
+
+        <!-- Sales Management with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="salesManagementToggle" role="button" aria-expanded="false" aria-controls="salesManagementSubmenu">
+            <span><i class="fa fa-chart-bar"></i> <span>Sales Management</span></span>
+            <i class="fas fa-chevron-down small" id="salesManagementChevron"></i>
+          </a>
+          <div id="salesManagementSubmenu" style="max-height:0;">
+            <a href="cusdatabase.html" class="submenu-link">• Customer Database</a>
+            <a href="/salesquotation.html" class="submenu-link">• Sales Quotation & Order Creation</a>
+            <a href="/invoice&paytrack.html" class="submenu-link active">• Invoicing & Payment Tracking</a>
+            <a href="/discounts.html" class="submenu-link">• Discounts, Taxes, and Credit Sales</a>
+            <a href="/pos.html" class="submenu-link">• Point-of-Sale (POS) Integration</a>
+          </div>
+        </div>
+
+        <!-- Reporting & Analytics with collapsible submenu -->
+        <div class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" href="#" id="reportingAnalyticsToggle" role="button" aria-expanded="false" aria-controls="reportingAnalyticsSubmenu">
+            <span><i class="fa fa-chart-pie"></i> <span>Reporting & Analytics</span></span>
+            <i class="fas fa-chevron-down small" id="reportingAnalyticsChevron"></i>
+          </a>
+          <div id="reportingAnalyticsSubmenu" style="max-height:0;">
+            <a href="/invalreports.html" class="submenu-link">• Inventory Valuation Reports</a>
+            <a href="/movingitems.html" class="submenu-link">• Fast-moving/Slow-moving Item Reports</a>
+            <a href="/salessummary.html" class="submenu-link">• Daily/Weekly/Monthly Sales Summaries</a>
+            <a href="/grossanalysis.html" class="submenu-link">• Gross Margin & Profitability Analysis</a>
+            <a href="/stocklevelalerts.html" class="submenu-link">• Stock Aging and Reorder Level Alerts</a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="/payments.html">
+          <i class="fa fa-credit-card"></i> <span>Payments</span>
+        </a>
+        <a class="nav-link" href="/customers.html">
+          <i class="fa fa-users"></i> <span>Customers</span>
+        </a>
+        <a class="nav-link" href="/notifications.html" id="notificationsLink">
+          <i class="fa fa-bell"></i> <span>Notifications</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </a>
+        <a class="nav-link" href="/settings.html">
+          <i class="fa fa-cog"></i> <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Fixed footer section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class='content' id="content">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <h2>Invoicing & Payment Tracking</h2>
+      <p>Manage customer invoices, track payments, and monitor outstanding balances</p>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Invoice Management</h3>
+      <div class="invoice-actions">
+        <button class="btn btn-primary" onclick="createNewInvoice()">
+          <i class="fas fa-plus me-1"></i> Create New Invoice
+        </button>
+        <button class="btn btn-outline-primary" onclick="downloadInvoiceReport()">
+          <i class="fas fa-download me-1"></i> Export Report
+        </button>
+      </div>
+    </div>
+    
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <i class="fas fa-file-invoice-dollar kpi-icon"></i>
+        <h6>Total Invoices</h6>
+        <h3 id="totalInvoices">0</h3>
+        <div class="kpi-trend" id="invoicesTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>0% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-money-bill-wave kpi-icon"></i>
+        <h6>Outstanding Balance</h6>
+        <h3 id="outstandingBalance">₦0</h3>
+        <div class="kpi-trend" id="balanceTrend">
+          <i class="fas fa-caret-down me-1 trend-down"></i> <span>0% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-clock kpi-icon"></i>
+        <h6>Overdue Invoices</h6>
+        <h3 id="overdueInvoices">0</h3>
+        <div class="kpi-trend" id="overdueTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>0% from last month</span>
+        </div>
+      </div>
+      <div class="kpi">
+        <i class="fas fa-percentage kpi-icon"></i>
+        <h6>Collection Rate</h6>
+        <h3 id="collectionRate">0%</h3>
+        <div class="kpi-trend" id="collectionTrend">
+          <i class="fas fa-caret-up me-1 trend-up"></i> <span>0% from last month</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div class="card invoice-card">
+          <h6><i class="fas fa-list me-2"></i> Recent Invoices</h6>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th>Due Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recentInvoicesBody">
+                <!-- Invoices will be loaded here automatically -->
+              </tbody>
+            </table>
+            <div id="emptyInvoices" class="empty-state" style="display: none;">
+              <i class="fas fa-file-invoice"></i>
+              <h4>No Invoices Yet</h4>
+              <p>Create your first invoice to get started with payment tracking.</p>
+              <button class="btn btn-primary mt-2" onclick="createNewInvoice()">Create New Invoice</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="card payment-card">
+          <h6><i class="fas fa-chart-bar me-2"></i> Payment Status Overview</h6>
+          <div class="chart-container mt-3">
+            <canvas id="paymentStatusChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="card overdue-card mt-3">
+          <h6><i class="fas fa-exclamation-triangle me-2"></i> Overdue Payments</h6>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Days Overdue</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody id="overduePaymentsBody">
+                <!-- Overdue payments will be loaded here -->
+              </tbody>
+            </table>
+            <div id="noOverdue" class="empty-state" style="display: none; padding: 20px;">
+              <i class="fas fa-check-circle"></i>
+              <p>No overdue payments</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Invoice Modal -->
+  <div class="modal fade" id="createInvoiceModal" tabindex="-1" aria-labelledby="createInvoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createInvoiceModalLabel">Create New Invoice</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="invoiceForm">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="customerSelect" class="form-label">Customer *</label>
+                <select class="form-select" id="customerSelect" required>
+                  <option value="">Select Customer</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="invoiceDate" class="form-label">Invoice Date *</label>
+                <input type="date" class="form-control" id="invoiceDate" value="" required>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="dueDate" class="form-label">Due Date *</label>
+                <input type="date" class="form-control" id="dueDate" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Invoice Number</label>
+                <input type="text" class="form-control" id="invoiceNumber" value="" readonly>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Invoice Items</label>
+              <div class="table-responsive">
+                <table class="table" id="invoiceItemsTable">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="invoiceItemsBody">
+                    <!-- Invoice items will be added here -->
+                  </tbody>
+                </table>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="addInvoiceItem()">
+                <i class="fas fa-plus me-1"></i> Add Item
+              </button>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-8"></div>
+              <div class="col-md-4">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Subtotal:</span>
+                  <span id="subtotalAmount">₦0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Tax (10%):</span>
+                  <span id="taxAmount">₦0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Discount:</span>
+                  <input type="number" class="form-control form-control-sm w-50" id="discountAmount" value="0" min="0" onchange="calculateGrandTotal()" oninput="calculateGrandTotal()">
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fw-bold">
+                  <span>Grand Total:</span>
+                  <span id="grandTotalAmount">₦0.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="invoiceNotes" class="form-label">Notes</label>
+              <textarea class="form-control" id="invoiceNotes" rows="3" placeholder="Additional notes..."></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveNewInvoice()">Create Invoice</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Storage keys
+    const INVOICES_STORAGE_KEY = 'lavish_invoices_v1';
+    const CUSTOMERS_STORAGE_KEY = 'lavish_customers_v1';
+    const PAYMENTS_STORAGE_KEY = 'lavish_payments_v1';
+    const AUTH_KEY = 'lavish_auth_v1';
+    const NOTIFICATIONS_KEY = 'lavish_notifications_v1';
+    const INVENTORY_STORAGE_KEY = 'lavish_inventory_v1';
+
+    // Authentication check
+    function checkAuthentication() {
+      const session = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+      
+      if (!session || !session.loggedIn) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      const loginTime = new Date(session.loginTime);
+      const now = new Date();
+      const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+      
+      if (hoursDiff >= 24) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+        return false;
+      }
+      
+      return session.user;
+    }
+
+    // Update user info in sidebar
+    function updateUserInfo() {
+      const user = checkAuthentication();
+      if (user) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem(AUTH_KEY);
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Data getters
+    function getInvoices() {
+      const invoices = localStorage.getItem(INVOICES_STORAGE_KEY);
+      return invoices ? JSON.parse(invoices) : [];
+    }
+
+    function getCustomers() {
+      const customers = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
+      return customers ? JSON.parse(customers) : [];
+    }
+
+    function getPayments() {
+      const payments = localStorage.getItem(PAYMENTS_STORAGE_KEY);
+      return payments ? JSON.parse(payments) : [];
+    }
+
+    function getNotifications() {
+      const notifications = localStorage.getItem(NOTIFICATIONS_KEY);
+      return notifications ? JSON.parse(notifications) : [];
+    }
+
+    function getInventoryItems() {
+      const items = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      return items ? JSON.parse(items) : [];
+    }
+
+    // Initialize demo invoice data if none exists
+    function initializeDemoInvoices() {
+      const existingInvoices = getInvoices();
+      if (existingInvoices.length === 0) {
+        const demoInvoices = [
+          {
+            id: 'INV-2023-001',
+            customerId: 1,
+            customerName: 'James Wilson',
+            date: '2023-10-15',
+            dueDate: '2023-11-14',
+            amount: 85400,
+            paidAmount: 85400,
+            status: 'paid',
+            items: [
+              { id: 1, name: 'Premium Leather Handbag', quantity: 1, price: 45000, total: 45000 },
+              { id: 2, name: 'Designer Sunglasses', quantity: 1, price: 25000, total: 25000 },
+              { id: 4, name: 'Cashmere Scarf', quantity: 1, price: 15400, total: 15400 }
+            ],
+            subtotal: 85400,
+            tax: 8540,
+            discount: 0,
+            notes: 'Thank you for your business!',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'INV-2023-002',
+            customerId: 2,
+            customerName: 'Sarah Johnson',
+            date: '2023-10-14',
+            dueDate: '2023-11-13',
+            amount: 42150,
+            paidAmount: 0,
+            status: 'pending',
+            items: [
+              { id: 3, name: 'Luxury Watch', quantity: 1, price: 42150, total: 42150 }
+            ],
+            subtotal: 42150,
+            tax: 4215,
+            discount: 0,
+            notes: '',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'INV-2023-003',
+            customerId: 3,
+            customerName: 'Michael Brown',
+            date: '2023-10-10',
+            dueDate: '2023-11-09',
+            amount: 63800,
+            paidAmount: 63800,
+            status: 'paid',
+            items: [
+              { id: 2, name: 'Designer Sunglasses', quantity: 2, price: 25000, total: 50000 },
+              { id: 4, name: 'Cashmere Scarf', quantity: 1, price: 13800, total: 13800 }
+            ],
+            subtotal: 63800,
+            tax: 6380,
+            discount: 0,
+            notes: 'Bulk order discount applied',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'INV-2023-004',
+            customerId: 1,
+            customerName: 'James Wilson',
+            date: '2023-09-28',
+            dueDate: '2023-10-28',
+            amount: 29500,
+            paidAmount: 0,
+            status: 'overdue',
+            items: [
+              { id: 4, name: 'Cashmere Scarf', quantity: 1, price: 18000, total: 18000 },
+              { id: 5, name: 'Premium Socks', quantity: 2, price: 5750, total: 11500 }
+            ],
+            subtotal: 29500,
+            tax: 2950,
+            discount: 0,
+            notes: 'Follow up on payment',
+            createdAt: new Date().toISOString()
+          }
+        ];
+        localStorage.setItem(INVOICES_STORAGE_KEY, JSON.stringify(demoInvoices));
+      }
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // Update KPI statistics
+    function updateKPIStats() {
+      const invoices = getInvoices();
+      
+      // Total Invoices
+      document.getElementById('totalInvoices').textContent = invoices.length.toLocaleString();
+      
+      // Outstanding Balance
+      const outstandingBalance = invoices
+        .filter(inv => inv.status !== 'paid')
+        .reduce((sum, inv) => sum + (inv.amount - inv.paidAmount), 0);
+      document.getElementById('outstandingBalance').textContent = `₦${outstandingBalance.toLocaleString()}`;
+      
+      // Overdue Invoices
+      const today = new Date();
+      const overdueInvoices = invoices.filter(inv => {
+        if (inv.status === 'paid') return false;
+        const dueDate = new Date(inv.dueDate);
+        return dueDate < today;
+      });
+      document.getElementById('overdueInvoices').textContent = overdueInvoices.length.toLocaleString();
+      
+      // Collection Rate
+      const totalAmount = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+      const totalPaid = invoices.reduce((sum, inv) => sum + inv.paidAmount, 0);
+      const collectionRate = totalAmount > 0 ? (totalPaid / totalAmount) * 100 : 0;
+      document.getElementById('collectionRate').textContent = `${collectionRate.toFixed(1)}%`;
+    }
+
+    // Load recent invoices
+    function loadRecentInvoices() {
+      const invoices = getInvoices();
+      const recentInvoices = invoices
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 10);
+      
+      const tbody = document.getElementById('recentInvoicesBody');
+      const emptyState = document.getElementById('emptyInvoices');
+      
+      if (recentInvoices.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = recentInvoices.map(invoice => {
+        const statusClass = `status-${invoice.status}`;
+        const statusText = invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1);
+        
+        return `
+          <tr>
+            <td>${invoice.id}</td>
+            <td>${invoice.customerName}</td>
+            <td>${invoice.date}</td>
+            <td>${invoice.dueDate}</td>
+            <td>₦${invoice.amount.toLocaleString()}</td>
+            <td><span class="status ${statusClass}">${statusText}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="viewInvoice('${invoice.id}')">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="editInvoice('${invoice.id}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-success" onclick="recordPayment('${invoice.id}')">
+                <i class="fas fa-money-bill"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load overdue payments
+    function loadOverduePayments() {
+      const invoices = getInvoices();
+      const today = new Date();
+      
+      const overduePayments = invoices.filter(inv => {
+        if (inv.status === 'paid') return false;
+        const dueDate = new Date(inv.dueDate);
+        return dueDate < today;
+      }).map(inv => {
+        const dueDate = new Date(inv.dueDate);
+        const daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
+        return { ...inv, daysOverdue };
+      });
+      
+      const tbody = document.getElementById('overduePaymentsBody');
+      const emptyState = document.getElementById('noOverdue');
+      
+      if (overduePayments.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = overduePayments.map(invoice => {
+        return `
+          <tr>
+            <td>${invoice.id}</td>
+            <td>${invoice.daysOverdue} days</td>
+            <td>₦${invoice.amount.toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Initialize payment status chart
+    function initializePaymentChart() {
+      const invoices = getInvoices();
+      
+      const statusCounts = {
+        paid: invoices.filter(inv => inv.status === 'paid').length,
+        pending: invoices.filter(inv => inv.status === 'pending').length,
+        overdue: invoices.filter(inv => inv.status === 'overdue').length,
+        draft: invoices.filter(inv => inv.status === 'draft').length
+      };
+      
+      const ctx = document.getElementById('paymentStatusChart');
+      if (!ctx) return;
+      
+      try {
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Paid', 'Pending', 'Overdue', 'Draft'],
+            datasets: [{
+              data: [
+                statusCounts.paid,
+                statusCounts.pending,
+                statusCounts.overdue,
+                statusCounts.draft
+              ],
+              backgroundColor: [
+                '#2ecc71',
+                '#f39c12',
+                '#e74c3c',
+                '#95a5a6'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  boxWidth: 12,
+                  font: {
+                    size: 11
+                  }
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing payment chart:', error);
+      }
+    }
+
+    // Create new invoice
+    function createNewInvoice() {
+      // Set today's date
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('invoiceDate').value = today;
+      
+      // Set due date to 30 days from now
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 30);
+      document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
+      
+      // Generate invoice number
+      const invoiceCount = getInvoices().length + 1;
+      document.getElementById('invoiceNumber').value = `INV-${new Date().getFullYear()}-${String(invoiceCount).padStart(3, '0')}`;
+      
+      // Load customers
+      const customers = getCustomers();
+      const customerSelect = document.getElementById('customerSelect');
+      customerSelect.innerHTML = '<option value="">Select Customer</option>';
+      customers.forEach(customer => {
+        const option = document.createElement('option');
+        option.value = customer.id;
+        option.textContent = `${customer.name} (${customer.email})`;
+        customerSelect.appendChild(option);
+      });
+      
+      // Load inventory items
+      const inventory = getInventoryItems();
+      const itemsBody = document.getElementById('invoiceItemsBody');
+      itemsBody.innerHTML = '';
+      
+      // Add first empty row
+      addInvoiceItem();
+      
+      // Reset form
+      document.getElementById('discountAmount').value = 0;
+      document.getElementById('invoiceNotes').value = '';
+      
+      // Calculate initial totals
+      calculateGrandTotal();
+      
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('createInvoiceModal'));
+      modal.show();
+    }
+
+    // Add new invoice item row
+    function addInvoiceItem() {
+      const tbody = document.getElementById('invoiceItemsBody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>
+          <select class="form-select item-select" onchange="updateItemPrice(this)">
+            <option value="">Select Item</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" class="form-control quantity" value="1" min="1" onchange="calculateLineTotal(this)" oninput="calculateLineTotal(this)">
+        </td>
+        <td>
+          <input type="number" class="form-control price" step="0.01" min="0" onchange="calculateLineTotal(this)" oninput="calculateLineTotal(this)">
+        </td>
+        <td>
+          <input type="text" class="form-control line-total" value="₦0" readonly>
+        </td>
+        <td>
+          <button type="button" class="btn btn-sm btn-danger" onclick="removeInvoiceItem(this)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(newRow);
+      
+      // Load items for the new select
+      const inventory = getInventoryItems();
+      const select = newRow.querySelector('.item-select');
+      inventory.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = `${item.name} - ₦${item.price.toLocaleString()} (Stock: ${item.stock})`;
+        option.setAttribute('data-price', item.price);
+        select.appendChild(option);
+      });
+    }
+
+    // Remove invoice item row
+    function removeInvoiceItem(button) {
+      const row = button.closest('tr');
+      if (document.querySelectorAll('#invoiceItemsBody tr').length > 1) {
+        row.remove();
+        calculateGrandTotal();
+      } else {
+        alert('Invoice must have at least one item');
+      }
+    }
+
+    // Update item price when selection changes
+    function updateItemPrice(select) {
+      const selectedOption = select.options[select.selectedIndex];
+      const price = selectedOption.getAttribute('data-price') || 0;
+      const row = select.closest('tr');
+      row.querySelector('.price').value = price;
+      calculateLineTotal(select);
+    }
+
+    // Calculate line total for an item
+    function calculateLineTotal(input) {
+      const row = input.closest('tr');
+      const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+      const price = parseFloat(row.querySelector('.price').value) || 0;
+      const lineTotal = quantity * price;
+      row.querySelector('.line-total').value = `₦${lineTotal.toLocaleString()}`;
+      calculateGrandTotal();
+    }
+
+    // Calculate grand total
+    function calculateGrandTotal() {
+      let subtotal = 0;
+      
+      document.querySelectorAll('#invoiceItemsBody tr').forEach(row => {
+        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+        const price = parseFloat(row.querySelector('.price').value) || 0;
+        subtotal += quantity * price;
+      });
+      
+      const tax = subtotal * 0.1; // 10% tax
+      const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+      const grandTotal = subtotal + tax - discount;
+      
+      document.getElementById('subtotalAmount').textContent = `₦${subtotal.toLocaleString()}`;
+      document.getElementById('taxAmount').textContent = `₦${tax.toLocaleString()}`;
+      document.getElementById('grandTotalAmount').textContent = `₦${grandTotal.toLocaleString()}`;
+    }
+
+    // Save new invoice
+    function saveNewInvoice() {
+      const form = document.getElementById('invoiceForm');
+      
+      // Basic validation
+      const customerId = document.getElementById('customerSelect').value;
+      const invoiceDate = document.getElementById('invoiceDate').value;
+      const dueDate = document.getElementById('dueDate').value;
+      
+      if (!customerId) {
+        alert('Please select a customer');
+        return;
+      }
+      
+      if (!invoiceDate || !dueDate) {
+        alert('Please fill in all required dates');
+        return;
+      }
+      
+      // Validate items
+      const items = [];
+      let hasValidItems = false;
+      
+      document.querySelectorAll('#invoiceItemsBody tr').forEach(row => {
+        const itemSelect = row.querySelector('.item-select');
+        const quantity = row.querySelector('.quantity').value;
+        const price = row.querySelector('.price').value;
+        
+        if (itemSelect.value && quantity > 0 && price > 0) {
+          const inventory = getInventoryItems();
+          const item = inventory.find(inv => inv.id == itemSelect.value);
+          
+          if (item) {
+            items.push({
+              id: item.id,
+              name: item.name,
+              quantity: parseInt(quantity),
+              price: parseFloat(price),
+              total: parseInt(quantity) * parseFloat(price)
+            });
+            hasValidItems = true;
+          }
+        }
+      });
+      
+      if (!hasValidItems) {
+        alert('Please add at least one valid invoice item');
+        return;
+      }
+      
+      // Calculate totals
+      const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+      const tax = subtotal * 0.1;
+      const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+      const grandTotal = subtotal + tax - discount;
+      
+      // Get customer info
+      const customers = getCustomers();
+      const customer = customers.find(c => c.id == customerId);
+      
+      // Create invoice object
+      const newInvoice = {
+        id: document.getElementById('invoiceNumber').value,
+        customerId: parseInt(customerId),
+        customerName: customer.name,
+        date: invoiceDate,
+        dueDate: dueDate,
+        amount: grandTotal,
+        paidAmount: 0,
+        status: 'pending',
+        items: items,
+        subtotal: subtotal,
+        tax: tax,
+        discount: discount,
+        notes: document.getElementById('invoiceNotes').value,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      const invoices = getInvoices();
+      invoices.push(newInvoice);
+      localStorage.setItem(INVOICES_STORAGE_KEY, JSON.stringify(invoices));
+      
+      // Close modal and refresh data
+      bootstrap.Modal.getInstance(document.getElementById('createInvoiceModal')).hide();
+      
+      // Show success message
+      alert('Invoice created successfully!');
+      
+      // Refresh page data
+      updateKPIStats();
+      loadRecentInvoices();
+      loadOverduePayments();
+      initializePaymentChart();
+      
+      // Add notification
+      addInvoiceNotification(newInvoice);
+    }
+
+    // Add notification for new invoice
+    function addInvoiceNotification(invoice) {
+      const notifications = getNotifications();
+      const newNotification = {
+        id: Date.now(),
+        type: 'invoice',
+        title: 'New Invoice Created',
+        message: `Invoice ${invoice.id} for ${invoice.customerName} - ₦${invoice.amount.toLocaleString()}`,
+        date: new Date().toISOString(),
+        read: false,
+        priority: 'medium'
+      };
+      notifications.push(newNotification);
+      localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notifications));
+      updateNotificationBadge();
+    }
+
+    // View invoice details
+    function viewInvoice(invoiceId) {
+      const invoices = getInvoices();
+      const invoice = invoices.find(inv => inv.id === invoiceId);
+      
+      if (invoice) {
+        let itemsHtml = '';
+        invoice.items.forEach(item => {
+          itemsHtml += `
+            <tr>
+              <td>${item.name}</td>
+              <td>${item.quantity}</td>
+              <td>₦${item.price.toLocaleString()}</td>
+              <td>₦${item.total.toLocaleString()}</td>
+            </tr>
+          `;
+        });
+        
+        const modalHtml = `
+          <div class="modal fade" id="viewInvoiceModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Invoice Details - ${invoice.id}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <strong>Customer:</strong> ${invoice.customerName}<br>
+                      <strong>Invoice Date:</strong> ${invoice.date}<br>
+                      <strong>Due Date:</strong> ${invoice.dueDate}
+                    </div>
+                    <div class="col-md-6 text-end">
+                      <strong>Status:</strong> <span class="status status-${invoice.status}">${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}</span><br>
+                      <strong>Amount Due:</strong> ₦${(invoice.amount - invoice.paidAmount).toLocaleString()}
+                    </div>
+                  </div>
+                  
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Quantity</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${itemsHtml}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <div class="row mt-3">
+                    <div class="col-md-8"></div>
+                    <div class="col-md-4">
+                      <div class="d-flex justify-content-between">
+                        <span>Subtotal:</span>
+                        <span>₦${invoice.subtotal.toLocaleString()}</span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>Tax (10%):</span>
+                        <span>₦${invoice.tax.toLocaleString()}</span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>Discount:</span>
+                        <span>₦${invoice.discount.toLocaleString()}</span>
+                      </div>
+                      <hr>
+                      <div class="d-flex justify-content-between fw-bold">
+                        <span>Grand Total:</span>
+                        <span>₦${invoice.amount.toLocaleString()}</span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>Amount Paid:</span>
+                        <span>₦${invoice.paidAmount.toLocaleString()}</span>
+                      </div>
+                      <hr>
+                      <div class="d-flex justify-content-between fw-bold text-primary">
+                        <span>Balance Due:</span>
+                        <span>₦${(invoice.amount - invoice.paidAmount).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  ${invoice.notes ? `
+                  <div class="mt-3">
+                    <strong>Notes:</strong>
+                    <p>${invoice.notes}</p>
+                  </div>
+                  ` : ''}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" onclick="printInvoice('${invoice.id}')">
+                    <i class="fas fa-print me-1"></i> Print
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Add modal to body if not exists
+        if (!document.getElementById('viewInvoiceModal')) {
+          document.body.insertAdjacentHTML('beforeend', modalHtml);
+        } else {
+          document.getElementById('viewInvoiceModal').remove();
+          document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('viewInvoiceModal'));
+        modal.show();
+      }
+    }
+
+    // Edit invoice
+    function editInvoice(invoiceId) {
+      alert(`Edit functionality for invoice ${invoiceId} would be implemented here`);
+      // In a real application, this would open an edit form
+    }
+
+    // Record payment for invoice
+    function recordPayment(invoiceId) {
+      const invoices = getInvoices();
+      const invoice = invoices.find(inv => inv.id === invoiceId);
+      
+      if (invoice) {
+        const amountDue = invoice.amount - invoice.paidAmount;
+        const paymentAmount = prompt(`Enter payment amount for invoice ${invoiceId} (Amount due: ₦${amountDue.toLocaleString()})`, amountDue);
+        
+        if (paymentAmount && !isNaN(paymentAmount) && paymentAmount > 0) {
+          const payment = parseFloat(paymentAmount);
+          
+          if (payment > amountDue) {
+            alert('Payment amount cannot exceed the amount due');
+            return;
+          }
+          
+          // Update invoice
+          invoice.paidAmount += payment;
+          if (invoice.paidAmount >= invoice.amount) {
+            invoice.status = 'paid';
+          }
+          
+          // Save updated invoices
+          localStorage.setItem(INVOICES_STORAGE_KEY, JSON.stringify(invoices));
+          
+          // Add payment record
+          const payments = getPayments();
+          const newPayment = {
+            id: payments.length + 1,
+            invoiceId: invoiceId,
+            customerId: invoice.customerId,
+            customerName: invoice.customerName,
+            amount: payment,
+            date: new Date().toISOString().split('T')[0],
+            method: 'Cash',
+            status: 'Completed',
+            createdAt: new Date().toISOString()
+          };
+          payments.push(newPayment);
+          localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(payments));
+          
+          // Add notification
+          const notifications = getNotifications();
+          const newNotification = {
+            id: Date.now(),
+            type: 'payment',
+            title: 'Payment Recorded',
+            message: `Payment of ₦${payment.toLocaleString()} received for invoice ${invoiceId}`,
+            date: new Date().toISOString(),
+            read: false,
+            priority: 'medium'
+          };
+          notifications.push(newNotification);
+          localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notifications));
+          
+          alert(`Payment of ₦${payment.toLocaleString()} recorded successfully!`);
+          
+          // Refresh page data
+          updateKPIStats();
+          loadRecentInvoices();
+          loadOverduePayments();
+          initializePaymentChart();
+          updateNotificationBadge();
+        }
+      }
+    }
+
+    // Print invoice
+    function printInvoice(invoiceId) {
+      alert(`Print functionality for invoice ${invoiceId} would be implemented here`);
+      // In a real application, this would open a print dialog with the invoice formatted for printing
+    }
+
+    // Download invoice report
+    function downloadInvoiceReport() {
+      const invoices = getInvoices();
+      
+      let csvContent = "Lavish Lifestyle - Invoice Report\n";
+      csvContent += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
+      
+      csvContent += "Invoice ID,Customer,Date,Due Date,Amount,Paid Amount,Balance,Status\n";
+      invoices.forEach(invoice => {
+        const balance = invoice.amount - invoice.paidAmount;
+        csvContent += `${invoice.id},${invoice.customerName},${invoice.date},${invoice.dueDate},${invoice.amount},${invoice.paidAmount},${balance},${invoice.status}\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-report-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Invoice report downloaded successfully!');
+    }
+
+    // ---------- UI interactions for sidebar submenus ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wire up all submenu toggles
+      const submenus = [
+        { toggle: 'productToggle', menu: 'productSubmenu', chevron: 'productChevron' },
+        { toggle: 'inventoryControlToggle', menu: 'inventoryControlSubmenu', chevron: 'inventoryControlChevron' },
+        { toggle: 'stockMovementToggle', menu: 'stockMovementSubmenu', chevron: 'stockMovementChevron' },
+        { toggle: 'purchaseManagementToggle', menu: 'purchaseManagementSubmenu', chevron: 'purchaseManagementChevron' },
+        { toggle: 'salesManagementToggle', menu: 'salesManagementSubmenu', chevron: 'salesManagementChevron' },
+        { toggle: 'reportingAnalyticsToggle', menu: 'reportingAnalyticsSubmenu', chevron: 'reportingAnalyticsChevron' }
+      ];
+
+      submenus.forEach(({ toggle, menu, chevron }) => {
+        const toggleEl = document.getElementById(toggle);
+        const menuEl = document.getElementById(menu);
+        const chevronEl = document.getElementById(chevron);
+        
+        if (toggleEl && menuEl) {
+          toggleEl.addEventListener('click', function(e){
+            e.preventDefault();
+            const expanded = toggleEl.getAttribute('aria-expanded') === 'true';
+            toggleEl.setAttribute('aria-expanded', (!expanded).toString());
+            if (menuEl.style.maxHeight && menuEl.style.maxHeight !== '0px') {
+              menuEl.style.maxHeight = '0';
+              if (chevronEl) chevronEl.style.transform = '';
+            } else {
+              menuEl.style.maxHeight = (menuEl.scrollHeight + 20) + 'px';
+              if (chevronEl) chevronEl.style.transform = 'rotate(180deg)';
+            }
+          });
+        }
+      });
+
+      // Initialize page
+      const user = checkAuthentication();
+      if (!user) return;
+      
+      updateUserInfo();
+      initializeDemoInvoices();
+      updateKPIStats();
+      loadRecentInvoices();
+      loadOverduePayments();
+      initializePaymentChart();
+      updateNotificationBadge();
+    });
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
+</body>
+</html>
