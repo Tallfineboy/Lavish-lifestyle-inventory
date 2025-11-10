@@ -365,42 +365,6 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        width: 250px;
-      }
-      
-      .sidebar.mobile-open {
-        transform: translateX(0);
-      }
-      
-      .content {
-        margin-left: 0;
-        width: 100%;
-      }
-      
-      .brand, .nav-link span, .user-info, .logout-btn span {
-        display: block;
-      }
-      
-      .nav-link, .logout-btn {
-        text-align: left;
-        padding: 12px 20px;
-        justify-content: flex-start;
-      }
-      
-      .nav-link i, .logout-btn i {
-        margin-right: 10px;
-        font-size: 1rem;
-      }
-
-      .notification-badge {
-        margin-left: auto;
-      }
-    }
-
     /* Stock Aging specific styles */
     .aging-bar {
       height: 8px;
@@ -452,9 +416,163 @@
     .stat-card.critical { border-left-color: var(--danger-color); }
     .stat-card.warning { border-left-color: var(--warning-color); }
     .stat-card.normal { border-left-color: var(--success-color); }
+
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .brand, .nav-link span, .user-info, .logout-btn span {
+        display: block;
+      }
+      
+      .nav-link, .logout-btn {
+        text-align: left;
+        padding: 12px 20px;
+        justify-content: flex-start;
+      }
+      
+      .nav-link i, .logout-btn i {
+        margin-right: 10px;
+        font-size: 1rem;
+      }
+
+      .notification-badge {
+        margin-left: auto;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      /* Adjust table layout for mobile */
+      .table-wrap {
+        font-size: 0.85rem;
+      }
+
+      th, td {
+        padding: 8px 10px;
+      }
+
+      /* Stack stat cards on mobile */
+      .stat-card {
+        margin-bottom: 15px;
+      }
+
+      /* Adjust action buttons for mobile */
+      .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .welcome-header p {
+        font-size: 0.9rem;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .filter-section .row {
+        gap: 10px;
+      }
+
+      .filter-section .col-md-3 {
+        margin-bottom: 10px;
+      }
+
+      /* Make tables more readable on mobile */
+      .table-responsive {
+        border: 0;
+      }
+
+      .table-responsive table {
+        min-width: 600px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 15px 10px;
+      }
+
+      .welcome-header {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .filter-section {
+        padding: 10px;
+      }
+
+      .stat-card {
+        padding: 10px;
+      }
+
+      .stat-card h4 {
+        font-size: 1.2rem;
+      }
+
+      .action-buttons .btn {
+        font-size: 0.85rem;
+      }
+
+      .empty-state i {
+        font-size: 2.5rem;
+      }
+
+      .empty-state h4 {
+        font-size: 1.2rem;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -597,25 +715,25 @@
 
     <!-- Alert Summary Cards -->
     <div class="row g-3 mb-4">
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6">
         <div class="stat-card critical">
           <h4 id="criticalAlertsCount">0</h4>
           <p>Critical Stock Alerts</p>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6">
         <div class="stat-card warning">
           <h4 id="warningAlertsCount">0</h4>
           <p>Reorder Level Warnings</p>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6">
         <div class="stat-card">
           <h4 id="agingItemsCount">0</h4>
           <p>Aging Inventory Items</p>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6">
         <div class="stat-card normal">
           <h4 id="healthyItemsCount">0</h4>
           <p>Healthy Stock Items</p>
@@ -626,7 +744,7 @@
     <!-- Filters Section -->
     <div class="filter-section">
       <div class="row g-3">
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
           <label class="form-label">Alert Level</label>
           <select class="form-select" id="alertLevelFilter">
             <option value="all">All Alerts</option>
@@ -635,7 +753,7 @@
             <option value="normal">Normal Only</option>
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
           <label class="form-label">Aging Period</label>
           <select class="form-select" id="agingFilter">
             <option value="all">All Periods</option>
@@ -645,13 +763,13 @@
             <option value="90-plus">90+ Days</option>
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
           <label class="form-label">Category</label>
           <select class="form-select" id="categoryFilter">
             <option value="all">All Categories</option>
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
           <label class="form-label">&nbsp;</label>
           <div>
             <button class="btn btn-outline-primary w-100" onclick="applyFilters()">
@@ -666,22 +784,24 @@
     <div class="card">
       <h6><i class="fas fa-exclamation-triangle me-2 text-warning"></i> Reorder Level Alerts</h6>
       <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>SKU</th>
-              <th>Current Stock</th>
-              <th>Reorder Level</th>
-              <th>Alert Level</th>
-              <th>Last Sold</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="reorderAlertsBody">
-            <!-- Reorder alerts will be loaded here -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Current Stock</th>
+                <th>Reorder Level</th>
+                <th>Alert Level</th>
+                <th>Last Sold</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="reorderAlertsBody">
+              <!-- Reorder alerts will be loaded here -->
+            </tbody>
+          </table>
+        </div>
         <div id="emptyReorderAlerts" class="empty-state" style="display: none;">
           <i class="fas fa-check-circle"></i>
           <h4>No Reorder Alerts</h4>
@@ -694,22 +814,24 @@
     <div class="card">
       <h6><i class="fas fa-clock me-2 text-info"></i> Stock Aging Analysis</h6>
       <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>SKU</th>
-              <th>Current Stock</th>
-              <th>Days in Inventory</th>
-              <th>Aging Status</th>
-              <th>Last Movement</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="stockAgingBody">
-            <!-- Stock aging data will be loaded here -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Current Stock</th>
+                <th>Days in Inventory</th>
+                <th>Aging Status</th>
+                <th>Last Movement</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="stockAgingBody">
+              <!-- Stock aging data will be loaded here -->
+            </tbody>
+          </table>
+        </div>
         <div id="emptyStockAging" class="empty-state" style="display: none;">
           <i class="fas fa-chart-line"></i>
           <h4>No Aging Data</h4>
@@ -719,12 +841,12 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="d-flex justify-content-between mt-4">
-      <div>
+    <div class="d-flex justify-content-between mt-4 action-buttons">
+      <div class="d-flex flex-wrap gap-2">
         <button class="btn btn-outline-primary" onclick="generateAgingReport()">
           <i class="fas fa-download me-1"></i> Export Aging Report
         </button>
-        <button class="btn btn-outline-primary ms-2" onclick="configureAlerts()">
+        <button class="btn btn-outline-primary" onclick="configureAlerts()">
           <i class="fas fa-cog me-1"></i> Configure Alert Settings
         </button>
       </div>
@@ -1045,6 +1167,36 @@
       // In a real implementation, this would open a promotion creation form
     }
 
+    // Mobile menu toggle functionality
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      
+      mobileMenuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('mobile-open');
+        // Toggle icon
+        const icon = mobileMenuToggle.querySelector('i');
+        if (sidebar.classList.contains('mobile-open')) {
+          icon.classList.remove('fa-bars');
+          icon.classList.add('fa-times');
+        } else {
+          icon.classList.remove('fa-times');
+          icon.classList.add('fa-bars');
+        }
+      });
+      
+      // Close sidebar when clicking on content on mobile
+      content.addEventListener('click', function() {
+        if (window.innerWidth <= 992 && sidebar.classList.contains('mobile-open')) {
+          sidebar.classList.remove('mobile-open');
+          const icon = mobileMenuToggle.querySelector('i');
+          icon.classList.remove('fa-times');
+          icon.classList.add('fa-bars');
+        }
+      });
+    }
+
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
       const user = checkAuthentication();
@@ -1057,6 +1209,9 @@
       
       // Set up sidebar navigation interactions (same as dashboard)
       setupSidebarNavigation();
+      
+      // Set up mobile menu functionality
+      setupMobileMenu();
     });
 
     // Setup sidebar navigation (same functionality as dashboard)

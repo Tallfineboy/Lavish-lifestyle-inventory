@@ -159,6 +159,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 800px; /* Ensure table has minimum width for small screens */
     }
 
     th {
@@ -458,11 +459,47 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile overlay for sidebar */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
     /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .product-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
-        width: 250px;
+        width: 280px;
       }
       
       .sidebar.mobile-open {
@@ -472,6 +509,7 @@
       .content {
         margin-left: 0;
         width: 100%;
+        padding: 15px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -506,10 +544,185 @@
         width: 100%;
         margin-bottom: 5px;
       }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .sidebar-overlay.mobile-open {
+        display: block;
+      }
+
+      /* Header adjustments for mobile */
+      .product-master-header {
+        margin-top: 20px;
+        padding: 15px;
+      }
+
+      .product-master-header h2 {
+        font-size: 1.5rem;
+      }
+
+      /* Table header adjustments */
+      .d-flex.justify-content-between.align-items-center.mb-3 {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-3 h3 {
+        margin-bottom: 15px;
+      }
+
+      .d-flex.align-items-center {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+
+      #searchProducts {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      /* Modal adjustments */
+      .modal-dialog {
+        margin: 20px 10px;
+      }
+
+      /* Product table mobile view */
+      .table-responsive-mobile {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Compact product cards for mobile */
+      .product-card-mobile {
+        display: none;
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .product-card-mobile .product-info {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .product-card-mobile .product-image {
+        width: 60px;
+        height: 60px;
+        margin-right: 15px;
+      }
+
+      .product-card-mobile .product-details {
+        flex: 1;
+      }
+
+      .product-card-mobile .product-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .product-card-mobile .product-sku {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+      }
+
+      .product-card-mobile .product-category {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+      }
+
+      .product-card-mobile .product-stock {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .product-card-mobile .product-price {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+      }
+
+      .product-card-mobile .product-actions {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .product-card-mobile .product-actions .btn {
+        flex: 1;
+        margin: 0 5px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 10px;
+      }
+
+      .product-master-header {
+        padding: 15px 10px;
+      }
+
+      .product-master-header h2 {
+        font-size: 1.3rem;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+
+      .modal-dialog {
+        margin: 10px 5px;
+      }
+
+      .modal-body {
+        padding: 15px;
+      }
+
+      .modal-footer {
+        padding: 10px 15px;
+      }
+
+      .toast {
+        right: 10px;
+        left: 10px;
+        width: auto;
+      }
+    }
+
+    /* Show mobile cards and hide table on small screens */
+    @media (max-width: 768px) {
+      .table-wrap {
+        display: none;
+      }
+
+      .product-card-mobile {
+        display: block;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -685,6 +898,7 @@
     </div>
     
     <div class="card">
+      <!-- Desktop Table View -->
       <div class="table-wrap">
         <table class="table">
           <thead>
@@ -702,6 +916,11 @@
             <!-- Products will be loaded here -->
           </tbody>
         </table>
+      </div>
+      
+      <!-- Mobile Card View -->
+      <div id="productsCardBody">
+        <!-- Product cards will be loaded here for mobile -->
       </div>
     </div>
 
@@ -973,7 +1192,7 @@
       return { status: 'In Stock', class: 'stock-high', badge: 'success' };
     }
 
-    // Load products into the table
+    // Load products into the table and mobile cards
     function loadProducts() {
       showLoading(true);
       
@@ -981,14 +1200,17 @@
       setTimeout(() => {
         const products = getProducts();
         const tbody = document.getElementById('productsTableBody');
+        const cardBody = document.getElementById('productsCardBody');
         
         if (products.length === 0) {
           tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No products found. <a href="javascript:void(0)" onclick="openProductForm()">Add your first product</a></td></tr>';
+          cardBody.innerHTML = '<div class="text-center text-muted py-4">No products found. <a href="javascript:void(0)" onclick="openProductForm()">Add your first product</a></div>';
           updateStats();
           showLoading(false);
           return;
         }
 
+        // Desktop table view
         tbody.innerHTML = products.map(product => {
           const stockStatus = getStockStatus(product.stock);
           return `
@@ -1013,6 +1235,31 @@
                 <button class="btn btn-sm btn-outline-secondary" onclick="deleteProduct('${product.sku}')" title="Delete"><i class="fas fa-trash"></i></button>
               </td>
             </tr>
+          `;
+        }).join('');
+
+        // Mobile card view
+        cardBody.innerHTML = products.map(product => {
+          const stockStatus = getStockStatus(product.stock);
+          return `
+            <div class="product-card-mobile">
+              <div class="product-info">
+                <img src="${product.thumb || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=150&h=150&fit=crop'}" class="product-image" alt="${product.name}">
+                <div class="product-details">
+                  <div class="product-name">${product.name}</div>
+                  <div class="product-sku">SKU: ${product.sku}</div>
+                  <div class="product-category">${product.category}</div>
+                  <div class="product-stock ${stockStatus.class}">Stock: ${product.stock}</div>
+                  <div class="product-price">₦${product.price.toLocaleString()}</div>
+                  <span class="badge bg-${stockStatus.badge}">${stockStatus.status}</span>
+                </div>
+              </div>
+              <div class="product-actions">
+                <button class="btn btn-sm btn-outline-secondary" onclick="viewProduct('${product.sku}')"><i class="fas fa-eye"></i> View</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="editProduct('${product.sku}')"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="deleteProduct('${product.sku}')"><i class="fas fa-trash"></i> Delete</button>
+              </div>
+            </div>
           `;
         }).join('');
 
@@ -1288,10 +1535,16 @@
     document.getElementById('searchProducts').addEventListener('input', function(e) {
       const searchTerm = e.target.value.toLowerCase();
       const rows = document.querySelectorAll('#productsTableBody tr');
+      const cards = document.querySelectorAll('.product-card-mobile');
       
       rows.forEach(row => {
         const text = row.textContent.toLowerCase();
         row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+      
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchTerm) ? 'block' : 'none';
       });
     });
 
@@ -1340,8 +1593,30 @@
       }
     }
 
+    // Mobile menu toggle functionality
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+          sidebarOverlay.classList.toggle('mobile-open');
+        });
+        
+        sidebarOverlay.addEventListener('click', function() {
+          sidebar.classList.remove('mobile-open');
+          sidebarOverlay.classList.remove('mobile-open');
+        });
+      }
+    }
+
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
+      // Set up mobile menu
+      setupMobileMenu();
+      
       // Wire up all sidebar submenu toggles
       const setupSubmenuToggle = (toggleId, submenuId, chevronId) => {
         const toggle = document.getElementById(toggleId);

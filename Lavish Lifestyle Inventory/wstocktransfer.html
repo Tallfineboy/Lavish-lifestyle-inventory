@@ -24,6 +24,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            min-height: 100vh;
         }
 
         .sidebar {
@@ -39,6 +40,7 @@
             transition: all 0.3s ease;
             z-index: 1000;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
         }
 
         .brand {
@@ -126,6 +128,7 @@
             margin-left: 250px;
             padding: 20px;
             transition: all 0.3s ease;
+            width: calc(100% - 250px);
         }
 
         .card {
@@ -277,7 +280,55 @@
             color: white;
         }
 
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
         /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .content {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .transfer-item .row > div {
+                margin-bottom: 10px;
+            }
+            
+            .action-buttons .btn {
+                margin-bottom: 5px;
+            }
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -291,6 +342,7 @@
             .content {
                 margin-left: 0;
                 width: 100%;
+                padding: 15px;
             }
             
             .brand, .nav-link span, .user-info, .logout-btn span {
@@ -307,10 +359,143 @@
                 margin-right: 10px;
                 font-size: 1rem;
             }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .page-header {
+                padding: 15px;
+                margin-top: 50px;
+            }
+            
+            .page-header .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            
+            .page-header .btn {
+                margin-top: 10px;
+                align-self: flex-end;
+            }
+            
+            .transfer-item .row > div {
+                margin-bottom: 10px;
+            }
+            
+            .transfer-item .row > div:last-child {
+                margin-bottom: 0;
+            }
+            
+            .table-wrap {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            .action-buttons {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            .action-buttons .btn {
+                margin-bottom: 5px;
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+            
+            .search-box {
+                margin-bottom: 10px;
+            }
+            
+            .d-flex.justify-content-between.align-items-center {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            
+            .d-flex.justify-content-between.align-items-center > * {
+                margin-bottom: 10px;
+            }
+            
+            .d-flex.justify-content-between.align-items-center > *:last-child {
+                margin-bottom: 0;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px 10px;
+            }
+            
+            .page-header {
+                padding: 15px 10px;
+            }
+            
+            .transfer-item {
+                padding: 10px;
+            }
+            
+            .table-wrap {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 6px 8px;
+            }
+            
+            .status {
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+            
+            .row {
+                margin-left: -5px;
+                margin-right: -5px;
+            }
+            
+            .row > [class*="col-"] {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            
+            .btn {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+            
+            .search-box input {
+                font-size: 0.9rem;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+            }
+            
+            .form-control, .form-select {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay for mobile menu -->
+    <div class="overlay" id="overlay"></div>
+    
     <div class="sidebar" id="sidebar">
         <div class="nav-section">
             <div class="brand">
@@ -442,7 +627,7 @@
             <h5 class="card-title mb-4"><i class="fas fa-truck-loading me-2"></i> Create New Stock Transfer</h5>
             
             <div class="row mb-3">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                     <label for="transferNumber" class="form-label">Transfer Number</label>
                     <input type="text" class="form-control" id="transferNumber" value="TRF-2023-00125" readonly>
                 </div>
@@ -453,7 +638,7 @@
             </div>
             
             <div class="row mb-3">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                     <label for="fromWarehouse" class="form-label">From Warehouse</label>
                     <select class="form-select" id="fromWarehouse">
                         <option value="">Select Source Warehouse</option>
@@ -507,7 +692,7 @@
             
             <div class="transfer-item">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4 mb-3 mb-md-0">
                         <label class="form-label">Product</label>
                         <select class="form-select product-select">
                             <option value="">Select Product</option>
@@ -518,19 +703,19 @@
                             <option value="LLP-005">Designer Perfume (LLP-005)</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-6 col-md-2 mb-3 mb-md-0">
                         <label class="form-label">Available Qty</label>
                         <input type="text" class="form-control available-qty" value="15" readonly>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-6 col-md-2 mb-3 mb-md-0">
                         <label class="form-label">Transfer Qty</label>
                         <input type="number" class="form-control transfer-qty" min="1" value="1">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-10 col-md-3 mb-3 mb-md-0">
                         <label class="form-label">Batch/Serial No.</label>
                         <input type="text" class="form-control batch-no" placeholder="Optional">
                     </div>
-                    <div class="col-md-1 d-flex align-items-end">
+                    <div class="col-2 col-md-1 d-flex align-items-end">
                         <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">
                             <i class="fas fa-times"></i>
                         </button>
@@ -538,12 +723,12 @@
                 </div>
             </div>
             
-            <div class="d-flex justify-content-between mb-4">
-                <button type="button" class="btn btn-outline-primary" onclick="addItem()">
+            <div class="d-flex justify-content-between mb-4 flex-column flex-md-row">
+                <button type="button" class="btn btn-outline-primary mb-2 mb-md-0" onclick="addItem()">
                     <i class="fas fa-plus me-1"></i> Add Another Item
                 </button>
-                <div>
-                    <button type="button" class="btn btn-secondary me-2" onclick="cancelTransfer()">
+                <div class="d-flex flex-column flex-md-row">
+                    <button type="button" class="btn btn-secondary me-0 me-md-2 mb-2 mb-md-0" onclick="cancelTransfer()">
                         <i class="fas fa-times me-1"></i> Cancel
                     </button>
                     <button type="button" class="btn btn-primary" onclick="saveTransfer()">
@@ -555,10 +740,10 @@
 
         <!-- Transfer List -->
         <div class="card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i> Recent Transfers</h5>
-                <div class="d-flex">
-                    <div class="search-box me-2">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-column flex-md-row">
+                <h5 class="card-title mb-3 mb-md-0"><i class="fas fa-list me-2"></i> Recent Transfers</h5>
+                <div class="d-flex flex-column flex-md-row w-100 w-md-auto">
+                    <div class="search-box me-0 me-md-2 mb-2 mb-md-0">
                         <i class="fas fa-search"></i>
                         <input type="text" class="form-control" id="searchTransfers" placeholder="Search transfers...">
                     </div>
@@ -587,8 +772,8 @@
                 </table>
             </div>
             
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <div id="transferCount">Showing 0 transfers</div>
+            <div class="d-flex justify-content-between align-items-center mt-3 flex-column flex-md-row">
+                <div id="transferCount" class="mb-2 mb-md-0">Showing 0 transfers</div>
                 <nav>
                     <ul class="pagination mb-0" id="pagination">
                         <!-- Pagination will be generated by JavaScript -->
@@ -599,7 +784,7 @@
 
         <!-- Transfer Statistics -->
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-3">
                 <div class="card text-center">
                     <div class="card-body">
                         <h3 class="text-primary" id="totalTransfers">0</h3>
@@ -607,7 +792,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-3">
                 <div class="card text-center">
                     <div class="card-body">
                         <h3 class="text-warning" id="pendingTransfers">0</h3>
@@ -615,7 +800,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-3">
                 <div class="card text-center">
                     <div class="card-body">
                         <h3 class="text-info" id="inTransitTransfers">0</h3>
@@ -623,7 +808,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-3">
                 <div class="card text-center">
                     <div class="card-body">
                         <h3 class="text-success" id="completedTransfers">0</h3>
@@ -706,12 +891,44 @@
             // Initialize sidebar menu toggles
             initializeSidebarToggles();
             
+            // Initialize mobile menu toggle
+            initializeMobileMenu();
+            
             // Load transfers data
             loadTransfers();
             
             // Update statistics
             updateStatistics();
         });
+
+        // Initialize mobile menu functionality
+        function initializeMobileMenu() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const content = document.getElementById('content');
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-open');
+                overlay.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+            });
+            
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('mobile-open');
+                overlay.style.display = 'none';
+            });
+            
+            // Close menu when clicking on a link (for mobile)
+            const navLinks = document.querySelectorAll('.nav-link, .submenu-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('mobile-open');
+                        overlay.style.display = 'none';
+                    }
+                });
+            });
+        }
 
         // Initialize sidebar menu toggles
         function initializeSidebarToggles() {

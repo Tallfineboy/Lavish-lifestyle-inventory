@@ -495,7 +495,30 @@
       padding: 1rem 1.5rem;
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
     /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
@@ -509,6 +532,7 @@
       .content {
         margin-left: 0;
         width: 100%;
+        padding: 15px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -532,11 +556,194 @@
 
       .invoice-actions {
         flex-direction: column;
+        width: 100%;
+      }
+
+      .invoice-actions .btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .welcome-header {
+        padding: 15px;
+        margin-top: 20px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .kpi {
+        padding: 15px;
+      }
+
+      .kpi h3 {
+        font-size: 1.5rem;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .table-wrap {
+        font-size: 0.85rem;
+      }
+
+      th, td {
+        padding: 8px 10px;
+      }
+
+      .modal-dialog {
+        margin: 10px;
+      }
+
+      .modal-content {
+        border-radius: 8px;
+      }
+
+      .modal-header, .modal-footer {
+        padding: 1rem;
+      }
+
+      .btn-group .btn {
+        font-size: 0.8rem;
+        padding: 5px 8px;
+      }
+
+      /* Stack table columns on very small screens */
+      @media (max-width: 480px) {
+        .table-responsive table,
+        .table-responsive thead,
+        .table-responsive tbody,
+        .table-responsive th,
+        .table-responsive td,
+        .table-responsive tr {
+          display: block;
+        }
+
+        .table-responsive thead tr {
+          position: absolute;
+          top: -9999px;
+          left: -9999px;
+        }
+
+        .table-responsive tr {
+          border: 1px solid #ccc;
+          margin-bottom: 10px;
+        }
+
+        .table-responsive td {
+          border: none;
+          border-bottom: 1px solid #eee;
+          position: relative;
+          padding-left: 50%;
+        }
+
+        .table-responsive td:before {
+          position: absolute;
+          top: 12px;
+          left: 10px;
+          width: 45%;
+          padding-right: 10px;
+          white-space: nowrap;
+          content: attr(data-label);
+          font-weight: bold;
+        }
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 10px;
+      }
+
+      .welcome-header {
+        padding: 12px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.3rem;
+      }
+
+      .welcome-header p {
+        font-size: 0.9rem;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .card h6 {
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+      }
+
+      .modal-body {
+        padding: 15px;
+      }
+
+      .form-label {
+        font-size: 0.9rem;
+      }
+
+      .form-control, .form-select {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+    }
+
+    /* Touch-friendly improvements */
+    @media (hover: none) and (pointer: coarse) {
+      .nav-link, .logout-btn, .btn {
+        padding: 14px 20px;
+      }
+
+      .table td, .table th {
+        padding: 14px 10px;
+      }
+
+      .sidebar-content {
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .card {
+        cursor: pointer;
+      }
+
+      .btn {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-dialog {
+        margin: 5px;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -678,7 +885,7 @@
     </div>
     
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h3>Invoice Management</h3>
+      <h3 class="page-title">Invoice Management</h3>
       <div class="invoice-actions">
         <button class="btn btn-primary" onclick="createNewInvoice()">
           <i class="fas fa-plus me-1"></i> Create New Invoice
@@ -759,7 +966,7 @@
       <div class="col-lg-4">
         <div class="card payment-card">
           <h6><i class="fas fa-chart-bar me-2"></i> Payment Status Overview</h6>
-          <div class="chart-container mt-3">
+          <div class="chart-container mt-3" style="height: 250px;">
             <canvas id="paymentStatusChart"></canvas>
           </div>
         </div>
@@ -1117,15 +1324,17 @@
             <td>₦${invoice.amount.toLocaleString()}</td>
             <td><span class="status ${statusClass}">${statusText}</span></td>
             <td>
-              <button class="btn btn-sm btn-outline-primary" onclick="viewInvoice('${invoice.id}')">
-                <i class="fas fa-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-secondary" onclick="editInvoice('${invoice.id}')">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-success" onclick="recordPayment('${invoice.id}')">
-                <i class="fas fa-money-bill"></i>
-              </button>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-primary" onclick="viewInvoice('${invoice.id}')">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="editInvoice('${invoice.id}')">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-success" onclick="recordPayment('${invoice.id}')">
+                  <i class="fas fa-money-bill"></i>
+                </button>
+              </div>
             </td>
           </tr>
         `;
@@ -1732,6 +1941,26 @@
           });
         }
       });
+
+      // Mobile menu toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+          const isClickInsideSidebar = sidebar.contains(event.target);
+          const isClickOnToggle = mobileMenuToggle.contains(event.target);
+          
+          if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 768) {
+            sidebar.classList.remove('mobile-open');
+          }
+        });
+      }
 
       // Initialize page
       const user = checkAuthentication();

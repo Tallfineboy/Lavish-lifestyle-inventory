@@ -444,8 +444,38 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile overlay */
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
     /* Responsive adjustments */
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
       .sidebar {
         transform: translateX(-100%);
         width: 250px;
@@ -479,13 +509,98 @@
         margin-left: auto;
       }
 
+      .mobile-menu-toggle {
+        display: flex;
+      }
+
+      .mobile-overlay.active {
+        display: block;
+      }
+
+      .inventory-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 15px;
+      }
+
       .inventory-stats {
         grid-template-columns: 1fr;
       }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .page-header .d-flex {
+        width: 100%;
+        margin-top: 15px;
+      }
+
+      .page-header .d-flex .form-control {
+        flex: 1;
+      }
+
+      .table th:nth-child(3),
+      .table td:nth-child(3) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 10px;
+      }
+
+      .table th:nth-child(2),
+      .table td:nth-child(2) {
+        display: none;
+      }
+
+      .table th:nth-child(6),
+      .table td:nth-child(6) {
+        display: none;
+      }
+
+      .modal-dialog {
+        margin: 10px;
+      }
+
+      .page-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Page header styles */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
+  <!-- Mobile menu toggle button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Mobile overlay -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
   <!-- Updated Sidebar to match dashboard -->
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
@@ -621,7 +736,7 @@
   </div>
   
   <div class='content' id="content">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="page-header">
       <h2><i class="fas fa-cubes me-2"></i> Inventory</h2>
       <div class="d-flex align-items-center">
         <input id="searchInventory" class="form-control form-control-sm" placeholder="Search items..." style="min-width:220px">
@@ -856,6 +971,25 @@
         if (bellIcon) {
           bellIcon.classList.remove('notification-alert');
         }
+      }
+    }
+
+    // Mobile menu toggle
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const mobileOverlay = document.getElementById('mobileOverlay');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+          mobileOverlay.classList.toggle('active');
+        });
+        
+        mobileOverlay.addEventListener('click', function() {
+          sidebar.classList.remove('mobile-open');
+          mobileOverlay.classList.remove('active');
+        });
       }
     }
 
@@ -1294,6 +1428,7 @@
       
       updateUserInfo();
       updateNotificationBadge();
+      setupMobileMenu();
       
       // Wire up sidebar submenu toggles
       const productToggle = document.getElementById('productToggle');

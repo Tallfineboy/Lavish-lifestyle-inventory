@@ -23,6 +23,7 @@
       margin: 0;
       padding: 0;
       display: flex;
+      min-height: 100vh;
     }
 
     .sidebar {
@@ -37,6 +38,7 @@
       transition: all 0.3s ease;
       z-index: 1000;
       box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      overflow-y: auto;
     }
 
     .sidebar-header {
@@ -142,6 +144,7 @@
       margin-left: 250px;
       padding: 20px;
       transition: all 0.3s ease;
+      width: calc(100% - 250px);
     }
 
     .card {
@@ -171,6 +174,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 600px;
     }
 
     th {
@@ -437,11 +441,51 @@
       margin-bottom: 20px;
     }
 
+    /* Mobile menu toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
     /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .chart-container {
+        height: 250px;
+      }
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
-        width: 250px;
+        width: 280px;
       }
       
       .sidebar.mobile-open {
@@ -451,6 +495,7 @@
       .content {
         margin-left: 0;
         width: 100%;
+        padding: 20px 15px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -471,10 +516,102 @@
       .notification-badge {
         margin-left: auto;
       }
+
+      .mobile-menu-toggle {
+        display: flex;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .welcome-header p {
+        font-size: 0.9rem;
+      }
+
+      .period-selector .row {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .period-selector .col-md-6 {
+        width: 100%;
+      }
+
+      .btn-group {
+        width: 100%;
+        display: flex;
+      }
+
+      .btn-group .btn {
+        flex: 1;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .summary-card .value {
+        font-size: 1.8rem;
+      }
+
+      .chart-container {
+        height: 220px;
+      }
+
+      .table-wrap {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 15px 10px;
+      }
+
+      .welcome-header {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .period-selector {
+        padding: 12px;
+      }
+
+      .summary-card {
+        padding: 15px;
+      }
+
+      .summary-card .value {
+        font-size: 1.6rem;
+      }
+
+      .chart-container {
+        height: 200px;
+      }
+
+      th, td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Overlay for mobile menu -->
+  <div class="overlay" id="overlay"></div>
+
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -1172,6 +1309,41 @@
       alert('Sales summary report downloaded successfully!');
     }
 
+    // Mobile menu toggle functionality
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const content = document.getElementById('content');
+      
+      function toggleMobileMenu() {
+        sidebar.classList.toggle('mobile-open');
+        overlay.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+        document.body.style.overflow = sidebar.classList.contains('mobile-open') ? 'hidden' : '';
+      }
+      
+      mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+      overlay.addEventListener('click', toggleMobileMenu);
+      
+      // Close menu when clicking on a nav link
+      document.querySelectorAll('.nav-link, .submenu-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            toggleMobileMenu();
+          }
+        });
+      });
+      
+      // Close menu on window resize if it becomes larger
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+          sidebar.classList.remove('mobile-open');
+          overlay.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
       const user = checkAuthentication();
@@ -1198,6 +1370,9 @@
 
       // Initialize sidebar submenus (same as dashboard)
       initializeSidebarSubmenus();
+      
+      // Setup mobile menu functionality
+      setupMobileMenu();
     });
 
     // Initialize sidebar submenus (same functionality as dashboard)

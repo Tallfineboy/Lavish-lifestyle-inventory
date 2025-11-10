@@ -403,7 +403,41 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
     /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .table th:nth-child(4),
+      .table td:nth-child(4),
+      .table th:nth-child(5),
+      .table td:nth-child(5) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .table th:nth-child(6),
+      .table td:nth-child(6) {
+        display: none;
+      }
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
@@ -417,6 +451,7 @@
       .content {
         margin-left: 0;
         width: 100%;
+        padding: 15px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -437,10 +472,166 @@
       .notification-badge {
         margin-left: auto;
       }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .welcome-header {
+        padding: 15px;
+        margin-top: 20px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .welcome-header p {
+        font-size: 0.9rem;
+      }
+
+      .filter-section .row {
+        margin-bottom: 0;
+      }
+
+      .filter-section .col-md-3 {
+        margin-bottom: 15px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .table th, .table td {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+      }
+
+      .table th:nth-child(3),
+      .table td:nth-child(3) {
+        display: none;
+      }
+
+      .status {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+      }
+
+      .empty-state {
+        padding: 20px 10px;
+      }
+
+      .empty-state i {
+        font-size: 2rem;
+      }
+
+      .empty-state h4 {
+        font-size: 1.2rem;
+      }
+
+      .empty-state p {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 10px;
+      }
+
+      .welcome-header {
+        padding: 10px;
+        margin-top: 15px;
+      }
+
+      .welcome-header h2 {
+        font-size: 1.3rem;
+      }
+
+      .welcome-header p {
+        font-size: 0.8rem;
+      }
+
+      .card {
+        padding: 10px;
+        border-radius: 8px;
+      }
+
+      .table th, .table td {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+      }
+
+      .table th:nth-child(2),
+      .table td:nth-child(2) {
+        display: none;
+      }
+
+      .filter-section {
+        padding: 10px;
+      }
+
+      .filter-section .col-md-3 {
+        margin-bottom: 10px;
+      }
+
+      .btn {
+        font-size: 0.85rem;
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-3 h3 {
+        font-size: 1.2rem;
+      }
+
+      .card h6 {
+        font-size: 0.9rem;
+      }
+
+      .card p.text-muted {
+        font-size: 0.8rem;
+      }
+
+      .summary-card h3 {
+        font-size: 1.5rem;
+      }
+
+      .summary-card h6 {
+        font-size: 0.8rem;
+      }
+
+      .summary-card small {
+        font-size: 0.7rem;
+      }
+
+      .summary-card .fa-2x {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .table th:nth-child(7),
+      .table td:nth-child(7) {
+        display: none;
+      }
+
+      .table th, .table td {
+        padding: 5px;
+        font-size: 0.75rem;
+      }
+
+      .status {
+        font-size: 0.65rem;
+        padding: 2px 5px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -633,7 +824,7 @@
     <!-- Summary Cards -->
     <div class="row g-3 mb-4">
       <div class="col-md-3">
-        <div class="card">
+        <div class="card summary-card">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h6 class="text-muted mb-1">Fast-Moving Items</h6>
@@ -647,7 +838,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card">
+        <div class="card summary-card">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h6 class="text-muted mb-1">Medium-Moving Items</h6>
@@ -661,7 +852,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card">
+        <div class="card summary-card">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h6 class="text-muted mb-1">Slow-Moving Items</h6>
@@ -675,7 +866,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card">
+        <div class="card summary-card">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h6 class="text-muted mb-1">Total Products</h6>
@@ -1001,6 +1192,25 @@
       }
     }
 
+    // Toggle mobile sidebar
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
+    // Close sidebar when clicking outside on mobile
+    function closeSidebarOnClickOutside(event) {
+      const sidebar = document.getElementById('sidebar');
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      
+      if (window.innerWidth <= 768 && 
+          !sidebar.contains(event.target) && 
+          !mobileMenuToggle.contains(event.target) &&
+          sidebar.classList.contains('mobile-open')) {
+        sidebar.classList.remove('mobile-open');
+      }
+    }
+
     // ---------- UI interactions for sidebar submenus ----------
     document.addEventListener('DOMContentLoaded', function() {
       // Wire up product submenu toggle
@@ -1116,6 +1326,15 @@
           }
         });
       }
+
+      // Mobile menu toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileSidebar);
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', closeSidebarOnClickOutside);
 
       // Initialize page
       const user = checkAuthentication();

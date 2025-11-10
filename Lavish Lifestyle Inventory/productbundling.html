@@ -405,11 +405,63 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
     /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .sidebar {
+        width: 220px;
+      }
+      
+      .content {
+        margin-left: 220px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 200px;
+      }
+      
+      .content {
+        margin-left: 200px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .welcome-header p {
+        font-size: 0.9rem;
+      }
+    }
+
     @media (max-width: 768px) {
+      .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
       .sidebar {
         transform: translateX(-100%);
-        width: 250px;
+        width: 280px;
       }
       
       .sidebar.mobile-open {
@@ -419,6 +471,7 @@
       .content {
         margin-left: 0;
         width: 100%;
+        padding: 60px 15px 15px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -439,10 +492,115 @@
       .notification-badge {
         margin-left: auto;
       }
+      
+      .welcome-header {
+        padding: 15px;
+        margin-top: 10px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.3rem;
+      }
+      
+      .welcome-header p {
+        font-size: 0.85rem;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-4 {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-4 > div {
+        margin-top: 15px;
+        width: 100%;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-4 > div button {
+        width: 100%;
+      }
+      
+      .table-wrap {
+        font-size: 0.85rem;
+      }
+      
+      th, td {
+        padding: 8px 10px;
+      }
+      
+      .modal-dialog.modal-lg {
+        max-width: 95%;
+        margin: 30px auto;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .sidebar {
+        width: 100%;
+      }
+      
+      .content {
+        padding: 60px 10px 10px;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+      
+      .welcome-header {
+        padding: 12px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .product-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .quantity-control {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .modal-dialog.modal-lg {
+        max-width: 100%;
+        margin: 10px;
+      }
+      
+      .modal-content {
+        border-radius: 0;
+      }
+      
+      .modal-header, .modal-body, .modal-footer {
+        padding: 15px;
+      }
+    }
+
+    /* Additional responsive table styles */
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .table-wrap {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -1055,6 +1213,27 @@
       }
     }
 
+    // Toggle mobile sidebar
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
+    // Close sidebar when clicking outside on mobile
+    function setupOutsideClickHandler() {
+      document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        
+        if (window.innerWidth <= 768 && 
+            sidebar.classList.contains('mobile-open') && 
+            !sidebar.contains(event.target) && 
+            !mobileToggle.contains(event.target)) {
+          sidebar.classList.remove('mobile-open');
+        }
+      });
+    }
+
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
       const user = checkAuthentication();
@@ -1070,6 +1249,12 @@
       
       // Wire up sidebar submenus (same as dashboard)
       setupSidebarSubmenus();
+      
+      // Setup mobile menu toggle
+      document.getElementById('mobileMenuToggle').addEventListener('click', toggleMobileSidebar);
+      
+      // Setup outside click handler for mobile sidebar
+      setupOutsideClickHandler();
     });
 
     // Setup sidebar submenus (same functionality as dashboard)

@@ -401,7 +401,35 @@
       margin-top: 20px;
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
     /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .grn-item .row > div {
+        margin-bottom: 15px;
+      }
+      
+      .grn-summary .row > div {
+        margin-bottom: 15px;
+      }
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
@@ -415,6 +443,7 @@
       .content {
         margin-left: 0;
         width: 100%;
+        padding: 15px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -435,10 +464,91 @@
       .notification-badge {
         margin-left: auto;
       }
+      
+      .mobile-menu-toggle {
+        display: block;
+      }
+      
+      .welcome-header {
+        padding: 15px;
+        margin-top: 20px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .grn-form {
+        padding: 15px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-3 {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-3 > div {
+        margin-top: 10px;
+        width: 100%;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-3 > div .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 10px;
+      }
+      
+      .welcome-header {
+        padding: 12px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.3rem;
+      }
+      
+      .grn-form {
+        padding: 12px;
+      }
+      
+      .grn-item {
+        padding: 10px;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+      
+      th, td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+      }
+      
+      .status {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile menu toggle button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -925,6 +1035,11 @@
         </button>
       `;
       grnItems.appendChild(newItem);
+      
+      // Add event listeners for calculation
+      newItem.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', calculateTotals);
+      });
     }
 
     // Remove GRN item row
@@ -997,6 +1112,21 @@
       alert('GRN report downloaded as CSV successfully!');
     }
 
+    // Toggle mobile sidebar
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      const toggleBtn = document.getElementById('mobileMenuToggle');
+      
+      sidebar.classList.toggle('mobile-open');
+      
+      if (sidebar.classList.contains('mobile-open')) {
+        toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+      } else {
+        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+      }
+    }
+
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
       // Wire up sidebar submenu toggles
@@ -1041,6 +1171,12 @@
             productChevron.style.transform = 'rotate(180deg)';
           }
         });
+      }
+
+      // Wire up mobile menu toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileSidebar);
       }
 
       // Continue with initialization

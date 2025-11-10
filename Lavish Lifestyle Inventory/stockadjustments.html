@@ -421,8 +421,94 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile adjustments table */
+    .mobile-adjustment-card {
+      display: none;
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .mobile-adjustment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .mobile-adjustment-id {
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .mobile-adjustment-status {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .mobile-adjustment-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .mobile-detail-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-detail-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .mobile-detail-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .mobile-adjustment-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
     /* Responsive adjustments */
-    @media (max-width: 768px) {
+    @media (max-width: 1200px) {
+      .content {
+        margin-left: 250px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .content {
+        margin-left: 0;
+        padding: 15px;
+      }
+      
       .sidebar {
         transform: translateX(-100%);
         width: 250px;
@@ -432,9 +518,27 @@
         transform: translateX(0);
       }
       
+      .mobile-menu-toggle {
+        display: block;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+      
+      .page-header {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      
+      .page-header h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
       .content {
-        margin-left: 0;
-        width: 100%;
+        padding: 10px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -455,10 +559,112 @@
       .notification-badge {
         margin-left: auto;
       }
+      
+      /* Summary cards stacked on mobile */
+      .summary-cards .col-md-3 {
+        margin-bottom: 15px;
+      }
+      
+      /* Filters stacked on mobile */
+      .filter-card .col-md-3,
+      .filter-card .col-md-6 {
+        margin-bottom: 15px;
+      }
+      
+      /* Hide table on mobile, show cards */
+      .table-wrap table {
+        display: none;
+      }
+      
+      .mobile-adjustment-card {
+        display: block;
+      }
+      
+      /* Modal adjustments */
+      .modal-dialog {
+        margin: 10px;
+      }
+      
+      .modal-content {
+        border-radius: 8px;
+      }
+      
+      .modal-body {
+        padding: 15px;
+      }
+      
+      .modal-footer {
+        padding: 10px 15px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 10px 5px;
+      }
+      
+      .page-header {
+        padding: 12px;
+        border-radius: 8px;
+      }
+      
+      .page-header h2 {
+        font-size: 1.3rem;
+      }
+      
+      .page-header p {
+        font-size: 0.9rem;
+      }
+      
+      .card {
+        padding: 12px;
+        border-radius: 8px;
+      }
+      
+      .mobile-adjustment-details {
+        grid-template-columns: 1fr;
+      }
+      
+      .mobile-adjustment-actions {
+        flex-direction: column;
+      }
+      
+      .mobile-adjustment-actions .btn {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+      
+      .filter-card .col-md-6.d-flex {
+        flex-direction: column;
+      }
+      
+      .filter-card .col-md-6.d-flex .btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .sidebar {
+        width: 100%;
+      }
+      
+      .content {
+        padding: 5px;
+      }
+      
+      .card {
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
   <div class="sidebar" id="sidebar">
     <!-- Fixed header section -->
     <div class="sidebar-header">
@@ -600,7 +806,7 @@
     </div>
     
     <!-- Adjustment Summary Cards -->
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-4 summary-cards">
       <div class="col-md-3">
         <div class="card">
           <div class="card-body">
@@ -664,7 +870,7 @@
     </div>
 
     <!-- Filters and Search -->
-    <div class="card mb-4">
+    <div class="card mb-4 filter-card">
       <div class="card-body">
         <div class="row g-3">
           <div class="col-md-3">
@@ -712,9 +918,14 @@
     <!-- Adjustments Table -->
     <div class="card">
       <div class="card-body">
-        <h6 class="card-title">Recent Stock Adjustments</h6>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="card-title mb-0">Recent Stock Adjustments</h6>
+          <button class="btn btn-primary btn-sm d-md-none" data-bs-toggle="modal" data-bs-target="#newAdjustmentModal">
+            <i class="fas fa-plus me-1"></i>New
+          </button>
+        </div>
         <div class="table-wrap">
-          <table class="table">
+          <table class="table d-none d-md-table">
             <thead>
               <tr>
                 <th>Adjustment ID</th>
@@ -733,6 +944,12 @@
               <!-- Adjustments will be loaded here -->
             </tbody>
           </table>
+          
+          <!-- Mobile Cards View -->
+          <div id="mobileAdjustmentsView">
+            <!-- Mobile adjustment cards will be loaded here -->
+          </div>
+          
           <div id="emptyAdjustments" class="empty-state" style="display: none;">
             <i class="fas fa-exchange-alt"></i>
             <h4>No Stock Adjustments</h4>
@@ -979,10 +1196,12 @@
     function loadAdjustmentsTable() {
       const adjustments = getAdjustments();
       const tbody = document.getElementById('adjustmentsTableBody');
+      const mobileView = document.getElementById('mobileAdjustmentsView');
       const emptyState = document.getElementById('emptyAdjustments');
       
       if (adjustments.length === 0) {
         tbody.innerHTML = '';
+        mobileView.innerHTML = '';
         emptyState.style.display = 'block';
         return;
       }
@@ -992,6 +1211,7 @@
       // Sort by date (newest first)
       const sortedAdjustments = adjustments.sort((a, b) => new Date(b.date) - new Date(a.date));
       
+      // Desktop table view
       tbody.innerHTML = sortedAdjustments.map(adj => {
         const typeClass = adj.type === 'increase' ? 'adjustment-increase' : 
                          adj.type === 'decrease' ? 'adjustment-decrease' : 'adjustment-transfer';
@@ -1027,6 +1247,67 @@
               ` : ''}
             </td>
           </tr>
+        `;
+      }).join('');
+      
+      // Mobile card view
+      mobileView.innerHTML = sortedAdjustments.map(adj => {
+        const typeClass = adj.type === 'increase' ? 'adjustment-increase' : 
+                         adj.type === 'decrease' ? 'adjustment-decrease' : 'adjustment-transfer';
+        const typeText = adj.type === 'increase' ? 'Increase' : 
+                        adj.type === 'decrease' ? 'Decrease' : 'Transfer';
+        const statusClass = `status-${adj.status}`;
+        
+        return `
+          <div class="mobile-adjustment-card">
+            <div class="mobile-adjustment-header">
+              <div class="mobile-adjustment-id">${adj.id}</div>
+              <span class="mobile-adjustment-status ${statusClass}">${adj.status.charAt(0).toUpperCase() + adj.status.slice(1)}</span>
+            </div>
+            <div class="mobile-adjustment-details">
+              <div class="mobile-detail-item">
+                <span class="mobile-detail-label">Product</span>
+                <span class="mobile-detail-value">${adj.productName}</span>
+              </div>
+              <div class="mobile-detail-item">
+                <span class="mobile-detail-label">Type</span>
+                <span class="mobile-detail-value adjustment-type ${typeClass}">${typeText}</span>
+              </div>
+              <div class="mobile-detail-item">
+                <span class="mobile-detail-label">Quantity</span>
+                <span class="mobile-detail-value">${adj.quantity}</span>
+              </div>
+              <div class="mobile-detail-item">
+                <span class="mobile-detail-label">Previous Stock</span>
+                <span class="mobile-detail-value">${adj.previousStock}</span>
+              </div>
+              <div class="mobile-detail-item">
+                <span class="mobile-detail-label">New Stock</span>
+                <span class="mobile-detail-value">${adj.newStock}</span>
+              </div>
+              <div class="mobile-detail-item">
+                <span class="mobile-detail-label">Reason</span>
+                <span class="mobile-detail-value">${adj.reasonText}</span>
+              </div>
+              <div class="mobile-detail-item">
+                <span class="mobile-detail-label">Date</span>
+                <span class="mobile-detail-value">${adj.date}</span>
+              </div>
+            </div>
+            <div class="mobile-adjustment-actions">
+              <button class="btn btn-sm btn-outline-primary" onclick="viewAdjustment('${adj.id}')">
+                <i class="fas fa-eye me-1"></i>View
+              </button>
+              ${adj.status === 'pending' ? `
+                <button class="btn btn-sm btn-outline-success" onclick="approveAdjustment('${adj.id}')">
+                  <i class="fas fa-check me-1"></i>Approve
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="rejectAdjustment('${adj.id}')">
+                  <i class="fas fa-times me-1"></i>Reject
+                </button>
+              ` : ''}
+            </div>
+          </div>
         `;
       }).join('');
     }
@@ -1194,6 +1475,12 @@
       loadAdjustmentsTable();
     }
 
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
     // Event listeners for modal
     document.addEventListener('DOMContentLoaded', function() {
       const user = checkAuthentication();
@@ -1209,6 +1496,20 @@
       document.getElementById('adjustmentReason').addEventListener('change', function() {
         const otherContainer = document.getElementById('otherReasonContainer');
         otherContainer.style.display = this.value === 'other' ? 'block' : 'none';
+      });
+      
+      // Mobile menu toggle
+      document.getElementById('mobileMenuToggle').addEventListener('click', toggleMobileMenu);
+      
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        
+        if (!sidebar.contains(event.target) && !mobileToggle.contains(event.target) && 
+            sidebar.classList.contains('mobile-open')) {
+          sidebar.classList.remove('mobile-open');
+        }
       });
       
       // Submenu toggle functionality (same as dashboard)

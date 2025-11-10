@@ -23,6 +23,7 @@
       margin: 0;
       padding: 0;
       display: flex;
+      min-height: 100vh;
     }
 
     .sidebar {
@@ -38,6 +39,7 @@
       transition: all 0.3s ease;
       z-index: 1000;
       box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      overflow-y: auto;
     }
 
     .brand {
@@ -125,6 +127,7 @@
       margin-left: 250px;
       padding: 20px;
       transition: all 0.3s ease;
+      width: calc(100% - 250px);
     }
 
     .card {
@@ -155,6 +158,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 600px;
     }
 
     th {
@@ -454,11 +458,53 @@
       box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile-specific styles */
+    @media (max-width: 1199.98px) {
+      .content {
+        padding: 15px;
+      }
+      
+      .welcome-header {
+        padding: 15px;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      .pr-actions {
+        flex-wrap: wrap;
+      }
+      
+      .pr-summary-value {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 767.98px) {
       .sidebar {
         transform: translateX(-100%);
-        width: 250px;
+        width: 280px;
       }
       
       .sidebar.mobile-open {
@@ -468,6 +514,7 @@
       .content {
         margin-left: 0;
         width: 100%;
+        padding: 15px;
       }
       
       .brand, .nav-link span, .user-info, .logout-btn span {
@@ -491,16 +538,132 @@
 
       .pr-actions {
         flex-direction: column;
+        width: 100%;
+      }
+      
+      .pr-actions .btn {
+        width: 100%;
+        margin-bottom: 10px;
       }
 
       .pr-summary {
         flex-direction: column;
         gap: 10px;
       }
+      
+      .pr-summary-item {
+        margin-bottom: 15px;
+      }
+      
+      .welcome-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .welcome-header p {
+        font-size: 0.9rem;
+      }
+      
+      .mobile-menu-toggle {
+        display: flex;
+      }
+      
+      .table-wrap {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+      }
+      
+      table {
+        min-width: 700px;
+      }
+      
+      .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .content {
+        padding: 10px;
+      }
+      
+      .welcome-header {
+        padding: 15px 10px;
+        text-align: center;
+      }
+      
+      .card {
+        padding: 15px 10px;
+        border-radius: 8px;
+      }
+      
+      .modal-dialog {
+        margin: 10px;
+      }
+      
+      .modal-content {
+        border-radius: 8px;
+      }
+      
+      .modal-header {
+        padding: 15px;
+      }
+      
+      .modal-body {
+        padding: 15px;
+      }
+      
+      .modal-footer {
+        padding: 15px;
+      }
+      
+      .form-control, .form-select {
+        padding: 8px 12px;
+      }
+      
+      .items-table th, .items-table td {
+        padding: 8px 10px;
+      }
+      
+      h3 {
+        font-size: 1.5rem;
+      }
+      
+      h6 {
+        font-size: 1rem;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      .sidebar, .mobile-menu-toggle, .pr-actions, .btn-group {
+        display: none !important;
+      }
+      
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+      
+      .welcome-header {
+        background: #f8f9fa !important;
+        color: #000 !important;
+        box-shadow: none;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
   <div class="sidebar" id="sidebar">
     <div class="nav-section">
       <div class="brand">
@@ -595,7 +758,7 @@
 
     <!-- Summary Cards -->
     <div class="row mb-4">
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6 mb-3">
         <div class="card text-center">
           <div class="card-body">
             <h3 class="pr-summary-value" id="totalPrCount">0</h3>
@@ -603,7 +766,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6 mb-3">
         <div class="card text-center">
           <div class="card-body">
             <h3 class="pr-summary-value" id="pendingPrCount">0</h3>
@@ -611,7 +774,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6 mb-3">
         <div class="card text-center">
           <div class="card-body">
             <h3 class="pr-summary-value" id="approvedPrCount">0</h3>
@@ -619,7 +782,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-sm-6 mb-3">
         <div class="card text-center">
           <div class="card-body">
             <h3 class="pr-summary-value" id="rejectedPrCount">0</h3>
@@ -629,14 +792,15 @@
       </div>
     </div>
     
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h3>All Purchase Requisitions</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-column flex-md-row">
+      <h3 class="mb-3 mb-md-0">All Purchase Requisitions</h3>
       <div class="pr-actions">
         <button class="btn btn-outline-primary" onclick="exportPRs()">
-          <i class="fas fa-download me-1"></i> Export
+          <i class="fas fa-download me-1"></i> <span class="d-none d-sm-inline">Export</span>
         </button>
         <button class="btn btn-primary" onclick="openAddPRModal()">
-          <i class="fas fa-plus me-1"></i> Create New PR
+          <i class="fas fa-plus me-1"></i> <span class="d-none d-sm-inline">Create New PR</span>
+          <span class="d-inline d-sm-none">New PR</span>
         </button>
       </div>
     </div>
@@ -706,7 +870,7 @@
               <input type="hidden" id="prId">
               
               <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                   <label for="prNumber" class="form-label">PR Number *</label>
                   <input type="text" class="form-control" id="prNumber" required readonly>
                 </div>
@@ -717,7 +881,7 @@
               </div>
               
               <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                   <label for="department" class="form-label">Department *</label>
                   <select class="form-select" id="department" required>
                     <option value="">Select Department</option>
@@ -736,7 +900,7 @@
               </div>
               
               <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                   <label for="urgency" class="form-label">Urgency Level *</label>
                   <select class="form-select" id="urgency" required>
                     <option value="low">Low</option>
@@ -843,6 +1007,28 @@
       if (confirm('Are you sure you want to log out?')) {
         localStorage.removeItem(AUTH_KEY);
         window.location.href = 'index.html';
+      }
+    }
+
+    // Mobile menu toggle
+    function setupMobileMenu() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+          const isClickInsideSidebar = sidebar.contains(event.target);
+          const isClickOnToggle = mobileMenuToggle.contains(event.target);
+          
+          if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 767.98) {
+            sidebar.classList.remove('mobile-open');
+          }
+        });
       }
     }
 
@@ -1019,7 +1205,7 @@
       
       const content = `
         <div class="row mb-4">
-          <div class="col-md-6">
+          <div class="col-md-6 mb-3 mb-md-0">
             <h6>PR Information</h6>
             <p><strong>PR Number:</strong> ${pr.prNumber}</p>
             <p><strong>Date:</strong> ${pr.date}</p>
@@ -1494,6 +1680,7 @@
       if (!user) return;
       
       updateUserInfo();
+      setupMobileMenu();
       initializeDemoPRs();
       loadPRs();
       updateNotificationBadge();

@@ -23,6 +23,8 @@
       padding: 20px 0;
       display: flex;
       flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 1000;
     }
 
     .brand {
@@ -51,6 +53,7 @@
       flex: 1;
       margin-left: 250px;
       padding: 20px;
+      transition: margin-left 0.3s ease;
     }
 
     .card {
@@ -246,7 +249,39 @@
       margin-top: 5px;
     }
 
-    @media (max-width: 768px) {
+    .mobile-header {
+      display: none;
+      background: #021527;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .mobile-header .brand {
+      border-bottom: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .table-responsive-card {
+      display: none;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 992px) {
       .sidebar {
         width: 70px;
         overflow: hidden;
@@ -271,12 +306,155 @@
       }
 
       .payment-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .content {
+        margin-left: 0;
+        padding-top: 70px;
+      }
+      
+      .payment-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .table-wrap {
+        display: none;
+      }
+      
+      .table-responsive-card {
+        display: block;
+      }
+      
+      .payment-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      
+      .payment-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+      }
+      
+      .payment-card-id {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      
+      .payment-card-status {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+        border-radius: 15px;
+      }
+      
+      .payment-card-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      
+      .payment-card-detail {
+        margin-bottom: 5px;
+      }
+      
+      .payment-card-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+      }
+      
+      .payment-card-value {
+        font-weight: 500;
+      }
+      
+      .payment-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 5px;
+        margin-top: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        padding: 15px;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-3 {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+      
+      .d-flex.justify-content-between.align-items-center.mb-3 > div {
+        margin-top: 10px;
+        width: 100%;
+      }
+      
+      #searchPayments {
+        min-width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      .modal-dialog.modal-lg {
+        margin: 10px;
+      }
+      
+      .order-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .item-details {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      .item-quantity, .item-total {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      .item-total {
+        text-align: left;
+      }
+      
+      .payment-card-details {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
+  <div class="mobile-header">
+    <div class="brand">Lavish Lifestyle <small style="color:#9ff3ef">Inventory</small></div>
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+  
   <div class="sidebar">
     <div class="brand">Lavish Lifestyle <small style="color:#9ff3ef">Inventory</small></div>
     <a class="nav-link" href="/dashboard.html"><i class="fa fa-chart-line me-2"></i> <span>Dashboard</span></a>
@@ -340,6 +518,11 @@
             <!-- Payments will be loaded here -->
           </tbody>
         </table>
+      </div>
+      
+      <!-- Mobile responsive cards view -->
+      <div class="table-responsive-card" id="paymentsCardsBody">
+        <!-- Payments cards will be loaded here for mobile -->
       </div>
     </div>
 
@@ -521,17 +704,26 @@
       return `ORD-${orderNumber.toString().padStart(4, '0')}`;
     }
 
-    // Load payments into table
+    // Toggle sidebar on mobile
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    // Load payments into table and cards
     function loadPayments() {
       const payments = getPayments();
       const tbody = document.getElementById('paymentsTableBody');
+      const cardsBody = document.getElementById('paymentsCardsBody');
       
       if (payments.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No payments found. <a href="javascript:void(0)" onclick="openPaymentForm()">Create your first payment</a></td></tr>';
+        cardsBody.innerHTML = '<div class="text-center text-muted py-4">No payments found. <a href="javascript:void(0)" onclick="openPaymentForm()">Create your first payment</a></div>';
         updateStats();
         return;
       }
 
+      // Table view
       tbody.innerHTML = payments.map(payment => `
         <tr>
           <td>#PAY-${payment.id}</td>
@@ -546,6 +738,42 @@
             <button class="btn btn-sm btn-outline-secondary" onclick="editPayment(${payment.id})"><i class="fas fa-edit"></i></button>
           </td>
         </tr>
+      `).join('');
+
+      // Cards view for mobile
+      cardsBody.innerHTML = payments.map(payment => `
+        <div class="payment-card">
+          <div class="payment-card-header">
+            <div class="payment-card-id">#PAY-${payment.id}</div>
+            <div class="payment-card-status status status-${payment.status.toLowerCase()}">${payment.status}</div>
+          </div>
+          <div class="payment-card-details">
+            <div class="payment-card-detail">
+              <div class="payment-card-label">Order ID</div>
+              <div class="payment-card-value">${payment.orderId}</div>
+            </div>
+            <div class="payment-card-detail">
+              <div class="payment-card-label">Customer</div>
+              <div class="payment-card-value">${payment.customer}</div>
+            </div>
+            <div class="payment-card-detail">
+              <div class="payment-card-label">Amount</div>
+              <div class="payment-card-value">₦${payment.amount.toLocaleString()}</div>
+            </div>
+            <div class="payment-card-detail">
+              <div class="payment-card-label">Method</div>
+              <div class="payment-card-value">${payment.method}</div>
+            </div>
+            <div class="payment-card-detail">
+              <div class="payment-card-label">Date</div>
+              <div class="payment-card-value">${payment.date}</div>
+            </div>
+          </div>
+          <div class="payment-card-actions">
+            <button class="btn btn-sm btn-outline-secondary" onclick="viewPayment(${payment.id})"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="editPayment(${payment.id})"><i class="fas fa-edit"></i></button>
+          </div>
+        </div>
       `).join('');
 
       updateStats();
@@ -912,10 +1140,16 @@
     document.getElementById('searchPayments').addEventListener('input', function(e) {
       const searchTerm = e.target.value.toLowerCase();
       const rows = document.querySelectorAll('#paymentsTableBody tr');
+      const cards = document.querySelectorAll('#paymentsCardsBody .payment-card');
       
       rows.forEach(row => {
         const text = row.textContent.toLowerCase();
         row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+      
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchTerm) ? '' : 'none';
       });
     });
 
@@ -937,6 +1171,18 @@
       initializeData();
       loadPayments();
       populateDropdowns();
+      
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(e) {
+        const sidebar = document.querySelector('.sidebar');
+        const mobileHeader = document.querySelector('.mobile-header');
+        if (window.innerWidth <= 768 && 
+            sidebar.classList.contains('active') && 
+            !sidebar.contains(e.target) && 
+            !mobileHeader.contains(e.target)) {
+          sidebar.classList.remove('active');
+        }
+      });
     });
   </script>
   <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'></script>
